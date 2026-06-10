@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>福岡五天四夜自由行 ✈️ 家庭版行程規劃</title>
+<style>
+  :root {
+    --primary: #e8453c;
+    --secondary: #f5a623;
+    --accent: #4a90d9;
+    --green: #27ae60;
+    --bg: #fafaf8;
+    --card: #ffffff;
+    --text: #2c2c2c;
+    --muted: #888;
+    --border: #e8e8e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+    color: white; text-align: center; padding: 60px 20px 40px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '🌸🗼🍜🏯🎌';
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    font-size: 2rem; letter-spacing: 10px; opacity: 0.3;
+  }
+  .hero h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; margin-bottom: 8px; }
+  .hero h1 span { color: var(--secondary); }
+  .hero .subtitle { font-size: 1rem; opacity: 0.85; margin-bottom: 24px; }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .hero-tag {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px; padding: 4px 14px; font-size: 0.85rem;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    background: white; border-bottom: 2px solid var(--border);
+    display: flex; overflow-x: auto; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .nav-tab {
+    flex-shrink: 0; padding: 14px 20px; cursor: pointer; font-size: 0.9rem;
+    border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap;
+    font-weight: 500; color: var(--muted);
+  }
+  .nav-tab:hover { color: var(--primary); background: #fff5f5; }
+  .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+  /* MAIN */
+  .main { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card); border-radius: 16px; padding: 24px;
+    margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid var(--border);
+  }
+  .card-title {
+    font-size: 1.2rem; font-weight: 800; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .icon { font-size: 1.4rem; }
+
+  /* DAY TIMELINE */
+  .day-header {
+    background: linear-gradient(135deg, var(--primary), #c0392b);
+    color: white; border-radius: 12px; padding: 16px 20px;
+    margin-bottom: 20px; display: flex; align-items: center; gap: 16px;
+  }
+  .day-num { font-size: 2.5rem; font-weight: 900; line-height: 1; }
+  .day-info h2 { font-size: 1.3rem; font-weight: 800; }
+  .day-info p { font-size: 0.88rem; opacity: 0.9; margin-top: 2px; }
+
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 10px; top: 0; bottom: 0;
+    width: 2px; background: linear-gradient(to bottom, var(--primary), var(--accent));
+  }
+  .timeline-item { position: relative; margin-bottom: 24px; }
+  .timeline-dot {
+    position: absolute; left: -26px; top: 4px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--primary); border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+  .timeline-time { font-size: 0.8rem; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+  .timeline-content {
+    background: white; border-radius: 12px; padding: 14px 16px;
+    border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .timeline-content h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .timeline-content p { font-size: 0.88rem; color: #555; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .tag {
+    font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+  }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-blue { background: #e3f2fd; color: #1565c0; }
+  .tag-orange { background: #fff3e0; color: #e65100; }
+  .tag-red { background: #fce4ec; color: #c62828; }
+  .tag-purple { background: #f3e5f5; color: #6a1b9a; }
+
+  /* TOGGLE BUTTONS */
+  .mode-toggle {
+    display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .mode-btn {
+    padding: 8px 18px; border-radius: 20px; border: 2px solid var(--primary);
+    cursor: pointer; font-size: 0.88rem; font-weight: 700; transition: all 0.2s;
+    background: white; color: var(--primary);
+  }
+  .mode-btn.active { background: var(--primary); color: white; }
+
+  /* MAP VISUAL */
+  .map-visual {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px; padding: 24px; color: white; margin-bottom: 20px;
+  }
+  .map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+  .map-point {
+    background: rgba(255,255,255,0.15); border-radius: 10px; padding: 12px;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .map-point h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+  .map-point p { font-size: 0.8rem; opacity: 0.85; }
+  .map-distance {
+    display: inline-block; background: var(--secondary); color: #333;
+    border-radius: 8px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700;
+    margin-top: 6px;
+  }
+
+  /* BUDGET TABLE */
+  .budget-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .budget-table th {
+    background: var(--primary); color: white; padding: 10px 14px;
+    text-align: left; font-weight: 700;
+  }
+  .budget-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .budget-table tr:hover td { background: #fff5f5; }
+  .budget-total td { font-weight: 800; background: #fff3e0 !important; color: var(--primary); font-size: 1rem; }
+
+  /* HOTEL CARDS */
+  .hotel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .hotel-card {
+    border-radius: 14px; overflow: hidden; border: 1px solid var(--border);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06); transition: transform 0.2s;
+  }
+  .hotel-card:hover { transform: translateY(-3px); }
+  .hotel-card-header {
+    padding: 16px; font-size: 1rem; font-weight: 800; color: white;
+  }
+  .hotel-card-body { padding: 14px; }
+  .hotel-feature { font-size: 0.85rem; margin-bottom: 6px; display: flex; gap: 6px; }
+  .hotel-price { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-top: 10px; }
+
+  /* FOOD */
+  .food-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .food-item {
+    background: white; border-radius: 12px; padding: 14px;
+    border: 1px solid var(--border); text-align: center;
+  }
+  .food-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+  .food-name { font-weight: 700; font-size: 0.95rem; }
+  .food-desc { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .food-price { font-size: 0.85rem; color: var(--green); font-weight: 700; margin-top: 6px; }
+
+  /* TIPS */
+  .tip-box {
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .tip-box.warning { background: #fff3e0; border-left: 4px solid var(--secondary); }
+  .tip-box.info { background: #e3f2fd; border-left: 4px solid var(--accent); }
+  .tip-box.success { background: #e8f5e9; border-left: 4px solid var(--green); }
+  .tip-box.danger { background: #fce4ec; border-left: 4px solid var(--primary); }
+  .tip-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+  .tip-text { font-size: 0.88rem; }
+  .tip-text strong { display: block; margin-bottom: 2px; font-size: 0.95rem; }
+
+  /* DISTANCE VIZ */
+  .distance-bar { margin-bottom: 16px; }
+  .distance-label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; }
+  .distance-track { background: #eee; border-radius: 20px; height: 10px; overflow: hidden; }
+  .distance-fill { height: 100%; border-radius: 20px; transition: width 0.8s ease; }
+
+  /* STARS */
+  .stars { color: var(--secondary); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .hero { padding: 40px 16px 30px; }
+    .card { padding: 16px; }
+    .day-header { padding: 12px 16px; }
+    .day-num { font-size: 2rem; }
+  }
+
+  /* ACCORDION */
+  .accordion-btn {
+    width: 100%; text-align: left; padding: 14px 16px;
+    background: none; border: none; font-size: 1rem; font-weight: 700;
+    cursor: pointer; display: flex; justify-content: space-between;
+    align-items: center; color: var(--text);
+  }
+  .accordion-btn:hover { background: #f9f9f9; border-radius: 8px; }
+  .accordion-content { display: none; padding: 0 16px 16px; }
+  .accordion-content.open { display: block; }
+  .chevron { transition: transform 0.2s; }
+  .chevron.open { transform: rotate(180deg); }
+
+  /* PRINT */
+  @media print {
+    .nav-tabs, .mode-toggle { display: none; }
+    .section { display: block !important; }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🇯🇵 福岡 <span>五天四夜</span> 自由行</h1>
+  <p class="subtitle">2025 完整行程規劃 · 家庭親子版 × 夫妻輕鬆版</p>
+  <div class="hero-tags">
+    <span class="hero-tag">👨‍👩‍👦‍👦 30歲夫妻 + 3歲男寶 + 1.5歲女寶</span>
+    <span class="hero-tag">🗓️ 5天4夜</span>
+    <span class="hero-tag">✈️ 博多・天神基地</span>
+    <span class="hero-tag">💴 預算友善</span>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showSection('overview')">📋 總覽</div>
+  <div class="nav-tab" onclick="showSection('day1')">Day 1</div>
+  <div class="nav-tab" onclick="showSection('day2')">Day 2</div>
+  <div class="nav-tab" onclick="showSection('day3')">Day 3</div>
+  <div class="nav-tab" onclick="showSection('day4')">Day 4</div>
+  <div class="nav-tab" onclick="showSection('day5')">Day 5</div>
+  <div class="nav-tab" onclick="showSection('hotels')">🏨 住宿</div>
+  <div class="nav-tab" onclick="showSection('food')">🍜 美食</div>
+  <div class="nav-tab" onclick="showSection('budget')">💴 預算</div>
+  <div class="nav-tab" onclick="showSection('tips')">💡 攻略</div>
+</div>
+
+<div class="main">
+
+  <!-- ==================== OVERVIEW ==================== -->
+  <div id="overview" class="section active">
+    <div class="card">
+      <div class="card-title"><span class="icon">🗺️</span>地圖位置總覽 · 行程邏輯</div>
+      <div class="map-visual">
+        <h3 style="margin-bottom:4px;">福岡活動範圍示意</h3>
+        <p style="font-size:0.85rem;opacity:0.85;">以博多・天神為中心，依地理象限分日規劃，不走回頭路</p>
+        <div class="map-grid">
+          <div class="map-point">
+            <h4>🏙️ 博多・天神（基地）</h4>
+            <p>機場5分鐘、景點輻射中心</p>
+            <span class="map-distance">Day 1 · Day 5</span>
+          </div>
+          <div class="map-point">
+            <h4>🏰 大濠公園・福岡城</h4>
+            <p>地下鐵10分鐘，適合孩子跑跳</p>
+            <span class="map-distance">Day 2 · 西方向</span>
+          </div>
+          <div class="map-point">
+            <h4>🌊 糸島海岸</h4>
+            <p>西鐵30分，必租車移動</p>
+            <span class="map-distance">Day 3 · 西北向</span>
+          </div>
+          <div class="map-point">
+            <h4>⛩️ 太宰府・柳川</h4>
+            <p>JR/西鐵35分，文化精華</p>
+            <span class="map-distance">Day 4 · 南方向</span>
+          </div>
+          <div class="map-point">
+            <h4>🛍️ Canal City・マリノア</h4>
+            <p>購物娛樂最後衝刺</p>
+            <span class="map-distance">Day 5 · 市區</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📊</span>各天移動距離 · 難度總覽</div>
+      <div class="distance-bar">
+        <div class="distance-label">
+          <span><strong>Day 1</strong> 步行為主 · Canal City周邊</span>
+          <span style="color:var(--green)">⭐ 輕鬆 · 約3–4km</span>
+        </div>
+        <div class="distance-track"><div class="distance-fill" style="width:20%;background:linear-gradient(90deg,#27ae60,#2ecc71)"></div></div>
+      </div>
+      <div class="distance-bar">
+        <div class="distance-label">
+          <span><strong>Day 2</strong> 地鐵2段 · 大濠公園區</span>
+          <span style="color:var(--accent)">⭐⭐ 中等 · 約8km</span>
+        </div>
+        <div class="distance-track"><div class="distance-fill" style="width:40%;background:linear-gradient(90deg,#3498db,#5dade2)"></div></div>
+      </div>
+      <div class="distance-bar">
+        <div class="distance-label">
+          <span><strong>Day 3</strong> 糸島 · 西鐵+租車</span>
+          <span style="color:var(--secondary)">⭐⭐⭐ 較長 · 約15–25km（租車版輕鬆）</span>
+        </div>
+        <div class="distance-track"><div class="distance-fill" style="width:65%;background:linear-gradient(90deg,#f39c12,#f5a623)"></div></div>
+      </div>
+      <div class="distance-bar">
+        <div class="distance-label">
+          <span><strong>Day 4</strong> 太宰府・柳川 · JR+公車</span>
+          <span style="color:var(--primary)">⭐⭐ 中等 · 約60–80km（含JR）</span>
+        </div>
+        <div class="distance-track"><div class="distance-fill" style="width:75%;background:linear-gradient(90deg,#e74c3c,#c0392b)"></div></div>
+      </div>
+      <div class="distance-bar">
+        <div class="distance-label">
+          <span><strong>Day 5</strong> 購物・返程 · 步行+地鐵</span>
+          <span style="color:var(--green)">⭐ 輕鬆 · 約4–5km</span>
+        </div>
+        <div class="distance-track"><div class="distance-fill" style="width:25%;background:linear-gradient(90deg,#27ae60,#2ecc71)"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🔑</span>帶兩個孩子的三大關鍵</div>
+      <div class="tip-box success">
+        <span class="tip-icon">🛒</span>
+        <div class="tip-text">
+          <strong>① 折疊輕量推車（Yoyo系列）</strong>
+          Canal City、博多車站地下街、大濠公園全部無障礙。日本電車對推車非常友善，月台有專屬位置。
+        </div>
+      </div>
+      <div class="tip-box info">
+        <span class="tip-icon">🏨</span>
+        <div class="tip-text">
+          <strong>② 飯店選 Grand Hyatt 或 JR Blossom</strong>
+          Grand Hyatt 在 Canal City 內，一切就在身邊；JR Blossom 在博多站旁，行李寄放最方便。兩者哺乳室與親子設備皆完善。
+        </div>
+      </div>
+      <div class="tip-box warning">
+        <span class="tip-icon">🚗</span>
+        <div class="tip-text">
+          <strong>③ 糸島務必租車</strong>
+          糸島公車班次稀少，帶嬰兒轉乘時間成本極高。租車一日約 NT$800–1,400，CP值極高。可在博多站附近取還車。
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🔀</span>選擇你的模式</div>
+      <p style="margin-bottom:16px;font-size:0.9rem;color:var(--muted)">每個 Day 都提供兩種版本，點擊天數頁籤後可切換</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:#fff3e0;border-radius:12px;padding:16px;border:2px solid var(--secondary)">
+          <div style="font-size:1.5rem;margin-bottom:8px;">👨‍👩‍👦‍👦</div>
+          <div style="font-weight:800;margin-bottom:6px;">親子版</div>
+          <div style="font-size:0.85rem;color:#555">推車友善・哺乳室標記・孩子跑跳空間・短距離移動・早收・避開人潮</div>
+        </div>
+        <div style="background:#e3f2fd;border-radius:12px;padding:16px;border:2px solid var(--accent)">
+          <div style="font-size:1.5rem;margin-bottom:8px;">💑</div>
+          <div style="font-weight:800;margin-bottom:6px;">夫妻版（無孩）</div>
+          <div style="font-size:0.85rem;color:#555">夜晚延伸・深度文化・酒吧居酒屋・咖啡探店・自由換景</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DAY 1 ==================== -->
+  <div id="day1" class="section">
+    <div class="day-header">
+      <div class="day-num">01</div>
+      <div class="day-info">
+        <h2>抵達博多 · Canal City 初探</h2>
+        <p>🛫 入境 → 飯店 → Canal City → 博多拉麵 → 那珂川夜景</p>
+      </div>
+    </div>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="toggleMode('day1','family')">👨‍👩‍👦‍👦 親子版</button>
+      <button class="mode-btn" onclick="toggleMode('day1','couple')">💑 夫妻版</button>
+    </div>
+
+    <div id="day1-family">
+      <div class="card">
+        <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">10:00 – 11:30</div>
+            <div class="timeline-content">
+              <h4>✈️ 福岡機場抵達 · 地鐵直達博多</h4>
+              <p>國際線入境後換乘地鐵（僅5分鐘），拖行李帶推車最輕鬆。地鐵有電梯，推車無阻。</p>
+              <div class="tags">
+                <span class="tag tag-green">🚇 地鐵5分</span>
+                <span class="tag tag-blue">♿ 推車友善</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">11:30 – 13:00</div>
+            <div class="timeline-content">
+              <h4>🏨 飯店 Check-in · 安頓行李</h4>
+              <p>建議 Grand Hyatt Fukuoka，在 Canal City 內，房間可直接通往商場。嬰兒床可預訂，大廳有親子友善設施。</p>
+              <div class="tags">
+                <span class="tag tag-orange">🍼 哺乳室在B1</span>
+                <span class="tag tag-blue">🛁 嬰兒浴盆可借</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">13:00 – 14:30</div>
+            <div class="timeline-content">
+              <h4>🍜 午餐：Canal City B1 美食廣場</h4>
+              <p>一風堂拉麵・丸亀製麺・各式日式定食，孩子專用椅充足，無壓力用餐。商場B1哺乳室設備完整。</p>
+              <div class="tags">
+                <span class="tag tag-green">💴 預算：¥1,500/人</span>
+                <span class="tag tag-orange">🍼 哺乳室即近</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">14:30 – 17:00</div>
+            <div class="timeline-content">
+              <h4>🛍️ Canal City 商場逛逛 · 水舞廣場</h4>
+              <p>商場中央音樂噴水秀每整點表演，孩子超愛！LEGO 店、玩具專區讓兒子跑跳。推車整棟可通行。</p>
+              <div class="tags">
+                <span class="tag tag-blue">⏰ 噴水秀整點</span>
+                <span class="tag tag-green">🎮 兒童遊戲區2F</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">17:30 – 19:00</div>
+            <div class="timeline-content">
+              <h4>🌇 那珂川河邊散步 · 輕鬆收日</h4>
+              <p>Canal City 旁的那珂川河畔步道，傍晚清風很舒服，推推車散步，孩子也不會鬧。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">19:00 – 20:30</div>
+            <div class="timeline-content">
+              <h4>🍱 晚餐：回飯店或商場用餐</h4>
+              <p>建議飯店附近的筑前料理或迴轉壽司（Canal City 1F），孩子吃烏龍麵或茶碗蒸都容易接受。</p>
+              <div class="tags">
+                <span class="tag tag-green">💴 ¥1,800–2,500/人</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">21:00</div>
+            <div class="timeline-content">
+              <h4>😴 孩子就寢 · 親子Day結束</h4>
+              <p>第一天以輕鬆為主，時差調整，讓孩子適應新環境。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="day1-couple" style="display:none;">
+      <div class="card">
+        <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">10:00 – 12:00</div>
+            <div class="timeline-content">
+              <h4>✈️ 抵達 · 輕食早午餐</h4>
+              <p>地鐵5分鐘到博多，推薦在博多站 DEITOS 商場吃明太子早午餐，正宗博多味初體驗。</p>
+              <div class="tags"><span class="tag tag-blue">🍳 明太子蛋包飯 ¥1,200</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">14:00 – 17:00</div>
+            <div class="timeline-content">
+              <h4>🏙️ 天神散步 · 咖啡探店</h4>
+              <p>步行天神地下街，探訪當地咖啡名店 COFFEE COUNTY 或 % ARABICA，感受在地文青氛圍。</p>
+              <div class="tags"><span class="tag tag-purple">☕ 精品咖啡 ¥600–800</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">17:00 – 19:00</div>
+            <div class="timeline-content">
+              <h4>🛍️ Canal City · 購物初探</h4>
+              <p>逛 UNIQLO、無印良品、Forever 21，順覽水舞廣場黃昏燈光秀。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">19:30 – 22:00</div>
+            <div class="timeline-content">
+              <h4>🍜 博多拉麵 + 中洲屋台文化</h4>
+              <p>在中洲屋台街體驗露天日式小吃，一風堂・しん・博多だるま各有特色。邊吃邊感受福岡夜生活。</p>
+              <div class="tags">
+                <span class="tag tag-red">🌙 夜晚延伸</span>
+                <span class="tag tag-green">💴 屋台一攤約¥1,000–2,000</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">22:00 – 24:00</div>
+            <div class="timeline-content">
+              <h4>🍺 中洲居酒屋 · 夜晚第一杯</h4>
+              <p>中洲是九州最大夜生活區，居酒屋、バー林立，推薦地元酒吧「博多一番地」或清酒專門店。</p>
+              <div class="tags"><span class="tag tag-purple">🍶 清酒+串燒 ¥3,000/人</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DAY 2 ==================== -->
+  <div id="day2" class="section">
+    <div class="day-header" style="background:linear-gradient(135deg,#3498db,#1a6fa8)">
+      <div class="day-num">02</div>
+      <div class="day-info">
+        <h2>大濠公園 · 博多市區文化</h2>
+        <p>🏞️ 大濠公園 → 福岡城跡 → 天神購物 → 住吉神社</p>
+      </div>
+    </div>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="toggleMode('day2','family')">👨‍👩‍👦‍👦 親子版</button>
+      <button class="mode-btn" onclick="toggleMode('day2','couple')">💑 夫妻版</button>
+    </div>
+
+    <div id="day2-family">
+      <div class="card">
+        <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">08:30 – 09:00</div>
+            <div class="timeline-content">
+              <h4>🌅 早起出發 · 大濠公園（地鐵西新站）</h4>
+              <p>週末人潮少，早上是孩子跑跳最棒的時段。地鐵大濠公園站步行3分，全區平坦推車無障礙。</p>
+              <div class="tags"><span class="tag tag-green">🚇 地鐵空港線→箱崎線轉乘約15分</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">09:00 – 11:00</div>
+            <div class="timeline-content">
+              <h4>🌳 大濠公園 · 日本第一美麗公園</h4>
+              <p>公園中央是大型水池，周長約2公里可散步。有免費兒童遊樂場，3歲男寶可以盡情玩滑梯鞦韆。租船搭手划船也很有趣（¥500/30分）。</p>
+              <div class="tags">
+                <span class="tag tag-green">🎡 免費兒童樂園</span>
+                <span class="tag tag-blue">🚣 租船 ¥500/30分</span>
+                <span class="tag tag-orange">🍼 公園廁所有哺乳間</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">11:00 – 12:00</div>
+            <div class="timeline-content">
+              <h4>🏯 福岡城跡 · 草地奔跑</h4>
+              <p>大濠公園相連，草地開闊，孩子自由奔跑的最佳草坪。春天有梅花，夏天有草地，全年怡人。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">12:00 – 13:30</div>
+            <div class="timeline-content">
+              <h4>🍱 午餐：公園邊咖啡館 or 附近定食</h4>
+              <p>推薦公園旁的「O·café」或附近的「うどん平」，博多烏龍麵孩子容易接受，清淡又好吃。</p>
+              <div class="tags"><span class="tag tag-green">💴 ¥800–1,200/人（兒童分食）</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">14:00 – 17:00</div>
+            <div class="timeline-content">
+              <h4>🛍️ 天神地下街 · 孩子休息 + 大人購物</h4>
+              <p>全長580m的天神地下街，全程有推車，氣溫恆定。孩子若睡著正好推車逛，ZARA、H&M、ABC-MART都在這。</p>
+              <div class="tags">
+                <span class="tag tag-blue">♿ 全程無障礙</span>
+                <span class="tag tag-green">❄️ 室內恆溫</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">17:30 – 19:00</div>
+            <div class="timeline-content">
+              <h4>⛩️ 住吉神社 · 傍晚參拜</h4>
+              <p>博多最古老神社，參道清幽，傍晚遊客少，推車可進入。讓孩子體驗神社文化，可買小御守。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">19:00 – 20:30</div>
+            <div class="timeline-content">
+              <h4>🍣 晚餐：天神 IWATAYA 百貨地下美食</h4>
+              <p>岩田屋本店B1美食廣場，選擇豐富，有壽司・豬排定食・博多水炊き，孩子座椅充足。</p>
+              <div class="tags"><span class="tag tag-green">💴 ¥1,500–2,500/人</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="day2-couple" style="display:none;">
+      <div class="card">
+        <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">09:00 – 11:00</div>
+            <div class="timeline-content">
+              <h4>☕ 天神精品咖啡 · 悠閒早晨</h4>
+              <p>先在天神 % ARABICA 或 COFFEE COUNTY 享用手沖咖啡，不急著出門，享受自由旅行節奏。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">11:00 – 13:00</div>
+            <div class="timeline-content">
+              <h4>🌊 大濠公園 · 晨跑or悠閒散步</h4>
+              <p>租自行車環繞大濠公園（¥500/1hr），湖景絕美，週末早上氛圍極佳。停下來的咖啡亭也很愜意。</p>
+              <div class="tags"><span class="tag tag-blue">🚲 自行車租借 ¥500/hr</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">13:00 – 15:00</div>
+            <div class="timeline-content">
+              <h4>🍜 午餐：天神本格拉麵</h4>
+              <p>推薦「博多だるま」本店，豚骨濃厚派代表作。或「shin-shin」清爽派，兩種福岡拉麵的頂端。</p>
+              <div class="tags"><span class="tag tag-green">💴 拉麵+替玉 ¥900–1,200</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">15:00 – 18:00</div>
+            <div class="timeline-content">
+              <h4>🛍️ 天神・大名 時尚選物店</h4>
+              <p>大名地區是福岡最文青的街道，獨立選物店、二手書店、設計師品牌聚集，逛起來不輸東京裏原宿。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">19:00 – 22:00</div>
+            <div class="timeline-content">
+              <h4>🍷 晚餐：天神燒肉or鐵板燒</h4>
+              <p>推薦「炭火焼肉 伊達」或「Bene Meraki」鐵板燒，兩人晚餐精緻版，佐在地麥酒。</p>
+              <div class="tags">
+                <span class="tag tag-red">🌙 夜晚延伸</span>
+                <span class="tag tag-purple">🥩 ¥4,000–6,000/人</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">22:00 →</div>
+            <div class="timeline-content">
+              <h4>🍺 警固公園 · 夜晚散步 + Bar</h4>
+              <p>天神周邊的警固公園夜晚很有氣氛，附近有多家精釀啤酒 Bar，Tap Room 可試 5 種在地麥酒。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DAY 3 ==================== -->
+  <div id="day3" class="section">
+    <div class="day-header" style="background:linear-gradient(135deg,#27ae60,#1e8449)">
+      <div class="day-num">03</div>
+      <div class="day-info">
+        <h2>糸島海岸一日遊</h2>
+        <p>🌊 糸島牡蠣小屋 → 二見ヶ浦日落 → 糸島海岸咖啡</p>
+      </div>
+    </div>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="toggleMode('day3','family')">👨‍👩‍👦‍👦 親子版</button>
+      <button class="mode-btn" onclick="toggleMode('day3','couple')">💑 夫妻版</button>
+    </div>
+
+    <div id="day3-family">
+      <div class="card">
+        <div class="tip-box warning">
+          <span class="tip-icon">🚗</span>
+          <div class="tip-text"><strong>親子版強烈建議租車！</strong>糸島公車班次1–2小時一班，帶推車+嬰兒包轉乘極不便。租車一日約 NT$800–1,400，博多站取車，糸島自由行動，CP值最高！</div>
+        </div>
+        <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">08:30 – 09:30</div>
+            <div class="timeline-content">
+              <h4>🚗 博多站取車 · 出發糸島（約40分鐘）</h4>
+              <p>前一天線上預訂 Toyota Rent-a-Car 或 Times Car，選4人座，確認兒童安全座椅（要預訂！）。</p>
+              <div class="tags">
+                <span class="tag tag-orange">👶 兒童安全座椅需預訂</span>
+                <span class="tag tag-green">💴 租車約¥5,000–8,000/日</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">09:30 – 11:00</div>
+            <div class="timeline-content">
+              <h4>🦪 糸島 牡蠣小屋（カキ小屋）</h4>
+              <p>糸島最著名的牡蠣小屋，現烤生猛！¥1,000/kg，附扇貝・蛤蜊，直接架炭爐自烤。孩子可吃清蒸蛤蜊或玉米。</p>
+              <div class="tags">
+                <span class="tag tag-green">🦪 牡蠣 ¥1,000–1,500/kg</span>
+                <span class="tag tag-blue">📅 11月–3月季節限定</span>
+                <span class="tag tag-orange">🍼 室外空間，孩子不受限</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">11:00 – 13:00</div>
+            <div class="timeline-content">
+              <h4>🏖️ 芥屋大門・海岸沙灘</h4>
+              <p>日本最大玄武岩洞穴「芥屋大門」，搭小船繞岸壁（孩子需2歲以上可搭）。旁邊沙灘讓孩子挖沙玩水，帶備用衣服！</p>
+              <div class="tags">
+                <span class="tag tag-blue">⛵ 船遊 ¥1,200/人</span>
+                <span class="tag tag-green">🏖️ 免費沙灘</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">13:00 – 14:30</div>
+            <div class="timeline-content">
+              <h4>🍦 午後甜點：糸島海岸咖啡館</h4>
+              <p>推薦「ITOSHIMA CAFE SOLA」或「SHAKALABBITS」，海景露台咖啡，鬆餅＋霜淇淋，拍照超美，孩子也愛。</p>
+              <div class="tags"><span class="tag tag-purple">📸 打卡勝地</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">15:00 – 17:30</div>
+            <div class="timeline-content">
+              <h4>⛩️ 二見ヶ浦 夫婦岩 · 日落海岸</h4>
+              <p>糸島最著名地標，海中兩塊岩石用注連繩連結，夕陽時分光芒絕美。孩子在沙灘上奔跑，超夢幻的家庭照！</p>
+              <div class="tags">
+                <span class="tag tag-green">📸 打卡必來</span>
+                <span class="tag tag-blue">🌅 日落約17:30（冬）</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">18:00 – 19:30</div>
+            <div class="timeline-content">
+              <h4>🚗 返回博多 · 晚餐</h4>
+              <p>還車後附近用餐，推薦博多站附近的「もつ鍋」（博多內臟鍋），暖胃又美味。孩子可吃蔬菜涮涮鍋。</p>
+              <div class="tags"><span class="tag tag-green">💴 もつ鍋 ¥1,500–2,000/人</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="day3-couple" style="display:none;">
+      <div class="card">
+        <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">08:00 – 09:00</div>
+            <div class="timeline-content">
+              <h4>🚃 JR筑前前原駅 · 西鐵→JR糸島</h4>
+              <p>無車版可搭 JR 筑肥線（天神→筑前前原 約45分），再租自行車探索，費用低但需體力。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">09:30 – 12:00</div>
+            <div class="timeline-content">
+              <h4>🚲 糸島自行車探索</h4>
+              <p>租電動輔助自行車（¥2,000/日），沿海岸公路騎行，途經産直市場「伊都菜彩」，買在地蔬菜野菜。</p>
+              <div class="tags"><span class="tag tag-blue">🚲 電動車 ¥2,000/日</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">12:00 – 14:00</div>
+            <div class="timeline-content">
+              <h4>🦪 牡蠣小屋・海鮮大食</h4>
+              <p>兩人世界，慢慢烤，慢慢吃，點上白酒搭牡蠣，是旅行中最療癒的一餐。</p>
+              <div class="tags"><span class="tag tag-purple">🍷 白酒+牡蠣 ¥3,000/人</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">14:00 – 17:30</div>
+            <div class="timeline-content">
+              <h4>☕ 海岸咖啡 · 日落二見ヶ浦</h4>
+              <p>沿海岸慢騎，探訪獨特海岬咖啡館，在夕陽下的夫婦岩前拍情侶照，是糸島之旅最浪漫的高光。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">19:00 – 22:30</div>
+            <div class="timeline-content">
+              <h4>🍶 博多 清酒×日式鍋物 深夜場</h4>
+              <p>回博多後，中洲深夜食堂「やま中」的水炊き，是福岡雞湯鍋物之頂，需提前訂位。</p>
+              <div class="tags">
+                <span class="tag tag-red">🌙 夜晚延伸</span>
+                <span class="tag tag-orange">📅 強烈建議訂位</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DAY 4 ==================== -->
+  <div id="day4" class="section">
+    <div class="day-header" style="background:linear-gradient(135deg,#8e44ad,#6c3483)">
+      <div class="day-num">04</div>
+      <div class="day-info">
+        <h2>太宰府 · 柳川 文化精華</h2>
+        <p>⛩️ 太宰府天満宮 → 参道美食 → 柳川舟遊</p>
+      </div>
+    </div>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="toggleMode('day4','family')">👨‍👩‍👦‍👦 親子版</button>
+      <button class="mode-btn" onclick="toggleMode('day4','couple')">💑 夫妻版</button>
+    </div>
+
+    <div id="day4-family">
+      <div class="card">
+        <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">08:30 – 09:30</div>
+            <div class="timeline-content">
+              <h4>🚃 博多 → 太宰府（西鐵 35分）</h4>
+              <p>西鐵天神站搭特急，35分到太宰府。月台有電梯，推車可上下。兒童票3歲以下免費，4–11歲半票。</p>
+              <div class="tags">
+                <span class="tag tag-green">🚃 西鐵特急 ¥400/人</span>
+                <span class="tag tag-blue">👶 3歲以下免票</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">09:30 – 11:30</div>
+            <div class="timeline-content">
+              <h4>⛩️ 太宰府天満宮</h4>
+              <p>學問之神菅原道真的神社，全日本最著名。参道石板路推車可通行，樹齢1000年梅樹讓孩子驚嘆。神牛摸頭智慧增（孩子超愛摸牛🐄）！</p>
+              <div class="tags">
+                <span class="tag tag-green">⛩️ 免費入場</span>
+                <span class="tag tag-orange">🐄 神牛摸頭必做</span>
+                <span class="tag tag-blue">♿ 推車友善</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">11:30 – 12:30</div>
+            <div class="timeline-content">
+              <h4>🍡 参道美食：梅ヶ枝餅</h4>
+              <p>太宰府名物「梅ヶ枝餅」現烤麻糬，外脆內軟，¥130一個。推薦「かさの家」或「寺田屋」，孩子一定搶著吃！</p>
+              <div class="tags"><span class="tag tag-green">💴 ¥130/個</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">13:00 – 14:00</div>
+            <div class="timeline-content">
+              <h4>🍱 午餐：参道食堂 or 太宰府茶屋</h4>
+              <p>参道有多家定食屋，推薦「梅の花」豆腐料理套餐（精緻但親子友善），或回車站旁吃山菜うどん。</p>
+              <div class="tags"><span class="tag tag-green">💴 ¥1,200–1,800/人</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">14:30 – 16:30</div>
+            <div class="timeline-content">
+              <h4>🛶 柳川 川下り（舟遊び）</h4>
+              <p>西鐵15分到柳川，搭傳統木舟穿過柳蔭水道（約70分）。船夫悠閒撐篙，孩子看水鳥、橋洞，超療癒的行程。1.5歲女寶坐在媽媽腿上可免票。</p>
+              <div class="tags">
+                <span class="tag tag-blue">⛵ 成人 ¥1,500–1,800</span>
+                <span class="tag tag-green">👶 1.5歲膝上免費</span>
+                <span class="tag tag-orange">⏰ 約70分鐘</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">17:00 – 18:30</div>
+            <div class="timeline-content">
+              <h4>🐡 柳川名物：うなぎのせいろ蒸し</h4>
+              <p>柳川名物鰻魚蒸飯！推薦「若松屋」，鰻魚肥嫩，孩子吃白飯蒸蛋。請提早訂位或 15:30 前到。</p>
+              <div class="tags">
+                <span class="tag tag-green">💴 ¥2,800–3,500/人</span>
+                <span class="tag tag-orange">📅 建議提早訂位</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">19:00 – 20:00</div>
+            <div class="timeline-content">
+              <h4>🚃 返回博多</h4>
+              <p>西鐵回天神約40分，孩子在車上睡著剛好。回飯店洗澡就寢，明天最後一天！</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="day4-couple" style="display:none;">
+      <div class="card">
+        <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">09:00 – 11:30</div>
+            <div class="timeline-content">
+              <h4>⛩️ 太宰府天満宮 · 深度探訪</h4>
+              <p>不趕時間，深入境內「九州国立博物館」（2F連通道可進，¥700），常設展涵蓋東亞文化交流史，非常豐富。</p>
+              <div class="tags"><span class="tag tag-purple">🏛️ 九博 ¥700/人</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">12:00 – 13:30</div>
+            <div class="timeline-content">
+              <h4>🍜 太宰府・庭院料理</h4>
+              <p>推薦「梅の花」懷石豆腐料理，在傳統庭院中用餐，兩人慢食精緻感十足。</p>
+              <div class="tags"><span class="tag tag-purple">🍃 懷石 ¥3,000/人</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">14:30 – 17:00</div>
+            <div class="timeline-content">
+              <h4>🛶 柳川舟遊 · 私房下午</h4>
+              <p>傍晚光線入水道最美，秋天有彼岸花，春天有藤花。搭完船在岸邊老街逛老菓子屋，買柳川羊羹伴手禮。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">17:30 – 19:30</div>
+            <div class="timeline-content">
+              <h4>🐡 鰻魚蒸飯晚宴</h4>
+              <p>柳川名物「うなぎのせいろ蒸し」搭在地清酒，是這趟旅行最有文化感的一餐。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">20:30 – 23:00</div>
+            <div class="timeline-content">
+              <h4>🌙 博多 中洲屋台 最終夜</h4>
+              <p>搭西鐵回博多，深夜中洲屋台再來一輪：烤串・博多地雞・生まれたてのビール，旅行最後一夜大滿足。</p>
+              <div class="tags"><span class="tag tag-red">🌙 夜晚延伸</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DAY 5 ==================== -->
+  <div id="day5" class="section">
+    <div class="day-header" style="background:linear-gradient(135deg,#f39c12,#d68910)">
+      <div class="day-num">05</div>
+      <div class="day-info">
+        <h2>最後衝刺 · 購物返程</h2>
+        <p>🛍️ Canal City · マリノア · 博多土産 · 機場出發</p>
+      </div>
+    </div>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="toggleMode('day5','family')">👨‍👩‍👦‍👦 親子版</button>
+      <button class="mode-btn" onclick="toggleMode('day5','couple')">💑 夫妻版</button>
+    </div>
+
+    <div id="day5-family">
+      <div class="card">
+        <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">08:00 – 09:00</div>
+            <div class="timeline-content">
+              <h4>🏨 早餐・Check-out · 寄放行李</h4>
+              <p>飯店寄放行李後輕裝出發，博多站有大件行李寄放（¥800/件），可到機場再領。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">09:00 – 12:00</div>
+            <div class="timeline-content">
+              <h4>🛍️ Canal City 最後血拚</h4>
+              <p>集中採購伴手禮：明太子・博多通りもん・ひよ子菓子・各式零食。Canal City 3F有大型玩具反斗城，孩子最後一次盡情逛！</p>
+              <div class="tags">
+                <span class="tag tag-green">🎁 伴手禮清單在攻略頁</span>
+                <span class="tag tag-blue">🧸 玩具 3F</span>
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">12:00 – 13:30</div>
+            <div class="timeline-content">
+              <h4>🍜 最後午餐：博多站 一蘭拉麵</h4>
+              <p>博多站地下「一蘭」，個室隔間讓帶孩子用餐更輕鬆，孩子可吃兒童烏龍麵（另點）。最後一碗麵收心。</p>
+              <div class="tags"><span class="tag tag-green">💴 一蘭 ¥980/碗</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">14:00 – 15:00</div>
+            <div class="timeline-content">
+              <h4>📦 行李取回 · 地鐵機場</h4>
+              <p>博多站取行李，搭地鐵空港線5分鐘到福岡機場國際線，辦理 Check-in，免稅店最後採購。</p>
+              <div class="tags"><span class="tag tag-blue">🚇 地鐵5分</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-time">16:00 →</div>
+            <div class="timeline-content">
+              <h4>✈️ 起飛！再見福岡</h4>
+              <p>帶著滿滿回憶和行李，孩子累了在飛機上就睡，旅程圓滿結束🎌</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="day5-couple" style="display:none;">
+      <div class="card">
+        <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">08:00 – 10:00</div>
+            <div class="timeline-content">
+              <h4>☕ 悠閒早晨・博多朝食文化</h4>
+              <p>福岡有「朝ラーメン」文化，早上7點就開門的拉麵店「ShinShin」或早餐定食喫茶店，感受在地晨間節奏。</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">10:00 – 13:00</div>
+            <div class="timeline-content">
+              <h4>🛍️ マリノアシティ Premium Outlets</h4>
+              <p>バス15分，福岡最大 outlet，COACH・Burberry・NIKE・Under Armour，最後一波大採購。</p>
+              <div class="tags"><span class="tag tag-blue">🚌 BRT巴士 ¥250/人</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">13:30 – 15:00</div>
+            <div class="timeline-content">
+              <h4>🍱 最後精緻午餐</h4>
+              <p>推薦博多站「筑前割烹」，使用九州食材的午間定食，是旅程最後一道正式料理，感受博多的飲食文化精華。</p>
+              <div class="tags"><span class="tag tag-purple">🍱 割烹午間 ¥2,500–3,500</span></div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div class="timeline-time">15:30 →</div>
+            <div class="timeline-content">
+              <h4>✈️ 機場 · 免稅掃貨</h4>
+              <p>機場免稅店：資生堂、HABA護膚品、明太子生鮮、福岡銘菓最後補貨，帶走滿滿的福岡味。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== HOTELS ==================== -->
+  <div id="hotels" class="section">
+    <div class="card">
+      <div class="card-title"><span class="icon">🏨</span>住宿推薦 · 博多天神區</div>
+      <div class="hotel-grid">
+
+        <div class="hotel-card">
+          <div class="hotel-card-header" style="background:linear-gradient(135deg,#c0392b,#e74c3c)">
+            ⭐⭐⭐⭐⭐ Grand Hyatt Fukuoka
+          </div>
+          <div class="hotel-card-body">
+            <div class="hotel-feature">📍 <span>博多市博多區住吉1-2-82（Canal City内）</span></div>
+            <div class="hotel-feature">🛁 <span>嬰兒浴盆・浴缸皆有，可借嬰兒床</span></div>
+            <div class="hotel-feature">🍼 <span>B1哺乳室完善，商場一切就近</span></div>
+            <div class="hotel-feature">♿ <span>Canal City直通，全程推車無障礙</span></div>
+            <div class="hotel-feature">🅿️ <span>自助停車 ¥1,500/日（租車者佳）</span></div>
+            <div class="hotel-price">💴 約 NT$4,500–7,000/晚（雙人+加床）</div>
+            <div class="tags" style="margin-top:10px">
+              <span class="tag tag-red">👨‍👩‍👦‍👦 親子首選</span>
+              <span class="tag tag-purple">🏆 最推薦</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hotel-card">
+          <div class="hotel-card-header" style="background:linear-gradient(135deg,#2980b9,#3498db)">
+            ⭐⭐⭐⭐ JR Kyushu Blossom Hakata
+          </div>
+          <div class="hotel-card-body">
+            <div class="hotel-feature">📍 <span>博多站直結，出站30秒</span></div>
+            <div class="hotel-feature">🧳 <span>行李寄放最方便（機場取還）</span></div>
+            <div class="hotel-feature">🛁 <span>家庭房可加兩張嬰兒床</span></div>
+            <div class="hotel-feature">🍽️ <span>早餐自助 ¥1,800，品項豐富</span></div>
+            <div class="hotel-feature">🚇 <span>地鐵博多站徒步1分，交通最利</span></div>
+            <div class="hotel-price">💴 約 NT$3,200–5,000/晚（家庭房）</div>
+            <div class="tags" style="margin-top:10px">
+              <span class="tag tag-blue">🚃 交通最佳</span>
+              <span class="tag tag-green">💰 性價比高</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hotel-card">
+          <div class="hotel-card-header" style="background:linear-gradient(135deg,#27ae60,#2ecc71)">
+            ⭐⭐⭐⭐ Fukuoka Marriott Hotel
+          </div>
+          <div class="hotel-card-body">
+            <div class="hotel-feature">📍 <span>天神地區，高層海景房</span></div>
+            <div class="hotel-feature">🌊 <span>高層可眺望博多灣，日出超美</span></div>
+            <div class="hotel-feature">🏊 <span>室內泳池（大人小孩皆宜）</span></div>
+            <div class="hotel-feature">🍳 <span>早餐含早自助，品質一流</span></div>
+            <div class="hotel-feature">💆 <span>SPA設備完整，孩子睡後夫妻享用</span></div>
+            <div class="hotel-price">💴 約 NT$4,000–6,500/晚</div>
+            <div class="tags" style="margin-top:10px">
+              <span class="tag tag-blue">🌊 景觀最佳</span>
+              <span class="tag tag-purple">💑 夫妻首選</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hotel-card">
+          <div class="hotel-card-header" style="background:linear-gradient(135deg,#8e44ad,#9b59b6)">
+            ⭐⭐⭐ Mitsui Garden Hotel Fukuoka
+          </div>
+          <div class="hotel-card-body">
+            <div class="hotel-feature">📍 <span>天神・大名エリア，文青街區</span></div>
+            <div class="hotel-feature">🏙️ <span>步行天神5分、大濠公園15分</span></div>
+            <div class="hotel-feature">🛁 <span>大浴場（需分開使用，孩子注意）</span></div>
+            <div class="hotel-feature">💰 <span>性價比最高，中等預算最佳解</span></div>
+            <div class="hotel-price">💴 約 NT$2,200–3,500/晚</div>
+            <div class="tags" style="margin-top:10px">
+              <span class="tag tag-green">💰 預算首選</span>
+              <span class="tag tag-orange">👪 中等預算家庭</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📍</span>周邊環境說明</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+        <div style="background:#fff3e0;border-radius:10px;padding:14px;">
+          <div style="font-weight:700;margin-bottom:6px;">🏙️ 博多区</div>
+          <div style="font-size:0.85rem;">機場最近（地鐵5分）、博多站為新幹線/JR中心。商業+商務為主，24小時便利店密集。</div>
+        </div>
+        <div style="background:#e3f2fd;border-radius:10px;padding:14px;">
+          <div style="font-weight:700;margin-bottom:6px;">🌟 天神区</div>
+          <div style="font-size:0.85rem;">百貨・地下街・流行購物中心，西鐵天神站為西南九州交通中心。天神 = 台北信義區。</div>
+        </div>
+        <div style="background:#e8f5e9;border-radius:10px;padding:14px;">
+          <div style="font-weight:700;margin-bottom:6px;">🌊 中洲</div>
+          <div style="font-size:0.85rem;">夜生活・屋台・居酒屋集中地。博多川與那珂川中間的洲，東南亞最大紅燈區（僅供了解，家庭勿入）。</div>
+        </div>
+        <div style="background:#f3e5f5;border-radius:10px;padding:14px;">
+          <div style="font-weight:700;margin-bottom:6px;">🏯 大濠/西新</div>
+          <div style="font-size:0.85rem;">住宅+公園區，安靜舒適，適合帶孩子散步，生活感濃厚，附近有九大・西南大學城氛圍。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FOOD ==================== -->
+  <div id="food" class="section">
+    <div class="card">
+      <div class="card-title"><span class="icon">🍜</span>福岡必吃美食清單</div>
+      <div class="food-grid">
+        <div class="food-item">
+          <div class="food-emoji">🍜</div>
+          <div class="food-name">豚骨拉麵</div>
+          <div class="food-desc">一蘭・一風堂・しんしん・だるま，各有擁護者。必吃替玉（加麵）！</div>
+          <div class="food-price">¥800–1,200/碗</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🦪</div>
+          <div class="food-name">糸島牡蠣</div>
+          <div class="food-desc">現烤生猛，季節限定（11–3月），糸島牡蠣小屋朝聖必去。</div>
+          <div class="food-price">¥1,000–1,500/kg</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🥘</div>
+          <div class="food-name">もつ鍋（內臟鍋）</div>
+          <div class="food-desc">博多靈魂美食，牛腸+韭菜+豆腐，醬油or味噌，暖胃又飽足。</div>
+          <div class="food-price">¥1,500–2,000/人</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🐔</div>
+          <div class="food-name">水炊き（雞湯鍋）</div>
+          <div class="food-desc">博多高級鍋物，雞骨白湯清甜，搭福岡地雞。推薦「やま中」。</div>
+          <div class="food-price">¥3,500–5,000/人</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🐡</div>
+          <div class="food-name">柳川鰻魚蒸飯</div>
+          <div class="food-desc">せいろ蒸し，柳川名物，鰻魚肥嫩，蒸飯入味，需提前訂位。</div>
+          <div class="food-price">¥2,800–3,500/人</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🍡</div>
+          <div class="food-name">梅ヶ枝餅</div>
+          <div class="food-desc">太宰府名物，現烤麻糬，外脆內軟，梅花印紋，邊走邊吃最香。</div>
+          <div class="food-price">¥130/個</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🥟</div>
+          <div class="food-name">博多餃子（一口餃子）</div>
+          <div class="food-desc">小口尺寸，一口一個，搭啤酒絕配。推薦「和み」或居酒屋單點。</div>
+          <div class="food-price">¥300–600/盤</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🍣</div>
+          <div class="food-name">呼子 活魷魚刺身</div>
+          <div class="food-desc">呼子港（可從唐津前往）活魷魚透明晶瑩，鮮甜程度難忘，遠道值得。</div>
+          <div class="food-price">¥2,000–3,500/人</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🧀</div>
+          <div class="food-name">明太子相關美食</div>
+          <div class="food-desc">明太子飯糰・明太子披薩・明太子法國麵包，福岡原産地，處處有驚喜。</div>
+          <div class="food-price">¥200–600/份</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🍦</div>
+          <div class="food-name">糸島霜淇淋</div>
+          <div class="food-desc">各海岸咖啡館有特色口味：藻鹽・海鹽牛奶・抹茶，拍照必拍。</div>
+          <div class="food-price">¥400–600/支</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🍺</div>
+          <div class="food-name">博多地ビール</div>
+          <div class="food-desc">九州各精釀廠牌，麥酒屋台沿那珂川林立，夜晚必配。</div>
+          <div class="food-price">¥600–900/杯</div>
+        </div>
+        <div class="food-item">
+          <div class="food-emoji">🥞</div>
+          <div class="food-name">福岡朝食・喫茶店</div>
+          <div class="food-desc">有「朝ラーメン」文化，早上7點拉麵店開門，和洋折衷喫茶早餐。</div>
+          <div class="food-price">¥500–800/人</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🍼</span>親子飲食攻略</div>
+      <div class="tip-box success">
+        <span class="tip-icon">✅</span>
+        <div class="tip-text"><strong>孩子容易接受的食物</strong>烏龍麵・茶碗蒸・白飯・味噌湯・壽司（鮭魚・蛋・玉米）・親子丼，基本上日式料理孩子適應度很高。</div>
+      </div>
+      <div class="tip-box warning">
+        <span class="tip-icon">⚠️</span>
+        <div class="tip-text"><strong>豚骨拉麵注意</strong>湯頭鹹度高，嬰幼兒不宜多食，可讓孩子吃麵條配白開水，不喝湯。</div>
+      </div>
+      <div class="tip-box info">
+        <span class="tip-icon">🏪</span>
+        <div class="tip-text"><strong>便利商店是救星</strong>日本超商（7-11・ローソン・FamilyMart）有副食品・離乳食・嬰兒零食，隨時補給，不用擔心孩子餓肚子。</div>
+      </div>
+      <div class="tip-box info">
+        <span class="tip-icon">🌡️</span>
+        <div class="tip-text"><strong>熱食加熱服務</strong>超商可免費幫嬰兒食品加熱，店員很親切，說「あたためてください」（加熱請）即可。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BUDGET ==================== -->
+  <div id="budget" class="section">
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" onclick="toggleMode('budget','family')">👨‍👩‍👦‍👦 親子版（4人家庭）</button>
+      <button class="mode-btn" onclick="toggleMode('budget','couple')">💑 夫妻版（2人無孩）</button>
+    </div>
+
+    <!-- 親子版預算 -->
+    <div id="budget-family">
+      <div class="card">
+        <div class="card-title"><span class="icon">💴</span>五天四夜預算試算（4人家庭）</div>
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">匯率以 1 JPY ≈ 0.22 TWD 計算；以下為中等預算版本</p>
+        <table class="budget-table">
+          <thead>
+            <tr><th>項目</th><th>日幣（JPY）</th><th>台幣（TWD）</th><th>備註</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🏨 住宿 4晚</td>
+              <td>¥80,000–120,000</td>
+              <td>NT$17,600–26,400</td>
+              <td>雙床家庭房 Grand Hyatt/JR Blossom</td>
+            </tr>
+            <tr>
+              <td>🍜 餐飲 5天</td>
+              <td>¥60,000–80,000</td>
+              <td>NT$13,200–17,600</td>
+              <td>4人・三餐含零食・超商</td>
+            </tr>
+            <tr>
+              <td>🚇 交通（市內）</td>
+              <td>¥8,000–12,000</td>
+              <td>NT$1,760–2,640</td>
+              <td>地鐵・西鐵・巴士・Suica卡</td>
+            </tr>
+            <tr>
+              <td>🚗 糸島租車 1日</td>
+              <td>¥5,000–8,000</td>
+              <td>NT$1,100–1,760</td>
+              <td>含兒童安全座椅・油費</td>
+            </tr>
+            <tr>
+              <td>⛩️ 景點門票</td>
+              <td>¥4,000–8,000</td>
+              <td>NT$880–1,760</td>
+              <td>九博・牡蠣小屋・柳川舟遊</td>
+            </tr>
+            <tr>
+              <td>🧸 兒童消費/推車耗材</td>
+              <td>¥3,000–6,000</td>
+              <td>NT$660–1,320</td>
+              <td>紙尿布補充・玩具・兒童零食</td>
+            </tr>
+            <tr>
+              <td>🛍️ 購物/伴手禮</td>
+              <td>¥20,000–50,000</td>
+              <td>NT$4,400–11,000</td>
+              <td>依個人需求，伸縮最大</td>
+            </tr>
+            <tr>
+              <td>✈️ 機票（含稅）</td>
+              <td>—</td>
+              <td>NT$15,000–25,000</td>
+              <td>台北/台中/高雄→福岡・4人</td>
+            </tr>
+            <tr class="budget-total">
+              <td><strong>💰 合計（不含購物）</strong></td>
+              <td><strong>¥160,000–234,000</strong></td>
+              <td><strong>NT$54,600–86,480</strong></td>
+              <td>4人家庭・中等品質</td>
+            </tr>
+            <tr>
+              <td><strong>👤 平均每人</strong></td>
+              <td>¥40,000–58,500</td>
+              <td>NT$13,650–21,600</td>
+              <td>不含機票・含兒童攤分</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;padding:12px 14px;background:#fff3e0;border-radius:10px;font-size:0.85rem;">
+          <strong>💡 親子版費用說明：</strong>3歲以下地鐵免票、柳川舟遊1.5歲膝上免票，兒童餐多數分食大人，整體孩子額外支出約 NT$3,000–5,000，主要差異來自飯店房型（家庭房 vs 標準雙人）。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon">💡</span>親子省錢攻略</div>
+        <div class="tip-box success">
+          <span class="tip-icon">💳</span>
+          <div class="tip-text"><strong>Suica / ICOCA 交通卡</strong>省去每次買票的麻煩，地鐵・巴士・超商全通用，到台灣前先買或在福岡機場直接充值。</div>
+        </div>
+        <div class="tip-box success">
+          <span class="tip-icon">🍱</span>
+          <div class="tip-text"><strong>午餐吃定食，晚餐吃大餐</strong>日本午市定食比晚餐便宜30–40%，同一家餐廳午間定食 ¥900 vs 晚間 ¥2,500+。</div>
+        </div>
+        <div class="tip-box success">
+          <span class="tip-icon">🏪</span>
+          <div class="tip-text"><strong>超商早餐＋飯糰</strong>省下每天早餐費用約 ¥3,000，4人×5天約省 NT$13,000+。日本超商品質真的好。</div>
+        </div>
+        <div class="tip-box info">
+          <span class="tip-icon">🎫</span>
+          <div class="tip-text"><strong>西鐵二日乘車券</strong>天神出發，太宰府・柳川・糸島方向，兩日無限搭乘 ¥1,650/人，買前算好划算再買。</div>
+        </div>
+        <div class="tip-box warning">
+          <span class="tip-icon">📱</span>
+          <div class="tip-text"><strong>eSIM 或 Wi-Fi 分享器</strong>4人共用 Wi-Fi 分享器（¥1,000–1,500/日）vs 4人分別買 eSIM，前者更省，但一人沒網路就全斷。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 夫妻版預算 -->
+    <div id="budget-couple" style="display:none;">
+      <div class="card">
+        <div class="card-title"><span class="icon">💑</span>五天四夜預算試算（2人夫妻・無孩）</div>
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">匯率以 1 JPY ≈ 0.22 TWD 計算；夫妻版行程較深夜・精緻餐飲・居酒屋為主</p>
+        <table class="budget-table">
+          <thead>
+            <tr><th>項目</th><th>日幣（JPY）</th><th>台幣（TWD）</th><th>備註</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🏨 住宿 4晚</td>
+              <td>¥40,000–70,000</td>
+              <td>NT$8,800–15,400</td>
+              <td>標準雙人房 Marriott/Mitsui Garden，無需大床家庭房</td>
+            </tr>
+            <tr>
+              <td>🍜 餐飲 5天</td>
+              <td>¥40,000–60,000</td>
+              <td>NT$8,800–13,200</td>
+              <td>2人・朝食喫茶+定食+精緻晚餐・居酒屋・屋台</td>
+            </tr>
+            <tr>
+              <td>🍺 夜間消費（居酒屋/Bar）</td>
+              <td>¥10,000–20,000</td>
+              <td>NT$2,200–4,400</td>
+              <td>中洲屋台・精釀Bar・清酒專門店・5晚合計</td>
+            </tr>
+            <tr>
+              <td>🚇 交通（市內）</td>
+              <td>¥5,000–8,000</td>
+              <td>NT$1,100–1,760</td>
+              <td>地鐵・西鐵・JR，2人份；無租車需求</td>
+            </tr>
+            <tr>
+              <td>🚲 糸島自行車租借</td>
+              <td>¥2,000–4,000</td>
+              <td>NT$440–880</td>
+              <td>電動輔助自行車 2台×1日，無需租車</td>
+            </tr>
+            <tr>
+              <td>⛩️ 景點門票</td>
+              <td>¥3,000–6,000</td>
+              <td>NT$660–1,320</td>
+              <td>九博・牡蠣小屋・柳川舟遊・精釀試飲</td>
+            </tr>
+            <tr>
+              <td>☕ 咖啡/甜點探店</td>
+              <td>¥3,000–5,000</td>
+              <td>NT$660–1,100</td>
+              <td>% ARABICA・COFFEE COUNTY・糸島海岸咖啡館</td>
+            </tr>
+            <tr>
+              <td>🛍️ 購物/伴手禮</td>
+              <td>¥15,000–40,000</td>
+              <td>NT$3,300–8,800</td>
+              <td>大名選物店・マリノア Outlet・藥妝</td>
+            </tr>
+            <tr>
+              <td>✈️ 機票（含稅）</td>
+              <td>—</td>
+              <td>NT$8,000–14,000</td>
+              <td>台北/台中/高雄→福岡・2人</td>
+            </tr>
+            <tr class="budget-total">
+              <td><strong>💰 合計（不含購物）</strong></td>
+              <td><strong>¥103,000–173,000</strong></td>
+              <td><strong>NT$31,460–54,560</strong></td>
+              <td>2人夫妻・中高品質</td>
+            </tr>
+            <tr>
+              <td><strong>👤 平均每人</strong></td>
+              <td>¥51,500–86,500</td>
+              <td>NT$15,730–27,280</td>
+              <td>不含機票・含夜間娛樂</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;padding:12px 14px;background:#e3f2fd;border-radius:10px;font-size:0.85rem;">
+          <strong>💡 夫妻版費用說明：</strong>雖然人數少，但夫妻版行程多了夜間居酒屋消費、精緻餐廳訂位、咖啡探店等支出，<strong>每人均攤反而略高於親子版</strong>。主要節省來自住宿（標準雙人房）與交通（無需租車）。
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon">📊</span>親子版 vs 夫妻版費用比較</div>
+        <div style="overflow-x:auto;">
+          <table class="budget-table">
+            <thead>
+              <tr><th>比較項目</th><th>👨‍👩‍👦‍👦 親子版（4人）</th><th>💑 夫妻版（2人）</th><th>差異說明</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>🏨 住宿</td>
+                <td>NT$17,600–26,400</td>
+                <td>NT$8,800–15,400</td>
+                <td>家庭房 vs 標準雙人，差約 NT$8,000–11,000</td>
+              </tr>
+              <tr>
+                <td>🍜 餐飲</td>
+                <td>NT$13,200–17,600</td>
+                <td>NT$8,800–13,200</td>
+                <td>夫妻版餐廳層次更高但人數少，差距縮小</td>
+              </tr>
+              <tr>
+                <td>🌙 夜間消費</td>
+                <td>NT$0（早休）</td>
+                <td>NT$2,200–4,400</td>
+                <td>夫妻版獨有，居酒屋・Bar・屋台</td>
+              </tr>
+              <tr>
+                <td>🚗 地面交通</td>
+                <td>NT$2,860–4,400</td>
+                <td>NT$1,540–2,640</td>
+                <td>親子版含租車+兒童座椅，較高</td>
+              </tr>
+              <tr>
+                <td>✈️ 機票</td>
+                <td>NT$15,000–25,000（4人）</td>
+                <td>NT$8,000–14,000（2人）</td>
+                <td>機票差距明顯，2人省 NT$7,000–11,000</td>
+              </tr>
+              <tr class="budget-total">
+                <td><strong>總計（不含購物）</strong></td>
+                <td><strong>NT$54,600–86,480</strong></td>
+                <td><strong>NT$31,460–54,560</strong></td>
+                <td>夫妻版整體省約 NT$23,000–32,000</td>
+              </tr>
+              <tr>
+                <td><strong>每人均攤</strong></td>
+                <td>NT$13,650–21,600</td>
+                <td>NT$15,730–27,280</td>
+                <td>⚠️ 每人均攤夫妻版反而略高（品質升級）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon">💡</span>夫妻版省錢攻略</div>
+        <div class="tip-box success">
+          <span class="tip-icon">🍱</span>
+          <div class="tip-text"><strong>午餐升級・晚餐精緻</strong>夫妻旅行不用遷就孩子，午間懷石定食 ¥1,500–2,000 即可享受精緻品質，晚間再選特色居酒屋，節奏完全自由。</div>
+        </div>
+        <div class="tip-box success">
+          <span class="tip-icon">🚲</span>
+          <div class="tip-text"><strong>糸島用自行車取代租車</strong>省下租車費 ¥5,000–8,000，改用電動輔助自行車 ¥2,000，體力也不費，沿海岸路景色更棒。</div>
+        </div>
+        <div class="tip-box info">
+          <span class="tip-icon">🏨</span>
+          <div class="tip-text"><strong>選 Mitsui Garden 省住宿</strong>夫妻版不需大床家庭房，Mitsui Garden 天神店標準雙人約 NT$2,200–3,500/晚，4晚省下 NT$8,000–15,000。</div>
+        </div>
+        <div class="tip-box info">
+          <span class="tip-icon">🎫</span>
+          <div class="tip-text"><strong>西鐵二日乘車券（2人版）</strong>太宰府・柳川・糸島方向 2 人合購 ¥3,300，比分開購票省 ¥1,500 以上，適合 Day 3–4 使用。</div>
+        </div>
+        <div class="tip-box warning">
+          <span class="tip-icon">🌙</span>
+          <div class="tip-text"><strong>夜晚屋台控制預算</strong>中洲屋台每攤約 ¥1,000–2,000，建議一晚選 2–3 攤體驗即可，避免無限制「繞攤」造成超支。</div>
+        </div>
+        <div class="tip-box success">
+          <span class="tip-icon">📱</span>
+          <div class="tip-text"><strong>2人 eSIM 各自購買最划算</strong>夫妻版2人，eSIM 各買5天方案（約 NT$250–350/人），比租 Wi-Fi 分享器更輕便，各自有獨立網路。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🎁</span>伴手禮採購清單</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
+        <div style="background:#fff3e0;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:1.5rem">🐟</div>
+          <div style="font-weight:700;font-size:0.9rem">明太子（辛子）</div>
+          <div style="font-size:0.8rem;color:var(--muted)">ふくや・やまや・稚加榮</div>
+        </div>
+        <div style="background:#e8f5e9;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:1.5rem">🍡</div>
+          <div style="font-weight:700;font-size:0.9rem">博多通りもん</div>
+          <div style="font-size:0.8rem;color:var(--muted)">白餡麻糬，長銷銘菓</div>
+        </div>
+        <div style="background:#e3f2fd;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:1.5rem">🐥</div>
+          <div style="font-weight:700;font-size:0.9rem">ひよ子菓子</div>
+          <div style="font-size:0.8rem;color:var(--muted)">小雞形狀，老字號</div>
+        </div>
+        <div style="background:#f3e5f5;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:1.5rem">🫙</div>
+          <div style="font-weight:700;font-size:0.9rem">博多醬油・高菜</div>
+          <div style="font-size:0.8rem;color:var(--muted)">九州甘口醬油</div>
+        </div>
+        <div style="background:#fce4ec;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:1.5rem">🍶</div>
+          <div style="font-weight:700;font-size:0.9rem">九州清酒・燒酎</div>
+          <div style="font-size:0.8rem;color:var(--muted)">麥燒酎・芋燒酎</div>
+        </div>
+        <div style="background:#fff3e0;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:1.5rem">💊</div>
+          <div style="font-weight:700;font-size:0.9rem">藥妝採購</div>
+          <div style="font-size:0.8rem;color:var(--muted)">眼藥水・花王紙尿布</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TIPS ==================== -->
+  <div id="tips" class="section">
+    <div class="card">
+      <div class="card-title"><span class="icon">💡</span>親子旅行必讀攻略</div>
+
+      <div class="tip-box success">
+        <span class="tip-icon">🛒</span>
+        <div class="tip-text">
+          <strong>推車選擇：Yoyo 系列最佳</strong>
+          輕量（6kg以下）、可登機帶上飛機、前後可折疊，日本地鐵月台專設推車停放區，完全不造成困擾。嬰兒背帶也可同時帶著備用。
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <span class="tip-icon">🚇</span>
+        <div class="tip-text">
+          <strong>地鐵推車規範</strong>
+          日本地鐵對推車非常友善，月台有電梯及推車專用車廂空間。搭電梯時不需折疊，尖峰時段建議使用隔離車廂兩端空間。
+        </div>
+      </div>
+
+      <div class="tip-box warning">
+        <span class="tip-icon">🌡️</span>
+        <div class="tip-text">
+          <strong>氣候與穿著（依季節）</strong>
+          春（3–5月）：日夜溫差大，外套必備；夏（6–8月）：濕熱防曬，幼兒補水重要；秋（9–11月）：最舒適，薄外套；冬（12–2月）：有輕微寒意，羽絨背心足夠。
+        </div>
+      </div>
+
+      <div class="tip-box danger">
+        <span class="tip-icon">🏥</span>
+        <div class="tip-text">
+          <strong>緊急醫療資訊</strong>
+          福岡有「福岡大學病院」、「九州大学病院」，部分有中文翻譯服務。建議出發前辦理「海外旅遊醫療保險」，包含嬰幼兒，台灣旅平險很便宜（4人5天約NT$500–800）。
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <span class="tip-icon">📱</span>
+        <div class="tip-text">
+          <strong>必備 App</strong>
+          ① Google Maps（離線下載福岡地圖）② 乗換案内（換乘路線）③ じゃらん / 食べログ（餐廳訂位）④ PayPay（手機支付，多店通用）⑤ 翻訳カメラ（相機即時翻譯日文）
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span class="tip-icon">💴</span>
+        <div class="tip-text">
+          <strong>現金 vs 刷卡</strong>
+          日本仍有部分屋台・小店只收現金。建議準備 ¥30,000–50,000 現金（4人），機場 ATM 可領（7-11 ATM 免手續費），其餘刷信用卡。
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span class="tip-icon">🗣️</span>
+        <div class="tip-text">
+          <strong>語言攻略</strong>
+          福岡觀光區日英標示完整，Siri/Google翻譯可輔助。餐廳可直接指菜單，店員普遍熱心。帶孩子出遊，日本人特別親切，不用擔心溝通問題。
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📦</span>行李打包清單（親子版）</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+        <div>
+          <div style="font-weight:700;margin-bottom:8px;color:var(--primary)">👶 嬰幼兒必備</div>
+          <div style="font-size:0.85rem;line-height:2">
+            ☑️ 推車（Yoyo）<br>
+            ☑️ 嬰兒背帶（備用）<br>
+            ☑️ 紙尿布（10–15片/日）<br>
+            ☑️ 濕紙巾×5包<br>
+            ☑️ 副食品/零食備用<br>
+            ☑️ 奶瓶+奶嘴消毒袋<br>
+            ☑️ 輕薄雨衣（孩子版）<br>
+            ☑️ 備用衣服各3套<br>
+            ☑️ 防曬乳（兒童版）
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:700;margin-bottom:8px;color:var(--accent)">🧳 大人必備</div>
+          <div style="font-size:0.85rem;line-height:2">
+            ☑️ 護照（效期6個月以上）<br>
+            ☑️ Suica/ICOCA 或現金<br>
+            ☑️ 信用卡（VISA/Master）<br>
+            ☑️ eSIM 或分享器<br>
+            ☑️ 國際駕照（糸島租車）<br>
+            ☑️ 插頭轉接器（日規3孔）<br>
+            ☑️ 行動電源<br>
+            ☑️ 旅遊醫療保險確認書
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:700;margin-bottom:8px;color:var(--green)">💊 藥品急救</div>
+          <div style="font-size:0.85rem;line-height:2">
+            ☑️ 退燒藥（兒童版）<br>
+            ☑️ 腸胃藥<br>
+            ☑️ 止癢藥膏（蚊蟲）<br>
+            ☑️ 體溫計<br>
+            ☑️ 優碘+棉棒<br>
+            ☑️ OK繃<br>
+            ☑️ 腹瀉止瀉藥<br>
+            ☑️ 過敏藥（必要時）
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🆘</span>緊急聯絡資訊</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
+        <div style="background:#fce4ec;border-radius:10px;padding:12px;">
+          <div style="font-weight:700;color:var(--primary)">🚨 緊急電話</div>
+          <div style="font-size:0.9rem;margin-top:4px">警察：110<br>救護車/消防：119<br>English Emergency: 092-832-0110</div>
+        </div>
+        <div style="background:#e3f2fd;border-radius:10px;padding:12px;">
+          <div style="font-weight:700;color:var(--accent)">🏥 主要醫院</div>
+          <div style="font-size:0.9rem;margin-top:4px">福岡大学病院：092-801-1011<br>九州大学病院：092-641-1151</div>
+        </div>
+        <div style="background:#e8f5e9;border-radius:10px;padding:12px;">
+          <div style="font-weight:700;color:var(--green)">🇹🇼 台灣辦事處</div>
+          <div style="font-size:0.9rem;margin-top:4px">台北駐福岡辦事處<br>092-734-2810<br>急難救助: 080-6585-0796</div>
+        </div>
+        <div style="background:#fff3e0;border-radius:10px;padding:12px;">
+          <div style="font-weight:700;color:var(--secondary)">🏨 飯店確認</div>
+          <div style="font-size:0.9rem;margin-top:4px">Grand Hyatt: 092-282-1234<br>JR Blossom: 092-414-3800<br>Marriott: 092-414-3900</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- FOOTER -->
+<div style="background:#1a1a2e;color:rgba(255,255,255,0.6);text-align:center;padding:24px;font-size:0.85rem;margin-top:20px;">
+  <div style="margin-bottom:6px;color:white;font-weight:700">🇯🇵 福岡五天四夜 家庭自由行行程規劃</div>
+  資訊僅供參考，請出發前確認最新開放時間、價格與交通資訊。祝旅途順遂，和孩子一起創造美好回憶！🌸
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function toggleMode(day, mode) {
+  const family = document.getElementById(day + '-family');
+  const couple = document.getElementById(day + '-couple');
+  const btns = event.target.parentElement.querySelectorAll('.mode-btn');
+  btns.forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (mode === 'family') {
+    if (family) family.style.display = 'block';
+    if (couple) couple.style.display = 'none';
+  } else {
+    if (family) family.style.display = 'none';
+    if (couple) couple.style.display = 'block';
+  }
+}
+
+// Animate distance bars on load
+window.addEventListener('load', () => {
+  document.querySelectorAll('.distance-fill').forEach(el => {
+    const w = el.style.width;
+    el.style.width = '0';
+    setTimeout(() => { el.style.width = w; }, 300);
+  });
+});
+</script>
+</body>
+</html>
