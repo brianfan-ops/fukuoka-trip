@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>沖繩五天四夜自由行 ✈️ 家庭版行程規劃</title>
+<style>
+  :root {
+    --primary: #00a8cc;
+    --secondary: #f5a623;
+    --accent: #4a90d9;
+    --green: #27ae60;
+    --bg: #f0f9ff;
+    --card: #ffffff;
+    --text: #2c2c2c;
+    --muted: #888;
+    --border: #d0eaf5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+  .hero {
+    background: linear-gradient(135deg, #003d6b 0%, #005f99 40%, #0099cc 100%);
+    color: white; text-align: center; padding: 60px 20px 40px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '🌊🐠🏖️🦀🌺';
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    font-size: 2rem; letter-spacing: 10px; opacity: 0.3;
+  }
+  .hero h1 { font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900; margin-bottom: 8px; }
+  .hero h1 span { color: var(--secondary); }
+  .hero .subtitle { font-size: 1rem; opacity: 0.85; margin-bottom: 24px; }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .hero-tag { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 0.85rem; }
+
+  .nav-tabs { background: white; border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .nav-tab { flex-shrink: 0; padding: 14px 20px; cursor: pointer; font-size: 0.9rem; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; font-weight: 500; color: var(--muted); }
+  .nav-tab:hover { color: var(--primary); background: #f0f9ff; }
+  .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+  .main { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .card { background: var(--card); border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid var(--border); }
+  .card-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card-title .icon { font-size: 1.4rem; }
+
+  .day-header { background: linear-gradient(135deg, var(--primary), #005f99); color: white; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; }
+  .day-num { font-size: 2.5rem; font-weight: 900; line-height: 1; }
+  .day-info h2 { font-size: 1.3rem; font-weight: 800; }
+  .day-info p { font-size: 0.88rem; opacity: 0.9; margin-top: 2px; }
+
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--primary), var(--accent)); }
+  .timeline-item { position: relative; margin-bottom: 24px; }
+  .timeline-dot { position: absolute; left: -26px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); border: 3px solid white; box-shadow: 0 0 0 2px var(--primary); }
+  .timeline-time { font-size: 0.8rem; color: var(--muted); font-weight: 600; margin-bottom: 4px; }
+  .timeline-content { background: white; border-radius: 12px; padding: 14px 16px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+  .timeline-content h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .timeline-content p { font-size: 0.88rem; color: #555; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .tag-green { background: #e8f5e9; color: #2e7d32; }
+  .tag-blue { background: #e3f2fd; color: #1565c0; }
+  .tag-orange { background: #fff3e0; color: #e65100; }
+  .tag-red { background: #fce4ec; color: #c62828; }
+  .tag-purple { background: #f3e5f5; color: #6a1b9a; }
+  .tag-cyan { background: #e0f7fa; color: #00695c; }
+
+  .mode-toggle { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .mode-btn { padding: 8px 18px; border-radius: 20px; border: 2px solid var(--primary); cursor: pointer; font-size: 0.88rem; font-weight: 700; transition: all 0.2s; background: white; color: var(--primary); }
+  .mode-btn.active { background: var(--primary); color: white; }
+
+  .map-visual { background: linear-gradient(135deg, #0099cc 0%, #005f99 100%); border-radius: 16px; padding: 24px; color: white; margin-bottom: 20px; }
+  .map-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+  .map-point { background: rgba(255,255,255,0.15); border-radius: 10px; padding: 12px; border: 1px solid rgba(255,255,255,0.25); }
+  .map-point h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+  .map-point p { font-size: 0.8rem; opacity: 0.85; }
+  .map-distance { display: inline-block; background: var(--secondary); color: #333; border-radius: 8px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; margin-top: 6px; }
+
+  .budget-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .budget-table th { background: var(--primary); color: white; padding: 10px 14px; text-align: left; font-weight: 700; }
+  .budget-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .budget-table tr:hover td { background: #f0f9ff; }
+  .budget-total td { font-weight: 800; background: #e0f7fa !important; color: #005f99; font-size: 1rem; }
+
+  .hotel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .hotel-card { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.06); transition: transform 0.2s; }
+  .hotel-card:hover { transform: translateY(-3px); }
+  .hotel-card-header { padding: 16px; font-size: 1rem; font-weight: 800; color: white; }
+  .hotel-card-body { padding: 14px; }
+  .hotel-feature { font-size: 0.85rem; margin-bottom: 6px; display: flex; gap: 6px; }
+  .hotel-price { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-top: 10px; }
+
+  .food-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .food-item { background: white; border-radius: 12px; padding: 14px; border: 1px solid var(--border); text-align: center; }
+  .food-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+  .food-name { font-weight: 700; font-size: 0.95rem; }
+  .food-desc { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .food-price { font-size: 0.85rem; color: var(--green); font-weight: 700; margin-top: 6px; }
+
+  .tip-box { border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start; }
+  .tip-box.warning { background: #fff3e0; border-left: 4px solid var(--secondary); }
+  .tip-box.info { background: #e3f2fd; border-left: 4px solid var(--accent); }
+  .tip-box.success { background: #e8f5e9; border-left: 4px solid var(--green); }
+  .tip-box.danger { background: #fce4ec; border-left: 4px solid #e8453c; }
+  .tip-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+  .tip-text { font-size: 0.88rem; }
+  .tip-text strong { display: block; margin-bottom: 2px; font-size: 0.95rem; }
+
+  .distance-bar { margin-bottom: 16px; }
+  .distance-label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; }
+  .distance-track { background: #eee; border-radius: 20px; height: 10px; overflow: hidden; }
+  .distance-fill { height: 100%; border-radius: 20px; transition: width 0.8s ease; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 40px 16px 30px; }
+    .card { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🇯🇵 沖繩 <span>五天四夜</span> 自由行</h1>
+  <p class="subtitle">2025 完整行程規劃 · 家庭親子版 × 夫妻輕鬆版</p>
+  <div class="hero-tags">
+    <span class="hero-tag">👨‍👩‍👦‍👦 30歲夫妻 + 3歲男寶 + 1.5歲女寶</span>
+    <span class="hero-tag">🗓️ 5天4夜</span>
+    <span class="hero-tag">✈️ 那霸・國際通基地</span>
+    <span class="hero-tag">🌊 海島風情</span>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showSection('overview')">📋 總覽</div>
+  <div class="nav-tab" onclick="showSection('day1')">Day 1</div>
+  <div class="nav-tab" onclick="showSection('day2')">Day 2</div>
+  <div class="nav-tab" onclick="showSection('day3')">Day 3</div>
+  <div class="nav-tab" onclick="showSection('day4')">Day 4</div>
+  <div class="nav-tab" onclick="showSection('day5')">Day 5</div>
+  <div class="nav-tab" onclick="showSection('hotels')">🏨 住宿</div>
+  <div class="nav-tab" onclick="showSection('food')">🍜 美食</div>
+  <div class="nav-tab" onclick="showSection('budget')">💴 預算</div>
+  <div class="nav-tab" onclick="showSection('tips')">💡 攻略</div>
+</div>
+
+<div class="main">
+
+<!-- OVERVIEW -->
+<div id="overview" class="section active">
+  <div class="card">
+    <div class="card-title"><span class="icon">🗺️</span>地圖位置總覽 · 行程邏輯</div>
+    <div class="map-visual">
+      <h3 style="margin-bottom:4px;">沖繩活動範圍示意（南→北縱貫）</h3>
+      <p style="font-size:0.85rem;opacity:0.85;">以那霸為基地，依南・中・北分日規劃，租車是沖繩旅行的核心</p>
+      <div class="map-grid">
+        <div class="map-point">
+          <h4>🏙️ 那霸（基地）</h4>
+          <p>機場單軌10分・國際通・牧志市場</p>
+          <span class="map-distance">Day 1 · Day 5</span>
+        </div>
+        <div class="map-point">
+          <h4>🏯 首里城・新都心</h4>
+          <p>單軌可達，沖繩文化精華</p>
+          <span class="map-distance">Day 2 · 東方向</span>
+        </div>
+        <div class="map-point">
+          <h4>🎡 中部・美浜</h4>
+          <p>American Village・海中道路・海洋體驗</p>
+          <span class="map-distance">Day 3 · 中部</span>
+        </div>
+        <div class="map-point">
+          <h4>🐠 北部・美ら海</h4>
+          <p>沖繩美ら海水族館・古宇利島</p>
+          <span class="map-distance">Day 4 · 北部</span>
+        </div>
+        <div class="map-point">
+          <h4>🕊️ 南部戰跡・購物</h4>
+          <p>平和祈念公園・DFS・返程</p>
+          <span class="map-distance">Day 5 · 南部</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span>各天移動距離 · 難度總覽</div>
+    <div class="distance-bar">
+      <div class="distance-label"><span><strong>Day 1</strong> 單軌＋步行 · 那霸市區</span><span style="color:var(--green)">⭐ 輕鬆 · 約3–5km</span></div>
+      <div class="distance-track"><div class="distance-fill" style="width:20%;background:linear-gradient(90deg,#27ae60,#2ecc71)"></div></div>
+    </div>
+    <div class="distance-bar">
+      <div class="distance-label"><span><strong>Day 2</strong> 單軌＋步行 · 首里城周邊</span><span style="color:var(--accent)">⭐⭐ 中等 · 約8km</span></div>
+      <div class="distance-track"><div class="distance-fill" style="width:35%;background:linear-gradient(90deg,#3498db,#5dade2)"></div></div>
+    </div>
+    <div class="distance-bar">
+      <div class="distance-label"><span><strong>Day 3</strong> 租車 · 中部海岸</span><span style="color:var(--secondary)">⭐⭐ 中等 · 約40–60km（租車輕鬆）</span></div>
+      <div class="distance-track"><div class="distance-fill" style="width:55%;background:linear-gradient(90deg,#f39c12,#f5a623)"></div></div>
+    </div>
+    <div class="distance-bar">
+      <div class="distance-label"><span><strong>Day 4</strong> 租車 · 北部一日遊</span><span style="color:#e74c3c)">⭐⭐⭐ 較長 · 約120–150km</span></div>
+      <div class="distance-track"><div class="distance-fill" style="width:80%;background:linear-gradient(90deg,#e74c3c,#c0392b)"></div></div>
+    </div>
+    <div class="distance-bar">
+      <div class="distance-label"><span><strong>Day 5</strong> 南部＋購物 · 返程</span><span style="color:var(--green)">⭐⭐ 中等 · 約30–40km</span></div>
+      <div class="distance-track"><div class="distance-fill" style="width:40%;background:linear-gradient(90deg,#27ae60,#2ecc71)"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔑</span>沖繩帶兩個孩子的三大關鍵</div>
+    <div class="tip-box danger">
+      <span class="tip-icon">🚗</span>
+      <div class="tip-text"><strong>① 沖繩租車是必須，不是選項</strong>沖繩公車極不便，班次少、路線複雜。除那霸市區外，租車是唯一解。建議第1天到後即取車，Day 2–5全程開車，還車後搭單軌回機場。</div>
+    </div>
+    <div class="tip-box success">
+      <span class="tip-icon">🛒</span>
+      <div class="tip-text"><strong>② 折疊推車（Yoyo）+ 兒童安全座椅預訂</strong>推車用於那霸市區・DFS・購物中心。租車時務必提前預訂兒童安全座椅（2個），日本租車公司有提供但需事先確認。</div>
+    </div>
+    <div class="tip-box info">
+      <span class="tip-icon">🏨</span>
+      <div class="tip-text"><strong>③ 飯店選那霸市區 or 恩納村度假村</strong>那霸基地：交通最方便，單軌可達機場，適合購物型家庭。恩納村度假村：有泳池・沙灘，孩子天天玩水，但需全程租車移動。</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔀</span>選擇你的模式</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="background:#e0f7fa;border-radius:12px;padding:16px;border:2px solid var(--primary)">
+        <div style="font-size:1.5rem;margin-bottom:8px;">👨‍👩‍👦‍👦</div>
+        <div style="font-weight:800;margin-bottom:6px;">親子版</div>
+        <div style="font-size:0.85rem;color:#555">水族館・沙灘玩水・兒童遊樂・早收・哺乳室標記・親子餐廳</div>
+      </div>
+      <div style="background:#fff3e0;border-radius:12px;padding:16px;border:2px solid var(--secondary)">
+        <div style="font-size:1.5rem;margin-bottom:8px;">💑</div>
+        <div style="font-weight:800;margin-bottom:6px;">夫妻版（無孩）</div>
+        <div style="font-size:0.85rem;color:#555">浮潛・夜市・沙灘Bar・深度文化・泡盛居酒屋・夜晚延伸</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY 1 -->
+<div id="day1" class="section">
+  <div class="day-header">
+    <div class="day-num">01</div>
+    <div class="day-info">
+      <h2>抵達那霸 · 國際通初探</h2>
+      <p>✈️ 入境 → 取租車 → 飯店 → 國際通 → 牧志公設市場</p>
+    </div>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="toggleMode('day1','family')">👨‍👩‍👦‍👦 親子版</button>
+    <button class="mode-btn" onclick="toggleMode('day1','couple')">💑 夫妻版</button>
+  </div>
+  <div id="day1-family">
+    <div class="card">
+      <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">10:00 – 11:30</div>
+          <div class="timeline-content">
+            <h4>✈️ 那霸空港抵達 · 取租車</h4>
+            <p>入境後至租車巴士站（機場外），接送至租車公司取車。確認兩個兒童安全座椅安裝正確。開車10分鐘到那霸市區飯店。</p>
+            <div class="tags"><span class="tag tag-orange">👶 安全座椅確認</span><span class="tag tag-blue">🚗 取車約30–40分</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">11:30 – 13:00</div>
+          <div class="timeline-content">
+            <h4>🏨 飯店 Check-in · 安頓</h4>
+            <p>推薦「JR九州ホテルブラッサム那覇」或「ダブルツリー那覇」，皆近國際通，停車場完善，可借嬰兒床。</p>
+            <div class="tags"><span class="tag tag-orange">🍼 哺乳室確認</span><span class="tag tag-blue">🅿️ 飯店停車場</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">13:00 – 14:30</div>
+          <div class="timeline-content">
+            <h4>🍜 午餐：國際通 沖繩そば初體驗</h4>
+            <p>推薦「首里そば」或「花笠食堂」，沖繩そば（豬骨＋柴魚高湯）清爽易入口，孩子接受度高。茶碗蒸＋白飯可分食。</p>
+            <div class="tags"><span class="tag tag-green">💴 ¥800–1,200/人</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">14:30 – 17:00</div>
+          <div class="timeline-content">
+            <h4>🛍️ 國際通散步 · 壺屋やちむん通り</h4>
+            <p>國際通步行街全長1.6km，推車暢行。沿途有Blue Seal冰淇淋（孩子必吃！）、紅型染體驗、沖繩風鈴。壺屋陶器街很適合慢逛。</p>
+            <div class="tags"><span class="tag tag-cyan">🍦 Blue Seal必吃</span><span class="tag tag-blue">♿ 推車友善</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">17:00 – 18:30</div>
+          <div class="timeline-content">
+            <h4>🐟 牧志公設市場 · 海鮮採買</h4>
+            <p>沖繩最著名的公設市場，1樓買生猛海鮮，2樓付加工費即可料理上桌。孩子看彩色熱帶魚超興奮！</p>
+            <div class="tags"><span class="tag tag-green">🐡 加工費 ¥500–800/人</span><span class="tag tag-orange">⏰ 建議17:00前到</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">19:00 – 20:30</div>
+          <div class="timeline-content">
+            <h4>🌺 晚餐：沖繩家庭料理</h4>
+            <p>推薦「ゆいまーる食堂」，沖繩定食・チャンプルー・ラフテー，家庭氛圍溫馨，孩子座椅充足，份量大適合分食。</p>
+            <div class="tags"><span class="tag tag-green">💴 ¥1,200–1,800/人</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="day1-couple" style="display:none;">
+    <div class="card">
+      <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">10:00 – 12:00</div>
+          <div class="timeline-content">
+            <h4>✈️ 抵達 · 單軌到國際通</h4>
+            <p>夫妻版無需租車第一天，搭Yui Rail（ゆいレール）單軌，機場→美栄橋站約10分，¥270，直達國際通。</p>
+            <div class="tags"><span class="tag tag-blue">🚈 單軌 ¥270</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">12:00 – 14:00</div>
+          <div class="timeline-content">
+            <h4>🍜 午餐：牧志公設市場 豪華海鮮</h4>
+            <p>1樓買海鮮（マグロ・ソデイカ・海ぶどう），2樓加工，搭泡盛或オリオンビール，第一餐就要豪華！</p>
+            <div class="tags"><span class="tag tag-purple">🍺 泡盛+海鮮 ¥3,000/人</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">14:00 – 17:30</div>
+          <div class="timeline-content">
+            <h4>🛍️ 國際通・大名選物 深度逛</h4>
+            <p>探訪沖繩獨立設計品牌「portriver market」、沖繩三線樂器體驗、琉球玻璃工房，感受在地文化。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">18:00 – 21:00</div>
+          <div class="timeline-content">
+            <h4>🌺 晚餐：沖繩居酒屋 + 泡盛初體驗</h4>
+            <p>推薦「島唄ライブ居酒屋」，邊聽三線現場演奏邊吃沖繩料理，泡盛各種年份試飲，沖繩夜晚最佳開場。</p>
+            <div class="tags"><span class="tag tag-red">🌙 夜晚延伸</span><span class="tag tag-purple">🍶 泡盛+三線 ¥3,500/人</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY 2 -->
+<div id="day2" class="section">
+  <div class="day-header" style="background:linear-gradient(135deg,#8e44ad,#6c3483)">
+    <div class="day-num">02</div>
+    <div class="day-info">
+      <h2>首里城 · 那霸文化深度遊</h2>
+      <p>🏯 首里城 → 金城町石畳 → 新都心イオン → 屋台村</p>
+    </div>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="toggleMode('day2','family')">👨‍👩‍👦‍👦 親子版</button>
+    <button class="mode-btn" onclick="toggleMode('day2','couple')">💑 夫妻版</button>
+  </div>
+  <div id="day2-family">
+    <div class="card">
+      <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">08:30 – 09:30</div>
+          <div class="timeline-content">
+            <h4>🚗 開車or單軌 → 首里城公園</h4>
+            <p>開車15分或搭單軌（首里站步行10分）。早上人少，是帶孩子參觀的最佳時段，廣場草坪可讓孩子奔跑。</p>
+            <div class="tags"><span class="tag tag-green">⛩️ 首里城正殿 ¥400/人</span><span class="tag tag-blue">👶 6歲以下免費</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">09:30 – 11:30</div>
+          <div class="timeline-content">
+            <h4>🏯 首里城公園 · 琉球王朝文化</h4>
+            <p>正殿（現修復中部分開放）、守禮門必拍照。園內有守里御嶽、龍潭池，孩子看大魚餵食超開心。推車可進入大部分區域。</p>
+            <div class="tags"><span class="tag tag-orange">🐟 龍潭池餵魚</span><span class="tag tag-blue">♿ 大部分推車可進</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">11:30 – 12:30</div>
+          <div class="timeline-content">
+            <h4>🪨 金城町石畳 · 古道散步</h4>
+            <p>首里城下方的琉球古石板道，全長300m，石頭路面推車略顛，建議改用背帶。沿途老屋庭院很有氣氛。</p>
+            <div class="tags"><span class="tag tag-orange">⚠️ 石板路推車不便，備背帶</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">12:30 – 14:00</div>
+          <div class="timeline-content">
+            <h4>🍱 午餐：首里周邊沖繩そば</h4>
+            <p>推薦「首里そば」（排隊名店，早到免等）或「てんtoてん」，沖繩そば＋ジューシー（沖繩炊飯）套餐，孩子適合。</p>
+            <div class="tags"><span class="tag tag-green">💴 ¥900–1,300/人</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">14:30 – 17:30</div>
+          <div class="timeline-content">
+            <h4>🛍️ 新都心イオンモール · 親子休息</h4>
+            <p>沖繩最大室內商場，全程冷氣，推車通行無阻。3F有大型兒童遊樂場（有管理員看護，父母可輪流休息購物！）。哺乳室設備完善。</p>
+            <div class="tags"><span class="tag tag-green">🎠 兒童遊樂場 ¥500/30分</span><span class="tag tag-orange">🍼 哺乳室3F</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">18:00 – 20:00</div>
+          <div class="timeline-content">
+            <h4>🍺 晚餐：那霸屋台村</h4>
+            <p>国際通沿線的「那覇屋台村」，多間小攤位聚集，可吃タコス・海鮮串・沖繩そば，孩子座位足夠，半戶外氛圍很舒服。</p>
+            <div class="tags"><span class="tag tag-green">💴 ¥1,000–1,500/人</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="day2-couple" style="display:none;">
+    <div class="card">
+      <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">09:00 – 12:00</div>
+          <div class="timeline-content">
+            <h4>🏯 首里城 · 深度文化探訪</h4>
+            <p>不趕時間，深入參觀首里城博物館，了解琉球王國歷史。推薦導覽音頻（免費APP），比跟團更自由。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">12:00 – 14:00</div>
+          <div class="timeline-content">
+            <h4>☕ 首里 精品咖啡 · 古民家カフェ</h4>
+            <p>「cafe ichara」或「首里殿内」，在琉球古民家中享用午餐+咖啡，時光靜止的慢食體驗。</p>
+            <div class="tags"><span class="tag tag-purple">☕ 古民家咖啡 ¥1,500/人</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">14:00 – 17:00</div>
+          <div class="timeline-content">
+            <h4>🎨 壺屋 陶器街 · 工藝品選購</h4>
+            <p>沖繩陶器「やちむん」發源地，逛獨立窯場直賣店，買一個有溫度的沖繩手工杯，是最好的旅行紀念。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">18:00 – 22:00</div>
+          <div class="timeline-content">
+            <h4>🌙 晚餐：沖繩割烹 + 泡盛Bar</h4>
+            <p>推薦「琉球料理ぬちがふう」精緻琉球料理，之後到「泡盛Bar 壺屋」，100種以上泡盛試飲，感受沖繩夜晚。</p>
+            <div class="tags"><span class="tag tag-red">🌙 夜晚延伸</span><span class="tag tag-purple">🍶 ¥4,000–5,000/人</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY 3 -->
+<div id="day3" class="section">
+  <div class="day-header" style="background:linear-gradient(135deg,#00b894,#00695c)">
+    <div class="day-num">03</div>
+    <div class="day-info">
+      <h2>中部海岸 · 海洋體驗</h2>
+      <p>🎡 美浜American Village → 海中道路 → 殘波岬</p>
+    </div>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="toggleMode('day3','family')">👨‍👩‍👦‍👦 親子版</button>
+    <button class="mode-btn" onclick="toggleMode('day3','couple')">💑 夫妻版</button>
+  </div>
+  <div id="day3-family">
+    <div class="card">
+      <div class="tip-box danger">
+        <span class="tip-icon">🚗</span>
+        <div class="tip-text"><strong>Day 3起全程租車！</strong>中部以北公車極不便，租車是唯一合理選擇。那霸取車，Day3–4連續使用，Day5南部後還車。</div>
+      </div>
+      <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">08:30 – 09:30</div>
+          <div class="timeline-content">
+            <h4>🚗 那霸取車 · 出發中部（約40分）</h4>
+            <p>沿沖繩自動車道北上，到中部約40分。沿途可停「道の駅かでな」嘉手納基地展望台，看軍機起降（孩子超興奮！免費）。</p>
+            <div class="tags"><span class="tag tag-green">✈️ 嘉手納展望台免費</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">09:30 – 11:30</div>
+          <div class="timeline-content">
+            <h4>🏖️ 残波ビーチ · 孩子玩沙戲水</h4>
+            <p>沖繩中部最美白沙灘之一，淺水區很適合幼兒。備好泳衣、防曬、沙灘玩具！浴室換衣設施完善，嬰兒換尿布台有。</p>
+            <div class="tags">
+              <span class="tag tag-blue">🏊 淺水適合嬰幼兒</span>
+              <span class="tag tag-orange">🧴 防曬必帶</span>
+              <span class="tag tag-green">🚿 淋浴設施完善</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">12:00 – 13:30</div>
+          <div class="timeline-content">
+            <h4>🌮 午餐：美浜American Village タコライス</h4>
+            <p>美浜美式村的タコライス（墨西哥風沖繩米飯）是沖繩B級美食代表，Cafe Jalapeño等多家選擇，孩子也愛吃。</p>
+            <div class="tags"><span class="tag tag-green">💴 タコライス ¥900–1,200</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">13:30 – 16:00</div>
+          <div class="timeline-content">
+            <h4>🎡 美浜American Village · 孩子天堂</h4>
+            <p>摩天輪（孩子必搭！¥500）、室內遊樂場、Blue Seal冰淇淋總店、各式美式店舖。推車通行，廁所哺乳室在觀光服務中心。</p>
+            <div class="tags">
+              <span class="tag tag-blue">🎡 摩天輪 ¥500/人</span>
+              <span class="tag tag-cyan">🍦 Blue Seal總店</span>
+              <span class="tag tag-orange">🍼 哺乳室在服務中心</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">16:30 – 18:00</div>
+          <div class="timeline-content">
+            <h4>🌉 海中道路 · 車窗海景</h4>
+            <p>全長4.7km的海上公路，兩側是翡翠色海洋，開車就是絕景！不需下車，孩子在車上看海也很滿足。路邊有海の駅可停車拍照。</p>
+            <div class="tags"><span class="tag tag-cyan">📸 打卡必來</span><span class="tag tag-green">🚗 開車即景</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">19:00</div>
+          <div class="timeline-content">
+            <h4>🍖 晚餐：沖繩燒肉 or 恩納村食堂</h4>
+            <p>返回那霸途中或在中部用餐，推薦「焼肉の乃が美」或「道の駅伊計島」附近食堂，沖繩黑毛和牛燒肉，孩子吃白飯配湯。</p>
+            <div class="tags"><span class="tag tag-green">💴 ¥2,000–3,000/人</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="day3-couple" style="display:none;">
+    <div class="card">
+      <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">08:00 – 10:00</div>
+          <div class="timeline-content">
+            <h4>🤿 恩納村 體驗浮潛</h4>
+            <p>恩納村海岸有多家浮潛體驗業者（¥3,000–5,000/人含器材），珊瑚礁＋熱帶魚，沖繩海水透明度是日本之最。</p>
+            <div class="tags"><span class="tag tag-cyan">🐠 浮潛 ¥3,000–5,000/人</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">12:00 – 14:00</div>
+          <div class="timeline-content">
+            <h4>🌮 美浜 海景午餐</h4>
+            <p>American Village「The Seaside」餐廳，海景座位搭タコライスor漢堡，美式風情拍照超好看。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">15:00 – 18:00</div>
+          <div class="timeline-content">
+            <h4>🌅 海中道路 → 伊計島 日落</h4>
+            <p>驅車穿越海中道路到伊計島，租SUP衝浪板或在伊計ビーチ玩到日落，是沖繩最浪漫的午後。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">19:00 – 23:00</div>
+          <div class="timeline-content">
+            <h4>🍺 美浜 沙灘Bar 夜晚</h4>
+            <p>American Village傍晚燈光點亮非常美，沿海promenade的Bar喝沖繩Orion生啤，聽現場音樂，是沖繩旅行最迷人的夜晚。</p>
+            <div class="tags"><span class="tag tag-red">🌙 夜晚延伸</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY 4 -->
+<div id="day4" class="section">
+  <div class="day-header" style="background:linear-gradient(135deg,#0099cc,#006994)">
+    <div class="day-num">04</div>
+    <div class="day-info">
+      <h2>北部 · 美ら海水族館 · 古宇利島</h2>
+      <p>🐠 沖繩美ら海水族館 → 古宇利大橋 → 名護パイナップルパーク</p>
+    </div>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="toggleMode('day4','family')">👨‍👩‍👦‍👦 親子版</button>
+    <button class="mode-btn" onclick="toggleMode('day4','couple')">💑 夫妻版</button>
+  </div>
+  <div id="day4-family">
+    <div class="card">
+      <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+      <div class="tip-box warning">
+        <span class="tip-icon">⏰</span>
+        <div class="tip-text"><strong>北部距那霸約2小時，早出發是關鍵！</strong>8點前出發，避開水族館人潮（10點前最舒適），下午古宇利島，傍晚順路吃名護鳳梨，不趕不累。</div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">07:30 – 09:30</div>
+          <div class="timeline-content">
+            <h4>🚗 那霸出發 → 美ら海水族館（約2小時）</h4>
+            <p>沖繩自動車道→許田IC→沿58號線北上。途中可在「道の駅許田」買早餐零食補給，孩子在車上補眠。</p>
+            <div class="tags"><span class="tag tag-blue">🛣️ 高速道路 ¥1,270</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">09:30 – 13:00</div>
+          <div class="timeline-content">
+            <h4>🐠 沖繩美ら海水族館（全日本最美水族館）</h4>
+            <p>「黑潮之海」巨型水槽（世界最大級！）鯨鯊悠游眼前，孩子貼著玻璃看大魚，一輩子的回憶！海豚秀11:00/14:00，推車可全館通行，哺乳室在入口旁。</p>
+            <div class="tags">
+              <span class="tag tag-blue">🎫 成人 ¥2,180 / 15歲以下 ¥710</span>
+              <span class="tag tag-green">👶 6歲以下免費</span>
+              <span class="tag tag-orange">🍼 哺乳室入口旁</span>
+              <span class="tag tag-cyan">🐬 海豚秀11:00</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">13:00 – 14:00</div>
+          <div class="timeline-content">
+            <h4>🍍 午餐：Ocean Food（水族館內）or 名護食堂</h4>
+            <p>水族館附設餐廳可看海景用餐，或開車10分到名護市區「食堂かりか」吃沖繩そば定食，份量大CP值高。</p>
+            <div class="tags"><span class="tag tag-green">💴 ¥1,000–1,500/人</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">14:30 – 16:30</div>
+          <div class="timeline-content">
+            <h4>🌉 古宇利大橋 · 古宇利ビーチ</h4>
+            <p>開車穿越夢幻的古宇利大橋（2km跨海大橋），橋上海景絕美！橋邊古宇利ビーチ淺水適合幼兒，ハートロック（心形礁石）拍家庭照。</p>
+            <div class="tags">
+              <span class="tag tag-cyan">📸 大橋+心形礁石必拍</span>
+              <span class="tag tag-blue">🏖️ 淺水沙灘</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">16:30 – 17:30</div>
+          <div class="timeline-content">
+            <h4>🍍 名護鳳梨園（NAGO PINEAPPLE PARK）</h4>
+            <p>搭自動小車繞鳳梨園（孩子超愛！），品嚐現切鳳梨・鳳梨冰淇淋，各式鳳梨商品伴手禮採購。¥1,200/人，3歲以下免費。</p>
+            <div class="tags">
+              <span class="tag tag-green">🍍 ¥1,200/人，3歲以下免費</span>
+              <span class="tag tag-cyan">🚌 小車遊園超可愛</span>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">18:00 – 20:00</div>
+          <div class="timeline-content">
+            <h4>🚗 返回那霸（約2小時）· 晚餐</h4>
+            <p>回程孩子在車上睡著，到那霸附近吃晚餐。推薦「ゆいまーる食堂」或飯店附近コンビニ解決，今天已經玩很多了！</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="day4-couple" style="display:none;">
+    <div class="card">
+      <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">07:30 – 09:30</div>
+          <div class="timeline-content">
+            <h4>🚗 北部出發 · 今歸仁城跡</h4>
+            <p>比美ら海更早到今歸仁城跡（世界遺產），早晨薄霧中的石垣城牆極美，春天有緋寒櫻，幾乎無人的靜謐體驗。</p>
+            <div class="tags"><span class="tag tag-purple">🏯 今歸仁城 ¥600/人</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">10:00 – 13:00</div>
+          <div class="timeline-content">
+            <h4>🐠 美ら海水族館 · 黑潮之海</h4>
+            <p>夫妻倆慢慢看，館內餐廳「Ocean Food」有面海座位，搭海景吃午餐，是水族館內最棒的體驗。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">14:00 – 17:00</div>
+          <div class="timeline-content">
+            <h4>🌉 古宇利島 · 兩人海岸時光</h4>
+            <p>古宇利ビーチ租浮板玩水，或直接坐在ハートロック前看海，傍晚光線打在大橋上，是沖繩最美的兩人風景。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">18:00 – 23:00</div>
+          <div class="timeline-content">
+            <h4>🍺 恩納村リゾートBar · 最後夜晚</h4>
+            <p>返途在恩納村度假飯店的海景Bar停留，喝沖繩Orion生啤＋海鮮烤物，聽海浪聲，是這趟旅行最療癒的尾聲。</p>
+            <div class="tags"><span class="tag tag-red">🌙 最後夜晚延伸</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DAY 5 -->
+<div id="day5" class="section">
+  <div class="day-header" style="background:linear-gradient(135deg,#f39c12,#d68910)">
+    <div class="day-num">05</div>
+    <div class="day-info">
+      <h2>南部戰跡 · 購物返程</h2>
+      <p>🕊️ 平和祈念公園 → DFS免稅 → 還車 → 機場</p>
+    </div>
+  </div>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="toggleMode('day5','family')">👨‍👩‍👦‍👦 親子版</button>
+    <button class="mode-btn" onclick="toggleMode('day5','couple')">💑 夫妻版</button>
+  </div>
+  <div id="day5-family">
+    <div class="card">
+      <div class="card-title"><span class="icon">👨‍👩‍👦‍👦</span>親子版行程</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">08:00 – 09:00</div>
+          <div class="timeline-content">
+            <h4>🏨 早餐 · Check-out · 行李上車</h4>
+            <p>行李全部放進車後輕裝出發南部。今天還車後搭單軌到機場，時間安排寬鬆。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">09:00 – 11:00</div>
+          <div class="timeline-content">
+            <h4>🕊️ 平和祈念公園（ひめゆりの塔）</h4>
+            <p>沖繩戰跡最重要紀念地，對孩子是重要的生命教育。公園廣場草坪開闊，孩子可自由跑動。ひめゆり資料館（¥310）帶有歷史感。</p>
+            <div class="tags"><span class="tag tag-blue">🕊️ 公園免費入場</span><span class="tag tag-green">🌿 草坪開闊</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">11:00 – 12:30</div>
+          <div class="timeline-content">
+            <h4>🌊 奥武島 天婦羅 · 最後海景午餐</h4>
+            <p>南部小島「奥武島」以天婦羅著名，「中本鮮魚てんぷら店」現炸海鮮天婦羅¥70–120/個，邊看海邊吃，是沖繩最在地的最後一餐。</p>
+            <div class="tags"><span class="tag tag-green">💴 天婦羅 ¥70–120/個</span><span class="tag tag-cyan">🦑 魚天婦羅必吃</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">13:00 – 15:00</div>
+          <div class="timeline-content">
+            <h4>🛍️ DFS沖繩 · 免稅最後採購</h4>
+            <p>那霸DFS（T Galleria）免稅購物，化妝品・名牌・酒類退稅。孩子在內部遊樂區稍作休息，大人輪流採購。</p>
+            <div class="tags"><span class="tag tag-purple">🛍️ 免稅採購</span><span class="tag tag-blue">🎮 兒童遊樂區</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">15:00 – 16:00</div>
+          <div class="timeline-content">
+            <h4>🚗 還車 · 單軌到機場</h4>
+            <p>租車公司還車（需提前確認還車地點），接駁巴士到單軌赤嶺站，搭單軌到空港約12分。機場免稅店最後掃貨。</p>
+            <div class="tags"><span class="tag tag-blue">🚈 單軌赤嶺→空港 ¥260</span></div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">17:00 →</div>
+          <div class="timeline-content">
+            <h4>✈️ 起飛！再見沖繩 🌊</h4>
+            <p>帶著滿滿海島回憶，孩子累了在飛機上就睡。沖繩的藍天白沙，期待下次再來！</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="day5-couple" style="display:none;">
+    <div class="card">
+      <div class="card-title"><span class="icon">💑</span>夫妻版行程</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">08:00 – 10:00</div>
+          <div class="timeline-content">
+            <h4>☕ 悠閒早晨 · 那霸朝食</h4>
+            <p>國際通旁「cafe ichara」或飯店早餐，不急著出發，享受最後一個沖繩早晨。沖繩早晨的陽光特別美。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">10:00 – 12:30</div>
+          <div class="timeline-content">
+            <h4>🕊️ 南部戰跡 · 歷史沉澱</h4>
+            <p>平和祈念公園＋ひめゆりの塔，兩人靜靜走過，感受沖繩獨特的歷史厚度，是旅行中少有的沉澱時刻。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">13:00 – 15:00</div>
+          <div class="timeline-content">
+            <h4>🌊 奥武島天婦羅 + 最後海景</h4>
+            <p>現炸天婦羅在堤防邊吃，看貓咪曬太陽，看漁船進出，是離開沖繩前最後一片寧靜。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">15:00 – 17:00</div>
+          <div class="timeline-content">
+            <h4>🛍️ DFS + 國際通最後採購</h4>
+            <p>泡盛・やちむん陶器・紅型染製品・海ぶどう（冷藏）作為最後伴手禮，DFS免稅化妝品掃貨。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--accent)"></div>
+          <div class="timeline-time">17:30 →</div>
+          <div class="timeline-content">
+            <h4>✈️ 那霸空港 · 起飛</h4>
+            <p>機場免稅店最後一杯沖繩咖啡，帶著藍色海洋記憶飛回台灣。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOTELS -->
+<div id="hotels" class="section">
+  <div class="card">
+    <div class="card-title"><span class="icon">🏨</span>住宿推薦 · 那霸市區 vs 恩納村度假</div>
+    <div class="tip-box info">
+      <span class="tip-icon">💡</span>
+      <div class="tip-text"><strong>那霸基地 vs 恩納村度假，怎麼選？</strong>那霸：交通最方便，機場10分，購物方便，適合行程多樣的家庭。恩納村：泳池沙灘就在飯店，孩子天天玩水，但全程需租車，移動成本高。</div>
+    </div>
+    <div class="hotel-grid">
+      <div class="hotel-card">
+        <div class="hotel-card-header" style="background:linear-gradient(135deg,#0099cc,#005f99)">
+          ⭐⭐⭐⭐⭐ DoubleTree by Hilton Naha
+        </div>
+        <div class="hotel-card-body">
+          <div class="hotel-feature">📍 <span>那霸市松山・國際通徒步5分</span></div>
+          <div class="hotel-feature">🛁 <span>浴缸完整，可借嬰兒床</span></div>
+          <div class="hotel-feature">🍼 <span>大廳哺乳室，家庭親善設備</span></div>
+          <div class="hotel-feature">🅿️ <span>自費停車 ¥1,000/日（租車者佳）</span></div>
+          <div class="hotel-feature">🍪 <span>入住Hilton名物溫熱餅乾</span></div>
+          <div class="hotel-price">💴 約 NT$3,800–6,000/晚</div>
+          <div class="tags" style="margin-top:10px"><span class="tag tag-cyan">👨‍👩‍👦‍👦 那霸親子首選</span><span class="tag tag-purple">🏆 推薦</span></div>
+        </div>
+      </div>
+      <div class="hotel-card">
+        <div class="hotel-card-header" style="background:linear-gradient(135deg,#27ae60,#1e8449)">
+          ⭐⭐⭐⭐⭐ ANAインターコンチネンタル万座ビーチ
+        </div>
+        <div class="hotel-card-body">
+          <div class="hotel-feature">📍 <span>恩納村万座ビーチ直結</span></div>
+          <div class="hotel-feature">🏊 <span>プール＋天然ビーチ、子供プール有</span></div>
+          <div class="hotel-feature">🐠 <span>ビーチで珊瑚礁シュノーケル</span></div>
+          <div class="hotel-feature">🍽️ <span>6種餐廳，含兒童自助餐</span></div>
+          <div class="hotel-feature">🎡 <span>Kids Club完善，父母可休息</span></div>
+          <div class="hotel-price">💴 約 NT$6,000–12,000/晚</div>
+          <div class="tags" style="margin-top:10px"><span class="tag tag-blue">🌊 度假最頂級</span><span class="tag tag-orange">💰 預算充裕者</span></div>
+        </div>
+      </div>
+      <div class="hotel-card">
+        <div class="hotel-card-header" style="background:linear-gradient(135deg,#8e44ad,#6c3483)">
+          ⭐⭐⭐⭐ Hyatt Regency Naha
+        </div>
+        <div class="hotel-card-body">
+          <div class="hotel-feature">📍 <span>那霸市中心，國際通旁</span></div>
+          <div class="hotel-feature">🛁 <span>大浴場完備，家庭房寬敞</span></div>
+          <div class="hotel-feature">🍳 <span>早餐自助品質一流</span></div>
+          <div class="hotel-feature">🚈 <span>縣廳前單軌站步行3分</span></div>
+          <div class="hotel-price">💴 約 NT$3,500–5,500/晚</div>
+          <div class="tags" style="margin-top:10px"><span class="tag tag-green">💰 性價比高</span><span class="tag tag-blue">🚈 交通最便</span></div>
+        </div>
+      </div>
+      <div class="hotel-card">
+        <div class="hotel-card-header" style="background:linear-gradient(135deg,#f39c12,#d68910)">
+          ⭐⭐⭐⭐ 沖縄残波岬ロイヤルホテル
+        </div>
+        <div class="hotel-card-body">
+          <div class="hotel-feature">📍 <span>中部残波岬，海景無敵</span></div>
+          <div class="hotel-feature">🏊 <span>大型プール（屋外）</span></div>
+          <div class="hotel-feature">🌅 <span>残波ビーチ徒步即達</span></div>
+          <div class="hotel-feature">🚗 <span>需有車，無法單軌到達</span></div>
+          <div class="hotel-price">💴 約 NT$2,500–4,500/晚</div>
+          <div class="tags" style="margin-top:10px"><span class="tag tag-cyan">🏖️ 海岸體驗佳</span><span class="tag tag-green">💰 中等預算</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">📍</span>周邊環境說明</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+      <div style="background:#e0f7fa;border-radius:10px;padding:14px;">
+        <div style="font-weight:700;margin-bottom:6px;">🏙️ 那霸市區</div>
+        <div style="font-size:0.85rem;">機場10分・單軌串連・國際通購物・牧志市場・首里城。生活機能最完整，適合不想全程開車的家庭。</div>
+      </div>
+      <div style="background:#e8f5e9;border-radius:10px;padding:14px;">
+        <div style="font-weight:700;margin-bottom:6px;">🎡 中部（北谷・恩納）</div>
+        <div style="font-size:0.85rem;">American Village・海中道路・各大度假飯店集中地。需租車，但海景＋設施最豐富，度假感最強。</div>
+      </div>
+      <div style="background:#e3f2fd;border-radius:10px;padding:14px;">
+        <div style="font-weight:700;margin-bottom:6px;">🐠 北部（名護・本部）</div>
+        <div style="font-size:0.85rem;">美ら海水族館・古宇利島・今歸仁城。距那霸2小時，純日遊最合適，住北部飯店則可悠閒探索。</div>
+      </div>
+      <div style="background:#fff3e0;border-radius:10px;padding:14px;">
+        <div style="font-weight:700;margin-bottom:6px;">🕊️ 南部（糸満・南城）</div>
+        <div style="font-size:0.85rem;">平和祈念公園・ひめゆり・奥武島天婦羅。歷史文化最深厚，最後一天南部巡禮後直奔機場。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOD -->
+<div id="food" class="section">
+  <div class="card">
+    <div class="card-title"><span class="icon">🍜</span>沖繩必吃美食清單</div>
+    <div class="food-grid">
+      <div class="food-item"><div class="food-emoji">🍜</div><div class="food-name">沖繩そば</div><div class="food-desc">豬骨＋柴魚高湯，加三枚肉・軟骨ソーキ，沖繩第一靈魂美食</div><div class="food-price">¥700–1,000/碗</div></div>
+      <div class="food-item"><div class="food-emoji">🥗</div><div class="food-name">ゴーヤーチャンプルー</div><div class="food-desc">苦瓜炒豆腐，沖繩家庭料理代表，搭白飯最配</div><div class="food-price">¥600–900/份</div></div>
+      <div class="food-item"><div class="food-emoji">🌮</div><div class="food-name">タコライス</div><div class="food-desc">墨西哥風沖繩米飯，美軍基地文化融合產物，孩子超愛</div><div class="food-price">¥800–1,200</div></div>
+      <div class="food-item"><div class="food-emoji">🐷</div><div class="food-name">ラフテー（東坡肉）</div><div class="food-desc">泡盛慢燉豬三層肉，入口即化，沖繩宴席必有</div><div class="food-price">¥1,000–1,500</div></div>
+      <div class="food-item"><div class="food-emoji">🍦</div><div class="food-name">Blue Seal 冰淇淋</div><div class="food-desc">沖繩在地50年冰淇淋品牌，紅芋・鹽キャラメル・バナナ</div><div class="food-price">¥350–500/球</div></div>
+      <div class="food-item"><div class="food-emoji">🌿</div><div class="food-name">海ぶどう</div><div class="food-desc">海葡萄，粒粒爆漿，沾醋醬油，沖繩獨有珍味</div><div class="food-price">¥500–800/份</div></div>
+      <div class="food-item"><div class="food-emoji">🍍</div><div class="food-name">沖繩鳳梨</div><div class="food-desc">名護鳳梨園現切，甜度極高，鳳梨冰淇淋¥350</div><div class="food-price">¥500–800</div></div>
+      <div class="food-item"><div class="food-emoji">🦑</div><div class="food-name">奥武島天婦羅</div><div class="food-desc">現炸海鮮天婦羅，每個¥70–120，站著吃看海</div><div class="food-price">¥70–120/個</div></div>
+      <div class="food-item"><div class="food-emoji">🍺</div><div class="food-name">オリオンビール</div><div class="food-desc">沖繩在地啤酒，清爽適合海島氣候，居酒屋・海邊必喝</div><div class="food-price">¥500–700/杯</div></div>
+      <div class="food-item"><div class="food-emoji">🍶</div><div class="food-name">泡盛（泡盛）</div><div class="food-desc">沖繩蒸餾酒，各年份風味不同，Bar可試飲多種</div><div class="food-price">¥600–1,000/杯</div></div>
+      <div class="food-item"><div class="food-emoji">🫓</div><div class="food-name">サーターアンダギー</div><div class="food-desc">沖繩傳統甜甜圈，外脆內鬆，紅芋口味最受歡迎</div><div class="food-price">¥80–150/個</div></div>
+      <div class="food-item"><div class="food-emoji">🐟</div><div class="food-name">牧志市場 海鮮</div><div class="food-desc">1樓買魚2樓煮，グルクン（沖繩縣魚）唐揚げ必點</div><div class="food-price">¥2,000–3,000/人</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🍼</span>親子飲食攻略</div>
+    <div class="tip-box success"><span class="tip-icon">✅</span><div class="tip-text"><strong>孩子容易接受的沖繩食物</strong>タコライス・沖繩そば（湯清淡）・天婦羅・白飯＋味噌湯・Blue Seal冰淇淋，基本上孩子接受度很高。</div></div>
+    <div class="tip-box warning"><span class="tip-icon">⚠️</span><div class="tip-text"><strong>ゴーヤー（苦瓜）注意</strong>苦味明顯，3歲孩子可能不接受，點餐時確認是否可不加苦瓜。ラフテー很鹹，嬰幼兒不宜多食。</div></div>
+    <div class="tip-box info"><span class="tip-icon">🏪</span><div class="tip-text"><strong>ファミリーマート（FamilyMart）が主流</strong>沖繩便利商店以全家為主（比7-11多），有副食品・離乳食・沖繩限定飯糰，隨時補給不慌張。</div></div>
+  </div>
+</div>
+
+<!-- BUDGET -->
+<div id="budget" class="section">
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="toggleMode('budget','family')">👨‍👩‍👦‍👦 親子版（4人家庭）</button>
+    <button class="mode-btn" onclick="toggleMode('budget','couple')">💑 夫妻版（2人無孩）</button>
+  </div>
+
+  <div id="budget-family">
+    <div class="card">
+      <div class="card-title"><span class="icon">💴</span>五天四夜預算試算（4人家庭）</div>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">匯率以 1 JPY ≈ 0.22 TWD 計算；中等預算版本</p>
+      <table class="budget-table">
+        <thead><tr><th>項目</th><th>日幣（JPY）</th><th>台幣（TWD）</th><th>備註</th></tr></thead>
+        <tbody>
+          <tr><td>🏨 住宿 4晚</td><td>¥70,000–110,000</td><td>NT$15,400–24,200</td><td>那霸雙床家庭房 DoubleTree/Hyatt</td></tr>
+          <tr><td>🍜 餐飲 5天</td><td>¥55,000–75,000</td><td>NT$12,100–16,500</td><td>4人三餐含超商・牧志市場</td></tr>
+          <tr><td>🚗 租車 4日</td><td>¥20,000–32,000</td><td>NT$4,400–7,040</td><td>含兒童安全座椅2個・油費・高速費</td></tr>
+          <tr><td>🚈 單軌/市內交通</td><td>¥3,000–5,000</td><td>NT$660–1,100</td><td>Yui Rail那霸市區移動</td></tr>
+          <tr><td>🐠 景點門票</td><td>¥8,000–12,000</td><td>NT$1,760–2,640</td><td>美ら海水族館・首里城・鳳梨園・浮潛</td></tr>
+          <tr><td>🧸 兒童消費</td><td>¥3,000–6,000</td><td>NT$660–1,320</td><td>Blue Seal・玩具・紙尿布補充</td></tr>
+          <tr><td>🛍️ 購物/伴手禮</td><td>¥20,000–50,000</td><td>NT$4,400–11,000</td><td>DFS免稅・紅芋タルト・泡盛</td></tr>
+          <tr><td>✈️ 機票（含稅）</td><td>—</td><td>NT$16,000–28,000</td><td>台北/高雄→那霸・4人（直飛較多）</td></tr>
+          <tr class="budget-total"><td><strong>💰 合計（不含購物）</strong></td><td><strong>¥159,000–240,000</strong></td><td><strong>NT$54,980–86,800</strong></td><td>4人家庭・中等品質</td></tr>
+          <tr><td><strong>👤 平均每人</strong></td><td>¥39,750–60,000</td><td>NT$13,745–21,700</td><td>不含機票</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px;padding:12px 14px;background:#e0f7fa;border-radius:10px;font-size:0.85rem;">
+        <strong>💡 沖繩親子版特別說明：</strong>沖繩租車費用比福岡糸島高（需4天），但美ら海水族館6歲以下免費、首里城6歲以下免費，兒童優惠多，整體孩子額外支出可控。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">💡</span>親子省錢攻略</div>
+      <div class="tip-box success"><span class="tip-icon">🎫</span><div class="tip-text"><strong>美ら海水族館 網路預購</strong>官網或Klook購買略便宜，且可跳過現場購票隊伍，旺季必做。</div></div>
+      <div class="tip-box success"><span class="tip-icon">🚗</span><div class="tip-text"><strong>租車提前1個月預訂</strong>沖繩旺季車輛極搶手，越早訂越便宜，OTS・Toyota Rent-a-Car・Times Car都可比價。</div></div>
+      <div class="tip-box success"><span class="tip-icon">🍱</span><div class="tip-text"><strong>道の駅・スーパー活用</strong>沖繩各地的道の駅有便宜在地食材，サンエー超市（沖繩在地超市）買泡盛・海ぶどう比觀光區便宜30–50%。</div></div>
+      <div class="tip-box info"><span class="tip-icon">🏖️</span><div class="tip-text"><strong>沙灘免費！玩水最省錢</strong>沖繩大部分公共海灘免費（残波・古宇利・奥武等），帶好泳衣防曬，孩子可玩一整天，幾乎零成本。</div></div>
+    </div>
+  </div>
+
+  <div id="budget-couple" style="display:none;">
+    <div class="card">
+      <div class="card-title"><span class="icon">💑</span>五天四夜預算試算（2人夫妻・無孩）</div>
+      <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">匯率以 1 JPY ≈ 0.22 TWD 計算；夫妻版含夜間消費・浮潛・精緻餐飲</p>
+      <table class="budget-table">
+        <thead><tr><th>項目</th><th>日幣（JPY）</th><th>台幣（TWD）</th><th>備註</th></tr></thead>
+        <tbody>
+          <tr><td>🏨 住宿 4晚</td><td>¥40,000–80,000</td><td>NT$8,800–17,600</td><td>標準雙人房 Hyatt/DoubleTree；度假村另計</td></tr>
+          <tr><td>🍜 餐飲 5天</td><td>¥35,000–55,000</td><td>NT$7,700–12,100</td><td>2人・居酒屋・海鮮市場・精緻午餐</td></tr>
+          <tr><td>🌙 夜間消費</td><td>¥10,000–20,000</td><td>NT$2,200–4,400</td><td>泡盛Bar・沙灘Bar・三線居酒屋・5晚</td></tr>
+          <tr><td>🚗 租車 3日</td><td>¥12,000–20,000</td><td>NT$2,640–4,400</td><td>Day3–5用車，Day1–2單軌代替，無需兒童座椅</td></tr>
+          <tr><td>🚈 單軌/市內交通</td><td>¥2,000–3,000</td><td>NT$440–660</td><td>Day1–2 Yui Rail</td></tr>
+          <tr><td>🤿 浮潛・海上活動</td><td>¥6,000–12,000</td><td>NT$1,320–2,640</td><td>恩納村體驗浮潛2人・SUP等</td></tr>
+          <tr><td>🐠 景點門票</td><td>¥5,000–8,000</td><td>NT$1,100–1,760</td><td>美ら海・首里城・今歸仁城・鳳梨園</td></tr>
+          <tr><td>🛍️ 購物/伴手禮</td><td>¥15,000–40,000</td><td>NT$3,300–8,800</td><td>やちむん・泡盛・DFS免稅</td></tr>
+          <tr><td>✈️ 機票（含稅）</td><td>—</td><td>NT$8,000–16,000</td><td>台北/高雄→那霸・2人</td></tr>
+          <tr class="budget-total"><td><strong>💰 合計（不含購物）</strong></td><td><strong>¥110,000–198,000</strong></td><td><strong>NT$34,200–62,040</strong></td><td>2人夫妻・中高品質</td></tr>
+          <tr><td><strong>👤 平均每人</strong></td><td>¥55,000–99,000</td><td>NT$17,100–31,020</td><td>含夜間活動・海上體驗</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px;padding:12px 14px;background:#e3f2fd;border-radius:10px;font-size:0.85rem;">
+        <strong>💡 夫妻版說明：</strong>夫妻版租車只需3天（Day1–2單軌即可），省下一天租車費。但浮潛・泡盛Bar・精緻餐廳是獨有支出，<strong>每人均攤反而高於親子版</strong>（品質升級效應）。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">📊</span>親子版 vs 夫妻版費用比較</div>
+      <div style="overflow-x:auto;">
+        <table class="budget-table">
+          <thead><tr><th>比較項目</th><th>👨‍👩‍👦‍👦 親子版（4人）</th><th>💑 夫妻版（2人）</th><th>差異說明</th></tr></thead>
+          <tbody>
+            <tr><td>🏨 住宿</td><td>NT$15,400–24,200</td><td>NT$8,800–17,600</td><td>家庭房vs標準雙人，省約NT$6,600</td></tr>
+            <tr><td>🚗 租車</td><td>NT$4,400–7,040（4日）</td><td>NT$2,640–4,400（3日）</td><td>夫妻Day1–2用單軌，省一天</td></tr>
+            <tr><td>🌙 夜間消費</td><td>NT$0（早休）</td><td>NT$2,200–4,400</td><td>夫妻版獨有泡盛Bar・沙灘Bar</td></tr>
+            <tr><td>🤿 海上活動</td><td>NT$0（孩子玩沙）</td><td>NT$1,320–2,640</td><td>夫妻版浮潛・SUP體驗</td></tr>
+            <tr><td>✈️ 機票</td><td>NT$16,000–28,000（4人）</td><td>NT$8,000–16,000（2人）</td><td>2人省NT$8,000–12,000</td></tr>
+            <tr class="budget-total"><td><strong>總計（不含購物）</strong></td><td><strong>NT$54,980–86,800</strong></td><td><strong>NT$34,200–62,040</strong></td><td>夫妻版整體省約NT$20,000–25,000</td></tr>
+            <tr><td><strong>每人均攤</strong></td><td>NT$13,745–21,700</td><td>NT$17,100–31,020</td><td>⚠️ 每人均攤夫妻版較高（活動升級）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="icon">💡</span>夫妻版省錢攻略</div>
+      <div class="tip-box success"><span class="tip-icon">🚈</span><div class="tip-text"><strong>Day1–2善用單軌，不租車</strong>那霸市區Yui Rail覆蓋完整，Day1–2完全不需要車，省下2天租車費約NT$1,500–2,200。</div></div>
+      <div class="tip-box success"><span class="tip-icon">🤿</span><div class="tip-text"><strong>浮潛選在地小業者</strong>避開大型觀光公司，找在地認證潛水店（恩納村有許多），品質更好，費用省30–40%。Klook也有優惠方案。</div></div>
+      <div class="tip-box info"><span class="tip-icon">🏨</span><div class="tip-text"><strong>恩納村度假村 vs 那霸標準房</strong>若兩人世界優先，恩納村度假村雖貴但泳池海灘全包，算含設施後CP值不輸那霸飯店加交通費。</div></div>
+      <div class="tip-box warning"><span class="tip-icon">🍶</span><div class="tip-text"><strong>泡盛控制消費</strong>泡盛居酒屋「飲み放題」（無限暢飲）約¥2,000–2,500/人，比單杯點更划算，但注意沖繩泡盛酒精度高（25–43度）。</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TIPS -->
+<div id="tips" class="section">
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span>沖繩親子旅行必讀攻略</div>
+    <div class="tip-box danger"><span class="tip-icon">🚗</span><div class="tip-text"><strong>沖繩租車注意事項</strong>①需攜帶台灣駕照＋日文譯本（台灣監理站申請，約1週）②右側駕駛（日本靠左行駛）③導航全程開啟④高速入口有ETC車道，建議租含ETC的車（¥500–1,000/日）。</div></div>
+    <div class="tip-box warning"><span class="tip-icon">☀️</span><div class="tip-text"><strong>沖繩防曬是最重要的事</strong>沖繩紫外線比台灣強20–30%，嬰幼兒更需嚴格防曬。帽子・防曬乳（SPF50+）・薄長袖必備，每2小時補擦一次。</div></div>
+    <div class="tip-box info"><span class="tip-icon">🌀</span><div class="tip-text"><strong>颱風季（7–9月）注意</strong>沖繩夏秋颱風頻繁，建議購買含颱風的旅遊保險，景點可能臨時關閉，行程保持彈性。春（3–5月）或秋（10–11月）天氣最穩定。</div></div>
+    <div class="tip-box success"><span class="tip-icon">🏖️</span><div class="tip-text"><strong>沙灘裝備清單</strong>泳衣・防曬（兒童版）・防水拖鞋・沙灘玩具・快乾毛巾・備用衣服，沖繩幾乎每天都會玩到水，每人準備2套換洗。</div></div>
+    <div class="tip-box info"><span class="tip-icon">📱</span><div class="tip-text"><strong>必備App（沖繩版）</strong>① Google Maps（必備，離線地圖）② ゆいレール（單軌時刻）③ るるぶ（沖繩旅遊資訊）④ じゃらん（餐廳訂位）⑤ Google翻譯（相機翻譯）</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🎁</span>沖繩伴手禮採購清單</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
+      <div style="background:#e0f7fa;border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.5rem">🥧</div><div style="font-weight:700;font-size:0.9rem">紅芋タルト</div><div style="font-size:0.8rem;color:var(--muted)">御菓子御殿，沖繩No.1伴手禮</div></div>
+      <div style="background:#e8f5e9;border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.5rem">🍶</div><div style="font-weight:700;font-size:0.9rem">泡盛</div><div style="font-size:0.8rem;color:var(--muted)">久米仙・瑞穂・菊之露，各有特色</div></div>
+      <div style="background:#fff3e0;border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.5rem">🪴</div><div style="font-weight:700;font-size:0.9rem">やちむん（陶器）</div><div style="font-size:0.8rem;color:var(--muted)">壺屋陶器街直購，最有溫度的紀念</div></div>
+      <div style="background:#f3e5f5;border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.5rem">🌺</div><div style="font-weight:700;font-size:0.9rem">紅型染製品</div><div style="font-size:0.8rem;color:var(--muted)">手帕・包包・T恤，琉球工藝</div></div>
+      <div style="background:#fce4ec;border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.5rem">🌿</div><div style="font-weight:700;font-size:0.9rem">海ぶどう（冷藏）</div><div style="font-size:0.8rem;color:var(--muted)">機場有冷藏包裝，可帶回台灣</div></div>
+      <div style="background:#e0f7fa;border-radius:10px;padding:12px;text-align:center"><div style="font-size:1.5rem">💊</div><div style="font-weight:700;font-size:0.9rem">藥妝採購</div><div style="font-size:0.8rem;color:var(--muted)">マツキヨ・ドンキ（那霸國際通附近）</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="icon">🆘</span>緊急聯絡資訊</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
+      <div style="background:#fce4ec;border-radius:10px;padding:12px;"><div style="font-weight:700;color:#c62828">🚨 緊急電話</div><div style="font-size:0.9rem;margin-top:4px">警察：110<br>救護車/消防：119<br>English：098-861-0110</div></div>
+      <div style="background:#e3f2fd;border-radius:10px;padding:12px;"><div style="font-weight:700;color:var(--accent)">🏥 主要醫院</div><div style="font-size:0.9rem;margin-top:4px">琉球大学病院：098-895-3331<br>南部医療センター：098-888-0123</div></div>
+      <div style="background:#e8f5e9;border-radius:10px;padding:12px;"><div style="font-weight:700;color:var(--green)">🇹🇼 台灣辦事處</div><div style="font-size:0.9rem;margin-top:4px">台北駐那覇辦事處<br>098-862-7008<br>急難救助：080-1703-1058</div></div>
+      <div style="background:#fff3e0;border-radius:10px;padding:12px;"><div style="font-weight:700;color:var(--secondary)">✈️ 那霸機場</div><div style="font-size:0.9rem;margin-top:4px">098-840-1179<br>Yui Rail空港站<br>停車場24hr開放</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div style="background:#003d6b;color:rgba(255,255,255,0.6);text-align:center;padding:24px;font-size:0.85rem;margin-top:20px;">
+  <div style="margin-bottom:6px;color:white;font-weight:700">🌊 沖繩五天四夜 家庭自由行行程規劃</div>
+  資訊僅供參考，請出發前確認最新開放時間、價格與交通資訊。祝旅途順遂，和孩子一起創造藍色海洋的美好回憶！🐠
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+function toggleMode(day, mode) {
+  const family = document.getElementById(day + '-family');
+  const couple = document.getElementById(day + '-couple');
+  const btns = event.target.parentElement.querySelectorAll('.mode-btn');
+  btns.forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (mode === 'family') {
+    if (family) family.style.display = 'block';
+    if (couple) couple.style.display = 'none';
+  } else {
+    if (family) family.style.display = 'none';
+    if (couple) couple.style.display = 'block';
+  }
+}
+window.addEventListener('load', () => {
+  document.querySelectorAll('.distance-fill').forEach(el => {
+    const w = el.style.width; el.style.width = '0';
+    setTimeout(() => { el.style.width = w; }, 300);
+  });
+});
+</script>
+</body>
+</html>
