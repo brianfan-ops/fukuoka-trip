@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>想得到就做得到｜From Member to Constructor</title>
+<style>
+:root{
+  --a:#6c47b8; --a-light:#f0ebfa;
+  --b:#1a6db5; --b-light:#e6f0fb;
+  --c:#c94e20; --c-light:#faeae3;
+  --d:#0f7a5a; --d-light:#e2f4ed;
+  --e:#9a6200; --e-light:#fdf3df;
+  --f:#3a5f8c; --f-light:#e6eef7;
+  --gray:#f7f6f2;
+  --border:#e4e3dc;
+  --text:#1a1a1a;
+  --muted:#777;
+  --light:#aaa;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#fff;color:var(--text);font-size:15px;line-height:1.7;}
+
+/* ── HEADER ── */
+.site-header{background:#fff;border-bottom:1px solid var(--border);padding:2rem 0 0;}
+.header-inner{max-width:900px;margin:0 auto;padding:0 1.5rem;}
+.site-title{font-size:26px;font-weight:600;letter-spacing:-.5px;}
+.site-en{font-size:13px;color:var(--muted);margin-top:2px;letter-spacing:.5px;}
+.site-org{font-size:12px;color:var(--light);margin-top:4px;}
+
+/* ── NAV TABS ── */
+.nav-tabs{display:flex;gap:0;margin-top:1.5rem;overflow-x:auto;}
+.nav-tabs button{flex-shrink:0;font-size:13px;font-weight:500;padding:10px 18px;border:none;border-bottom:3px solid transparent;background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s;}
+.nav-tabs button:hover{color:var(--text);}
+.nav-tabs button.active-home{color:var(--text);border-bottom-color:var(--text);}
+.nav-tabs button.active-a{color:var(--a);border-bottom-color:var(--a);}
+.nav-tabs button.active-b{color:var(--b);border-bottom-color:var(--b);}
+.nav-tabs button.active-c{color:var(--c);border-bottom-color:var(--c);}
+.nav-tabs button.active-d{color:var(--d);border-bottom-color:var(--d);}
+.nav-tabs button.active-e{color:var(--e);border-bottom-color:var(--e);}
+.nav-tabs button.active-f{color:var(--f);border-bottom-color:var(--f);}
+
+/* ── MAIN CONTENT ── */
+.main{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* ── SECTION HEADER ── */
+.sec-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--light);margin-bottom:.4rem;}
+.sec-title{font-size:24px;font-weight:600;letter-spacing:-.5px;margin-bottom:.3rem;}
+.sec-title.color-a{color:var(--a);}
+.sec-title.color-b{color:var(--b);}
+.sec-title.color-c{color:var(--c);}
+.sec-title.color-d{color:var(--d);}
+.sec-title.color-e{color:var(--e);}
+.sec-title.color-f{color:var(--f);}
+.sec-en{font-size:13px;color:var(--light);letter-spacing:.5px;margin-bottom:.5rem;}
+.sec-desc{font-size:14px;color:var(--muted);margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+
+/* ── OVERVIEW GRID ── */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:2.5rem;}
+.ov-card{background:#fff;padding:1.25rem 1.5rem;cursor:pointer;transition:background .12s;}
+.ov-card:hover{background:var(--gray);}
+.ov-num{font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:.5rem;}
+.ov-num.c-a{color:var(--a);}
+.ov-num.c-b{color:var(--b);}
+.ov-num.c-c{color:var(--c);}
+.ov-num.c-d{color:var(--d);}
+.ov-num.c-e{color:var(--e);}
+.ov-num.c-f{color:var(--f);}
+.ov-title{font-size:14px;font-weight:600;margin-bottom:.3rem;}
+.ov-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* ── GRADE PATH ── */
+.grade-path{margin-top:2rem;}
+.grade-path-title{font-size:11px;font-weight:600;letter-spacing:2px;color:var(--light);text-transform:uppercase;margin-bottom:1rem;}
+.grade-steps{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.grade-step{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.grade-badge{font-size:12px;font-weight:600;padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);white-space:nowrap;}
+.grade-en{font-size:10px;color:var(--light);}
+.grade-arrow{font-size:18px;color:var(--border);}
+
+/* ── MODULE ITEM (numbered) ── */
+.module{margin-bottom:2.5rem;}
+.module-head{display:flex;align-items:baseline;gap:1rem;margin-bottom:.75rem;}
+.module-num{font-size:11px;font-weight:700;letter-spacing:2px;min-width:28px;}
+.module-num.c-a{color:var(--a);}
+.module-num.c-b{color:var(--b);}
+.module-num.c-c{color:var(--c);}
+.module-num.c-d{color:var(--d);}
+.module-num.c-e{color:var(--e);}
+.module-num.c-f{color:var(--f);}
+.module-title{font-size:16px;font-weight:600;}
+.module-en{font-size:11px;color:var(--light);letter-spacing:.5px;margin-left:auto;}
+.module-body{padding-left:42px;font-size:14px;color:var(--muted);line-height:1.8;}
+.module-divider{height:1px;background:var(--border);margin-bottom:2rem;}
+
+/* ── KV TABLE (key-value) ── */
+.kv-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:.5rem;}
+.kv-table tr{border-top:1px solid var(--border);}
+.kv-table tr:first-child{border-top:none;}
+.kv-table td{padding:8px 0;vertical-align:top;}
+.kv-table td:first-child{font-weight:600;color:var(--text);width:130px;padding-right:1rem;flex-shrink:0;}
+.kv-table td:last-child{color:var(--muted);}
+
+/* ── QUOTE ── */
+.blockquote{border-left:3px solid var(--border);padding:.6rem 1rem;margin:1rem 0;font-size:13px;color:#555;line-height:1.8;font-style:normal;}
+.blockquote strong{color:var(--text);}
+
+/* ── COMPARE BLOCKS ── */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1rem 0;}
+.compare-box{border-radius:8px;padding:.85rem 1rem;font-size:13px;line-height:1.7;}
+.compare-bad{background:#fff5f5;border:1px solid #fdd;}
+.compare-good{background:#f5fbf7;border:1px solid #c3e8d0;}
+.compare-label{font-size:10px;font-weight:700;letter-spacing:1.5px;margin-bottom:.4rem;}
+.compare-bad .compare-label{color:#c0392b;}
+.compare-good .compare-label{color:#27ae60;}
+.compare-bad p{color:#666;}
+.compare-good p{color:#444;}
+
+/* ── ROLE CARDS ── */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:1rem;}
+.role-card{border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;background:#fff;}
+.role-card.fixed-role{border-color:var(--c);background:var(--c-light);}
+.role-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:10px;margin-bottom:.5rem;}
+.tag-fixed{background:var(--c);color:#fff;}
+.tag-fluid{background:#eee;color:var(--muted);}
+.role-name{font-size:14px;font-weight:700;margin-bottom:.4rem;}
+.role-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* ── STEP LIST ── */
+.step-list{list-style:none;counter-reset:steps;}
+.step-list li{counter-increment:steps;display:flex;gap:14px;padding:12px 0;border-top:1px solid var(--border);}
+.step-list li:first-child{border-top:none;}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.step-body{flex:1;font-size:13px;line-height:1.7;}
+.step-body strong{display:block;font-size:14px;margin-bottom:3px;color:var(--text);}
+.step-body p{color:var(--muted);}
+.step-a .step-num{background:var(--a-light);color:var(--a);}
+.step-b .step-num{background:var(--b-light);color:var(--b);}
+.step-d .step-num{background:var(--d-light);color:var(--d);}
+.step-e .step-num{background:var(--e-light);color:var(--e);}
+.step-f .step-num{background:var(--f-light);color:var(--f);}
+
+/* ── ACCORDION ── */
+.acc-item{border-top:1px solid var(--border);}
+.acc-item:last-child{border-bottom:1px solid var(--border);}
+.acc-head{display:flex;justify-content:space-between;align-items:center;padding:14px 0;cursor:pointer;user-select:none;}
+.acc-head-title{font-size:14px;font-weight:600;}
+.acc-icon{font-size:20px;color:var(--light);transition:transform .15s;line-height:1;}
+.acc-icon.open{transform:rotate(45deg);}
+.acc-body{display:none;padding-bottom:16px;font-size:13px;color:var(--muted);line-height:1.8;}
+.acc-body.open{display:block;}
+
+/* ── BADGE ── */
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px;background:#e8f0fe;color:#2b59c3;letter-spacing:.5px;}
+
+/* ── CARD BOX (for E module) ── */
+.card-box{background:var(--gray);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1rem;}
+.card-box-title{font-size:14px;font-weight:700;margin-bottom:.75rem;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  /* Header */
+  .site-title{font-size:20px;}
+  .site-en{font-size:11px;}
+  .header-inner{padding:0 1rem;}
+  .main{padding:1.5rem 1rem 4rem;}
+
+  /* Nav tabs — smaller text, scroll horizontally */
+  .nav-tabs button{font-size:12px;padding:9px 13px;}
+
+  /* Section headings */
+  .sec-title{font-size:20px;}
+
+  /* Module head — stack number+title vertically, hide EN subtitle */
+  .module-head{flex-wrap:wrap;gap:.3rem;}
+  .module-en{display:none;}
+  .module-body{padding-left:0;}
+  .module-num{min-width:auto;}
+
+  /* kv-table — let first column shrink, word-wrap */
+  .kv-table td:first-child{width:90px;font-size:12px;}
+  .kv-table td{font-size:12px;}
+
+  /* Overview grid — single column */
+  .overview-grid{grid-template-columns:1fr;}
+
+  /* Compare — stack vertically */
+  .compare{grid-template-columns:1fr;}
+
+  /* Role cards — single column */
+  .role-grid{grid-template-columns:1fr;}
+
+  /* Grade path table — let it scroll horizontally */
+  .grade-path{overflow-x:auto;}
+  .grade-path table{min-width:520px;}
+
+  /* Accordion */
+  .acc-head-title{font-size:13px;}
+
+  /* Blockquote */
+  .blockquote{font-size:12px;}
+
+  /* Step list */
+  .step-body{font-size:12px;}
+  .step-body strong{font-size:13px;}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-title">想得到就做得到</div>
+    <div class="site-en">FROM MEMBER TO CONSTRUCTOR</div>
+    <div class="site-org">健樂運動教育股份有限公司 · 主管培育系統 v2.2</div>
+    <nav class="nav-tabs" role="tablist">
+      <button data-active="active-home" class="active-home" onclick="tab('home',this)">總覽</button>
+      <button data-active="active-a" onclick="tab('a',this)">A · 管理哲學</button>
+      <button data-active="active-b" onclick="tab('b',this)">B · 面談系統</button>
+      <button data-active="active-c" onclick="tab('c',this)">C · 六角色</button>
+      <button data-active="active-d" onclick="tab('d',this)">D · 硬知識</button>
+      <button data-active="active-e" onclick="tab('e',this)">E · 組織思維</button>
+      <button data-active="active-f" onclick="tab('f',this)">F · 年度營運規劃</button>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ══ 總覽 ══ -->
+  <div id="home" class="section active">
+    <div class="sec-label">Overview</div>
+    <div class="sec-title">系統架構</div>
+    <div class="sec-en">SIX-LAYER MANAGEMENT TRAINING SYSTEM</div>
+    <div class="sec-desc">六層架構，從核心信念出發，逐步建立帶人能力、組織診斷能力與年度營運眼光。每一層相互支撐，不可單獨學習。</div>
+
+    <div class="overview-grid">
+      <div class="ov-card" onclick="tab('a',document.querySelectorAll('.nav-tabs button')[1])">
+        <div class="ov-num c-a">A · PHILOSOPHY</div>
+        <div class="ov-title">管理哲學與內功</div>
+        <div class="ov-desc">帶領 vs 引導、三層邊界、70% 提案、成長邏輯、第十人法則</div>
+      </div>
+      <div class="ov-card" onclick="tab('b',document.querySelectorAll('.nav-tabs button')[2])">
+        <div class="ov-num c-b">B · INTERVIEW</div>
+        <div class="ov-title">一對一面談系統</div>
+        <div class="ov-desc">四問題閉環、真誠對話技術、五種典型情境應對</div>
+      </div>
+      <div class="ov-card" onclick="tab('c',document.querySelectorAll('.nav-tabs button')[3])">
+        <div class="ov-num c-c">C · ROLES</div>
+        <div class="ov-title">六角色功能框架</div>
+        <div class="ov-desc">功能性、流動的；角色是功能不是頭銜</div>
+      </div>
+      <div class="ov-card" onclick="tab('d',document.querySelectorAll('.nav-tabs button')[4])">
+        <div class="ov-num c-d">D · KNOWLEDGE</div>
+        <div class="ov-title">六大硬知識模組</div>
+        <div class="ov-desc">行銷、財務、服務流程、顧客關係、團隊、開發</div>
+      </div>
+      <div class="ov-card" onclick="tab('e',document.querySelectorAll('.nav-tabs button')[5])">
+        <div class="ov-num c-e">E · THINKING</div>
+        <div class="ov-title">組織性思維</div>
+        <div class="ov-desc">五層診斷框架、七問清單、提案能力</div>
+      </div>
+      <div class="ov-card" onclick="tab('f',document.querySelectorAll('.nav-tabs button')[6])">
+        <div class="ov-num c-f">F · OPERATIONS</div>
+        <div class="ov-title">年度營運管理規劃</div>
+        <div class="ov-desc">年度排程、財產管理、財務預算、人力組織、考核制度、環境分析</div>
+      </div>
+    </div>
+
+    <div class="grade-path">
+      <div class="grade-path-title">公司職等架構 · Grade System</div>
+      <table class="kv-table" style="margin-top:.5rem">
+        <tr style="background:var(--gray)">
+          <td style="font-weight:700;color:var(--text);width:72px">職等</td>
+          <td style="font-weight:700;color:var(--text);width:120px">職等級別</td>
+          <td style="font-weight:700;color:var(--text)">應具備之專業能力條件</td>
+        </tr>
+        <tr><td style="color:var(--muted)">六職等</td><td style="font-weight:600">決策級 GM</td><td style="font-size:12px;line-height:1.7">具五職等純熟之專業能力・具領導專業團隊綜合技能發展之能力・具專業團隊職能提升及種子人才培育等套裝規劃及教練之能力</td></tr>
+        <tr><td style="color:var(--muted)">五職等</td><td style="font-weight:600">營運級 CEO／COO／CHO</td><td style="font-size:12px;line-height:1.7">具精技術職能為企業經營發展重要之能力・具設立新單位組織佈局，任務編組，作業管理系統設計及領導推動之能力・具企業競爭力開發團隊領導之能力・具技術或管理機制創新規劃及推動之能力・具企業體質提升或發展之專案規劃、推動及領導之能力</td></tr>
+        <tr><td style="color:var(--muted)">四職等</td><td style="font-weight:600">經理級 Manager</td><td style="font-size:12px;line-height:1.7">管理制度建立之能力・具人才培訓、教育訓練課程及實習計劃等套裝規劃及教練之能力・具規劃單位績效持續成長目標及組織推動之能力・具專案規劃或組織規劃、審查及領導之能力・具領導團隊達成年度計劃目標及分析之能力</td></tr>
+        <tr><td style="color:var(--muted)">三職等</td><td style="font-weight:600">主任級 Supervisor</td><td style="font-size:12px;line-height:1.7">具專業知識講師及培訓專業種子人才之能力・具工作方法系統目標化之改善能力・具專案工作計劃進度規劃與成果報告之能力・具專案分工設計、進度規劃及推動之能力・具持續改善推動之能力</td></tr>
+        <tr><td style="color:var(--muted)">二職等</td><td style="font-weight:600">組長級 Leader</td><td style="font-size:12px;line-height:1.7">具規劃工作進度之能力・具經常性專業工作獨立應變及執行之能力・具融入團隊運作堅持持續創新改善之決心・具強烈追求成長企圖心・具條理清晰工作報告能力</td></tr>
+        <tr><td style="color:var(--muted)">一職等</td><td style="font-weight:600">助理級 Assistant</td><td style="font-size:12px;line-height:1.7">具獨立應變經常性工作之能力・設定工作範圍內，具自主管理能力</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ A 管理哲學 ══ -->
+  <div id="a" class="section">
+    <div class="sec-label">Layer A · Philosophy</div>
+    <div class="sec-title color-a">管理哲學與內功</div>
+    <div class="sec-en">MANAGEMENT PHILOSOPHY &amp; INNER MASTERY</div>
+    <div class="sec-desc">核心信念，不因情境改變。帶人技術建立在這些信念之上，信念不穩則技術無根。</div>
+    <div class="blockquote" style="margin-bottom:2rem;font-size:14px;line-height:1.9;border-left-color:var(--a)">「解決問題的能力並不是找出問題來解決，而是透過各種方法來推動事情的發展。如果你的考量總是否定的，很可能你看到的都是問題，事情也就很難發展了。」<br><span style="font-size:12px;color:var(--light);margin-top:.4rem;display:block">— 《PPAPER 雜誌》創辦人暨總編輯 胡至宜</span></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-a">01</span>
+        <span class="module-title">帶領 vs 引導</span>
+        <span class="module-en">LEAD vs GUIDE</span>
+      </div>
+      <div class="module-body">
+        <p style="margin-bottom:1rem">兩種工具，看時機切換。判斷標準只有一個：<strong>現在需要的是能量，還是覺察？</strong></p>
+        <div class="compare">
+          <div class="compare-box compare-bad">
+            <div class="compare-label">✗ 帶領（Lead）</div>
+            <p>群體場景、製造集體能量、用狀態輻射團隊、需要動員和方向感的時刻</p>
+          </div>
+          <div class="compare-box compare-good">
+            <div class="compare-label">✓ 引導（Guide）</div>
+            <p>個人場景、用觀察和真誠對話幫對方看見自己、需要覺察和轉變的時刻</p>
+          </div>
+        </div>
+        <div class="blockquote">引導不是「比較溫柔的管理方式」，有時比帶領更需要勇氣——在對方不舒服的地方繼續問下去，在他想要答案的時候繼續把問題丟回給他。</div>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-a">02</span>
+        <span class="module-title">權威與三層邊界</span>
+        <span class="module-en">AUTHORITY &amp; BOUNDARIES</span>
+      </div>
+      <div class="module-body">
+        <table class="kv-table">
+          <tr><td>權威本質</td><td>是事實，不需展示。選擇用這個權力創造安全感，而不是壓制對方。</td></tr>
+          <tr><td>情感邊界</td><td>帶著真誠和開放進行對談，表達理解但不一定能支持，適當說出差異。</td></tr>
+          <tr><td>決策邊界</td><td>在對方提出的前提下延展，必要時重新框架或反向質疑，讓對方產生覺察。</td></tr>
+          <tr><td>關係邊界</td><td>可以放手——接納對方的選擇，不把別人的離開當作自己的失敗。規則仍要在，組織的決策責任在主管這裡。</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-a">03</span>
+        <span class="module-title">70% 提案原則</span>
+        <span class="module-en">70% PROPOSAL PRINCIPLE</span>
+      </div>
+      <div class="module-body">
+        <table class="kv-table">
+          <tr><td>核心邏輯</td><td>先有立場，留 30% 給團隊補。讓他們練習批判性思考，感受到自己的意見被重視。</td></tr>
+          <tr><td>成功給大家</td><td>榮譽和舞台屬於團隊，讓大家有「與團隊站在一起」的感覺，保護凝聚感。</td></tr>
+          <tr><td>失敗自己扛</td><td>主管承擔結果，不讓失敗成為團隊的裂縫。那 30% 的空白是設計出來的，不是能力不足。</td></tr>
+        </table>
+        <div class="blockquote">一個 85 分但每個人都有參與感的方案，執行投入感遠高於一個 100 分但只有主管想推動的方案。</div>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-a">04</span>
+        <span class="module-title">成長邏輯、紅線、框架外視角</span>
+        <span class="module-en">GROWTH LOGIC &amp; BOUNDARIES</span>
+      </div>
+      <div class="module-body">
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.75rem">成長邏輯</p>
+        <svg viewBox="0 0 500 80" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;display:block;margin:0 auto .75rem;">
+          <rect x="2" y="14" width="96" height="52" rx="8" fill="#f0ebfa" stroke="#c4aeed" stroke-width="1.5"/>
+          <text x="50" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#6c47b8" font-family="-apple-system,sans-serif">態度</text>
+          <text x="50" y="55" text-anchor="middle" font-size="10" fill="#9070c8" font-family="-apple-system,sans-serif">根本的樣子</text>
+          <text x="112" y="44" text-anchor="middle" font-size="16" fill="#c4aeed">→</text>
+          <rect x="126" y="14" width="96" height="52" rx="8" fill="#e8f3ff" stroke="#90b8e0" stroke-width="1.5"/>
+          <text x="174" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#1a6db5" font-family="-apple-system,sans-serif">日常</text>
+          <text x="174" y="55" text-anchor="middle" font-size="10" fill="#4a8ab5" font-family="-apple-system,sans-serif">習慣與觀察</text>
+          <text x="236" y="44" text-anchor="middle" font-size="16" fill="#90b8e0">→</text>
+          <rect x="250" y="14" width="96" height="52" rx="8" fill="#e2f4ed" stroke="#7dd0aa" stroke-width="1.5"/>
+          <text x="298" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#0f7a5a" font-family="-apple-system,sans-serif">準備</text>
+          <text x="298" y="55" text-anchor="middle" font-size="10" fill="#2a8a6a" font-family="-apple-system,sans-serif">預見與規劃</text>
+          <text x="360" y="44" text-anchor="middle" font-size="16" fill="#7dd0aa">→</text>
+          <rect x="374" y="14" width="122" height="52" rx="8" fill="#fdf3df" stroke="#e0b860" stroke-width="1.5"/>
+          <text x="435" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#9a6200" font-family="-apple-system,sans-serif">結果</text>
+          <text x="435" y="55" text-anchor="middle" font-size="10" fill="#b07820" font-family="-apple-system,sans-serif">看得見的表現</text>
+        </svg>
+        <table class="kv-table" style="margin-bottom:1.25rem">
+          <tr><td>結構</td><td>結果反映準備，準備反映日常，日常反映態度。看一個人的工作成果，往回追的不是技術，是他平時怎麼對待生活細節。</td></tr>
+          <tr><td>預見問題的能力</td><td>能在問題發生前看到它的人，是因為他平時就在觀察、聯想、從不同角度看事情。這個能力從生活裡來，不從工作訓練裡來。</td></tr>
+          <tr><td>這是選人標準，不是培育目標</td><td>一個人有沒有這個習慣，很難後天改變。主管不試圖改變員工的生活方式，而是在選人時就找有這種眼光的人。</td></tr>
+        </table>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.4rem">直接介入紅線</p>
+        <table class="kv-table" style="margin-bottom:1.25rem">
+          <tr><td>製造對立氣氛</td><td>私下拉攏同事一起鬆懈、怠忽職守。判斷依據是<strong>意圖</strong>——是否帶有惡意。意見不合不是紅線；即使不認同，理解並接受結果是基本（「投票輸了還是要認」）。</td></tr>
+          <tr><td>紀律性違規</td><td>在群體放話、帶有不敬冒犯、公開發文攻擊。屬於違反工作規則，視嚴重程度召開紀律委員會，由集體共同判斷，不由主管單方決定。</td></tr>
+          <tr><td>違法情事</td><td>無需等待引導，直接介入。其餘所有情況優先用對話與面談處理。</td></tr>
+        </table>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.4rem">框架外視角</p>
+        <table class="kv-table">
+          <tr><td>觀察的來源</td><td>消費任何服務都是觀察機會：進一家店看動線設計、使用一個 APP 看操作邏輯、看一支廣告看文案結構、體驗一個品牌看它的整體感受。不同產業都在解決「如何讓人願意來、願意留、願意說出去」這個同樣的問題。</td></tr>
+          <tr><td>方法論</td><td><strong>看到 → 提取 → 複製 → 改編 → 內化</strong>。先模仿才有可能變成自己的，先複製才有可能修改出差異。不排斥借鑑，因為借鑑是創新的前一步。沒有人是從零開始創造的。</td></tr>
+          <tr><td>驅動力</td><td>「別人能做到，為什麼我不行。」這不是好奇心，是競爭心。看到別人做到的事，它就自動成為你的比較基準——不需要別人要求你，你自己就會想做到。</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-a">05</span>
+        <span class="module-title">第十人法則</span>
+        <span class="module-en">THE TENTH MAN</span>
+      </div>
+      <div class="module-body">
+        <div class="blockquote">當九個人都同意，第十個人的職責是反對——不是因為他真的不同意，而是因為這是他的工作。確定感會讓人停止思考，第十人的任務是讓思考繼續下去。</div>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .4rem">法則的本質</p>
+        <table class="kv-table">
+          <tr><td>不是反對，是責任分工</td><td>多數組織有沒有反對聲音，取決於有沒有人剛好不同意、有沒有勇氣說、當下氛圍允不允許。第十人法則把這件事從「靠運氣」變成「靠制度」。</td></tr>
+          <tr><td>共識不等於正確</td><td>九個人同意，可能是真的最好的答案，也可能是沒人想當出頭鳥，也可能是大家都看到問題但覺得說了也沒用。你永遠不知道是哪一種——所以強制有人說出來。</td></tr>
+          <tr><td>對確定性保持警惕</td><td>最危險的不是「大家都不確定」的時刻，而是「大家都很確定」的時刻。確定感讓人停止蒐集矛盾的資訊——因為已經知道答案了，何必再看？</td></tr>
+        </table>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .4rem">第十人的兩種姿態</p>
+        <div class="compare">
+          <div class="compare-box compare-bad">
+            <div class="compare-label">壓力測試者</div>
+            <p>對太確定、太傳統的答案扮演魔鬼代言人。「如果這個假設是錯的，整個方案會怎樣？」目的是讓看起來穩固的東西暴露脆弱點。</p>
+          </div>
+          <div class="compare-box compare-good">
+            <div class="compare-label">好奇的挑戰者</div>
+            <p>帶著好奇心詢問對方的思考過程，往更深的地方走。「你為什麼這樣想？還有你沒說出來的部分嗎？」目的是讓對方說出他自己都不知道自己知道的事。</p>
+          </div>
+        </div>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .75rem">第十人有它的時區——決策三階段</p>
+
+        <svg viewBox="0 0 500 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;display:block;margin:0 auto 1.25rem;">
+          <!-- Phase 1: 前期發散 -->
+          <rect x="4" y="10" width="148" height="120" rx="8" fill="#f0ebfa" stroke="#c4aeed" stroke-width="1.5"/>
+          <text x="78" y="36" text-anchor="middle" font-size="10" font-weight="700" fill="#6c47b8" font-family="-apple-system,sans-serif" letter-spacing="1">前 2–3 次會議</text>
+          <text x="78" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#6c47b8" font-family="-apple-system,sans-serif">前期發散</text>
+          <text x="78" y="80" text-anchor="middle" font-size="11" fill="#7e60c0" font-family="-apple-system,sans-serif">第十人在這裡</text>
+          <text x="78" y="100" text-anchor="middle" font-size="10" fill="#888" font-family="-apple-system,sans-serif">擴展眼光</text>
+          <text x="78" y="116" text-anchor="middle" font-size="10" fill="#888" font-family="-apple-system,sans-serif">讓可能性被看見</text>
+          <!-- Arrow 1 -->
+          <text x="174" y="77" text-anchor="middle" font-size="20" fill="#c4aeed" font-family="sans-serif">→</text>
+          <!-- Phase 2: 中期收攏 -->
+          <rect x="192" y="10" width="116" height="120" rx="8" fill="#e6f0fb" stroke="#9bbce8" stroke-width="1.5"/>
+          <text x="250" y="36" text-anchor="middle" font-size="10" font-weight="700" fill="#1a6db5" font-family="-apple-system,sans-serif" letter-spacing="1">主軸確立</text>
+          <text x="250" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#1a6db5" font-family="-apple-system,sans-serif">中期收攏</text>
+          <text x="250" y="80" text-anchor="middle" font-size="11" fill="#2a6faa" font-family="-apple-system,sans-serif">70% 提案</text>
+          <text x="250" y="100" text-anchor="middle" font-size="10" fill="#888" font-family="-apple-system,sans-serif">方向確定</text>
+          <text x="250" y="116" text-anchor="middle" font-size="10" fill="#888" font-family="-apple-system,sans-serif">能量轉向建造</text>
+          <!-- Arrow 2 -->
+          <text x="326" y="77" text-anchor="middle" font-size="20" fill="#9bbce8" font-family="sans-serif">→</text>
+          <!-- Phase 3: 後期堆疊 -->
+          <rect x="348" y="10" width="148" height="120" rx="8" fill="#e2f4ed" stroke="#7dd0aa" stroke-width="1.5"/>
+          <text x="422" y="36" text-anchor="middle" font-size="10" font-weight="700" fill="#0f7a5a" font-family="-apple-system,sans-serif" letter-spacing="1">共同建造</text>
+          <text x="422" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#0f7a5a" font-family="-apple-system,sans-serif">後期堆疊</text>
+          <text x="422" y="80" text-anchor="middle" font-size="11" fill="#1a7a5a" font-family="-apple-system,sans-serif">30% 空間</text>
+          <text x="422" y="100" text-anchor="middle" font-size="10" fill="#888" font-family="-apple-system,sans-serif">在核心上累積</text>
+          <text x="422" y="116" text-anchor="middle" font-size="10" fill="#888" font-family="-apple-system,sans-serif">不拆除重建</text>
+        </svg>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .4rem">主導者的責任</p>
+        <table class="kv-table">
+          <tr><td>畫出時區邊界</td><td>「收攏的時機」由主導者決定。若太早收攏——因為方向在心裡已經很清楚——前期的第十人其實沒有完整發揮過。</td></tr>
+          <tr><td>讓反對合法存在</td><td>即使打開了空間，進來的人也需要確信挑戰不會讓他難堪。你的確定感本身就是一種壓力——第十人需要被制度保護，不只靠個人勇氣。</td></tr>
+          <tr><td>挑戰自己的 70%</td><td>對外扮演第十人容易，對自己已確立的方向扮演第十人才是難點。定期問：「我有沒有因為確定而停止看矛盾的資訊？」</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ B 面談 ══ -->
+  <div id="b" class="section">
+    <div class="sec-label">Layer B · Interview System</div>
+    <div class="sec-title color-b">一對一面談系統</div>
+    <div class="sec-en">ONE-ON-ONE INTERVIEW SYSTEM</div>
+    <div class="sec-desc">每年至少一次，路徑自適應。四個問題依序建立信任，前三問的安全感決定第四問是否說真話。</div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-b">01</span>
+        <span class="module-title">四問題閉環</span>
+        <span class="module-en">THE FOUR QUESTIONS</span>
+      </div>
+      <div class="module-body">
+        <ul class="step-list">
+          <li class="step-b"><div class="step-num">1</div><div class="step-body"><strong>正感受——動力來源，複製強化</strong><p>追問三層：事件 → 感受 → 核心動力。找到之後，設計任務和獎勵與之對齊。</p></div></li>
+          <li class="step-b"><div class="step-num">2</div><div class="step-body"><strong>負感受——耗損點，減少消耗</strong><p>透過真誠對話六問深入（見下方冰山圖）。主管第一個動作只有一個：繼續聽，不說話，讓他把話說完。</p></div></li>
+          <li class="step-b"><div class="step-num">3</div><div class="step-body"><strong>新學到的——成長軌跡，定位現在</strong><p>測的是工作態度，不只是技能清單。說得出具體的人，代表他真的在觀察自己的成長。</p></div></li>
+          <li class="step-b"><div class="step-num">4</div><div class="step-body"><strong>靠近的目標——共同描繪方向</strong>
+            <p style="margin-top:.4rem">第一次說不出來是正常的。主管先給「靠近」的觀念，讓員工帶著想法回來，下次一起討論。</p>
+            <ul style="margin:.5rem 0 0 0;padding-left:0;list-style:none;">
+              <li style="font-size:13px;color:var(--muted);padding:5px 0;border-top:1px solid var(--border)"><strong style="color:var(--b)">① 描繪，不是設定目標</strong>——對話的過程讓腦袋有一個投射，有畫面就夠了。不需要文件，不需要計劃書，只需要他心裡有一個方向的輪廓。</li>
+              <li style="font-size:13px;color:var(--muted);padding:5px 0;border-top:1px solid var(--border)"><strong style="color:var(--b)">② 靠近，不是承諾到達</strong>——「靠近」移除了壓力。慢慢走，方向對了就夠，不是承諾一定要做到。</li>
+              <li style="font-size:13px;color:var(--muted);padding:5px 0;border-top:1px solid var(--border)"><strong style="color:var(--b)">③ 最後問意願</strong>——「願意以這為目標嗎？願意一起靠近嗎？」讓員工自己說出口。說出口之後，這個目標是他的，不是主管交代的任務。</li>
+            </ul>
+          </div></li>
+        </ul>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1.5rem 0 .75rem">真誠對話冰山——負感受底下的七層結構</p>
+        <svg viewBox="0 0 500 446" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:480px;display:block;margin:0 auto 1rem;">
+          <!-- Sky -->
+          <rect width="500" height="110" fill="#f4f7fb"/>
+          <!-- Water -->
+          <rect y="110" width="500" height="336" fill="#deeaf8"/>
+          <!-- Water line -->
+          <line x1="0" y1="110" x2="500" y2="110" stroke="#1a6db5" stroke-width="1.5"/>
+          <!-- Labels -->
+          <text x="14" y="104" font-size="10" fill="#aaa" font-family="-apple-system,sans-serif" font-weight="600" letter-spacing="1.5">看得見</text>
+          <text x="14" y="135" font-size="10" fill="#6b9cd0" font-family="-apple-system,sans-serif" font-weight="600" letter-spacing="1.5">看不見</text>
+          <!-- Layer 0: 事件 (above water) -->
+          <rect x="160" y="18" width="180" height="82" rx="8" fill="#c5d9f2" stroke="#9bbce8" stroke-width="1.5"/>
+          <text x="250" y="53" text-anchor="middle" font-size="16" font-weight="700" fill="#0d4878" font-family="-apple-system,sans-serif">事件</text>
+          <text x="250" y="74" text-anchor="middle" font-size="11" fill="#2a5e8a" font-family="-apple-system,sans-serif">可見的行為與應對</text>
+          <!-- Layer 1: 感受 -->
+          <rect x="128" y="118" width="244" height="48" rx="5" fill="#aecbe8" stroke="#8ab4d8" stroke-width="1"/>
+          <text x="250" y="139" text-anchor="middle" font-size="14" font-weight="700" fill="#0a3d6e" font-family="-apple-system,sans-serif">感受</text>
+          <text x="250" y="156" text-anchor="middle" font-size="11" fill="#1a4d7a" font-family="-apple-system,sans-serif">此刻浮現的情緒</text>
+          <!-- Layer 2: 感受的感受 -->
+          <rect x="96" y="174" width="308" height="48" rx="5" fill="#90b8e0" stroke="#6ba0d0" stroke-width="1"/>
+          <text x="250" y="195" text-anchor="middle" font-size="14" font-weight="700" fill="#082e52" font-family="-apple-system,sans-serif">感受的感受</text>
+          <text x="250" y="212" text-anchor="middle" font-size="11" fill="#0f3c62" font-family="-apple-system,sans-serif">對自身情緒的反應與評判</text>
+          <!-- Layer 3: 觀點 (NEW) -->
+          <rect x="68" y="230" width="364" height="48" rx="5" fill="#7aaad8" stroke="#5890c8" stroke-width="1"/>
+          <text x="250" y="251" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="-apple-system,sans-serif">觀點</text>
+          <text x="250" y="268" text-anchor="middle" font-size="11" fill="#ddeeff" font-family="-apple-system,sans-serif">我怎麼解讀這件事、我相信什麼</text>
+          <!-- Layer 4: 期待 -->
+          <rect x="44" y="286" width="412" height="48" rx="5" fill="#5588c8" stroke="#3d70b0" stroke-width="1"/>
+          <text x="250" y="307" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="-apple-system,sans-serif">期待</text>
+          <text x="250" y="324" text-anchor="middle" font-size="11" fill="#ddeeff" font-family="-apple-system,sans-serif">對他人或情境的具體期望</text>
+          <!-- Layer 5: 渴望 -->
+          <rect x="18" y="342" width="464" height="48" rx="5" fill="#3a7ab8" stroke="#2560a0" stroke-width="1"/>
+          <text x="250" y="363" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="-apple-system,sans-serif">渴望</text>
+          <text x="250" y="380" text-anchor="middle" font-size="11" fill="#c8ddf5" font-family="-apple-system,sans-serif">深層的連結感與被重視的需求</text>
+          <!-- Layer 6: 自我 (deepest) -->
+          <rect x="4" y="398" width="492" height="40" rx="7" fill="#1a6db5" stroke="#0e4d8a" stroke-width="1"/>
+          <text x="250" y="414" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="-apple-system,sans-serif">自我</text>
+          <text x="250" y="431" text-anchor="middle" font-size="11" fill="#b8d4f0" font-family="-apple-system,sans-serif">存在感、價值認同、我是誰</text>
+        </svg>
+        <p style="font-size:12px;color:var(--light);text-align:center;margin-bottom:.5rem">主管的任務是帶對話從水面上走到水面下——層層往下，不停在事件本身。</p>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-b">02</span>
+        <span class="module-title">主管常見錯誤——第二問</span>
+        <span class="module-en">COMMON MISTAKES</span>
+      </div>
+      <div class="module-body">
+        <div class="compare">
+          <div class="compare-box compare-bad">
+            <div class="compare-label">✗ 錯誤示範</div>
+            <p>「那你就這樣做啊」（立刻給解答）<br>「不要想太多，就這樣而已」（縮小問題）<br>「好好，那我們說下一件事」（轉移話題）<br>「但那個其實是因為……」（反駁）</p>
+          </div>
+          <div class="compare-box compare-good">
+            <div class="compare-label">✓ 正確做法</div>
+            <p>繼續聽，不說話。<br>員工說出負感受的那一刻，他在做一件需要勇氣的事。主管的第一個動作不是解決，不是安慰，是讓他把話說完。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-b">03</span>
+        <span class="module-title">五種正向情境——第一問</span>
+        <span class="module-en">POSITIVE ENERGY PATTERNS</span>
+      </div>
+      <div class="module-body">
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">01 · 說了完成一個任務後的成就感</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">往動力核心走：「那個成就感是什麼？是事情做完了，還是你知道自己做得比以前好？」成就感有很多種來源，找到他的那一種，才知道下次怎麼複製。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">02 · 說了看見學生或客人進步的滿足</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">確認這是他的核心驅動力：「你說看到別人進步讓你最開心——這是你選擇這份工作的原因嗎？」如果是，日後的任務設計就往這個方向走。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">03 · 說了和團隊合作克服困難的意義感</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">辨識他是否在乎歸屬與連結：「那次是什麼讓你覺得有意義——是一起完成了，還是感覺大家在同一邊？」歸屬感驅動的人，最怕孤立，最需要被看見貢獻。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">04 · 說了被主管或同事肯定時的動力</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">問他最希望在哪個面向被看見：「你說上次被肯定讓你很有勁——你最希望在什麼樣的事情上被看見？」讓他說出來，之後的回饋就精準給那個點。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">05 · 說了越做越上手、越做越有自信的充實感</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">銜接第三問：「你說越來越上手——最近做哪件事的時候最有這個感覺？」讓第一問和第三問自然連結，把成長動力和成長軌跡接在一起說。</div>
+        </div>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-b">04</span>
+        <span class="module-title">五種典型情境應對——第二問</span>
+        <span class="module-en">NEGATIVE FEELINGS PATTERNS</span>
+      </div>
+      <div class="module-body">
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">01 · 沉默，說沒有</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">把問題降低門檻：「沒有關係，換個方式問——最近有沒有哪一天下班特別累？那天發生了什麼？」從「負感受」降低到「特別累的一天」，更容易讓人開口。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">02 · 說了一個表面事件</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">把事件往感受層走：「排班讓你困擾——那個困擾是什麼感覺？是覺得不公平，還是影響到你的生活？」</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">03 · 說了情緒但很模糊（說累）</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">「你說累——是身體的累，還是心裡的累？最近哪個時候最有這個感覺？」「累」是空的詞，可以是體力累、心力累、或是對工作失去動力。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">04 · 說到具體的人際問題</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">「相處讓你壓力大——那個壓力是怎麼來的？是工作上的摩擦，還是其他的什麼？」先了解狀況，不急著評論任何人。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">05 · 說了很多，情緒很強</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">不在中間插話，讓他說完。這個員工終於開口了——主管唯一的任務是接住。說完後再說：「謝謝你告訴我這些，我想多了解一點——」</div>
+        </div>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-b">05</span>
+        <span class="module-title">五種正向情境——第三問</span>
+        <span class="module-en">GROWTH TRACKING PATTERNS</span>
+      </div>
+      <div class="module-body">
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">01 · 說了一個技術或專業能力的成長</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">往應用走：「這個進步讓你在工作上，有什麼地方不一樣了？」技能只是工具，應用出來才是學習真正發生的地方。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">02 · 說了溝通或帶人方式的改變</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">往成熟度走：「你說你現在說話的方式不一樣了——是什麼讓你有這個轉變？有沒有哪個時刻讓你意識到原來做法需要調整？」這種成長往往比技術成長更關鍵。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">03 · 說了從一次挫折或失誤中學到的</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">最有深度的成長——接住並往前問：「你說那次讓你學到了——你調整了什麼？現在遇到類似的狀況，你會怎麼做？」說得出來的，代表他真的整合了，而不是只是說說而已。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">04 · 說了開始能夠獨立判斷和做決策</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">往 Leadership 走：「你說你現在面對這種情況知道怎麼判斷了——那個判斷是從哪裡來的？經驗、還是有什麼準則？」能說出準則的人，才是真的內化了，不只是運氣好。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">05 · 說了對自己工作風格或特質的新認識</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">往自我連結走：「你說你發現自己在這種情況下比較好發揮——這個認識讓你對接下來想走的方向有什麼想法？」自我認識是職涯規劃的起點，把這個問題帶到第四問去。</div>
+        </div>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-b">06</span>
+        <span class="module-title">五種典型情境應對——第四問</span>
+        <span class="module-en">GOAL-SETTING PATTERNS</span>
+      </div>
+      <div class="module-body">
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">01 · 說不出來</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">「沒關係，換個方式問——工作裡有沒有哪件事，做完之後覺得還想繼續做、還想做得更好？」從「目標」降低到「想繼續做的事」。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">02 · 說了待遇目標</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">「薪水高一點，這個我理解。再問你，如果薪水不變，工作能力上有沒有想變得更好的地方？」接住待遇期待，往發展方向推一步。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">03 · 說了職位目標</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">「主教練——好。你覺得你現在跟主教練的位置之間，差距在哪裡？你自己怎麼看？」讓他說出落差，比主管告訴他更有效——他說出來的，他才真的聽得進去。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">04 · 目標很模糊</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">「你說想更厲害——在哪個方面？如果三個月後有一件事變得更好，你希望是哪一件？」縮小範圍讓他具體。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)"><span class="acc-head-title">05 · 目標超出現有舞台</span><span class="acc-icon">+</span></div>
+          <div class="acc-body">「有想做的事，我來做舞台給你發揮。」這是整套系統裡最重要的管理承諾之一——它說的是：組織為個人目標服務，而不是相反。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ C 六角色 ══ -->
+  <div id="c" class="section">
+    <div class="sec-label">Layer C · Role Framework</div>
+    <div class="sec-title color-c">六角色功能框架</div>
+    <div class="sec-en">SIX FUNCTIONAL ROLES</div>
+    <div class="sec-desc">功能性、流動的，同一個人可同時擔任多角色。角色是功能，不是頭銜——不是有職位才能擔任，是真正在執行這個功能才算。</div>
+
+    <div class="role-grid">
+      <div class="role-card fixed-role">
+        <div class="role-tag tag-fixed">固定角色</div>
+        <div class="role-name">Constructor 建構者</div>
+        <div class="role-desc">框架外視角，異花授粉，組織裡最稀缺的角色。保持與日常運作的距離感，讓視野不被內部消耗。把外面看到的東西帶進來，讓組織因為這個輸入產生質變。</div>
+      </div>
+      <div class="role-card fixed-role">
+        <div class="role-tag tag-fixed">固定角色</div>
+        <div class="role-name">Executor 執行者</div>
+        <div class="role-desc">單場館執行長，縱整全局。四個心得：迅速理解、迅速反應、持續推進、專注當下。最成熟的狀態是「不認同，但理解」——明白為什麼，然後全力執行。</div>
+      </div>
+      <div class="role-card">
+        <div class="role-tag tag-fluid">流動角色</div>
+        <div class="role-name">Organizer 組織者</div>
+        <div class="role-desc">任何人在專案中擔任。腦內彩排，看見系統性問題並主動推動解法，而不是等主管告訴他要做什麼。</div>
+      </div>
+      <div class="role-card">
+        <div class="role-tag tag-fluid">流動角色</div>
+        <div class="role-name">Team Builder 團建者</div>
+        <div class="role-desc">感知團隊氛圍，保護付出者。把這個角色顯性化，讓默默照顧別人的人被看見、被重視——從「那個很熱心的人」變成「我們團隊的 Team Builder」。</div>
+      </div>
+      <div class="role-card">
+        <div class="role-tag tag-fluid">流動角色</div>
+        <div class="role-name">Leader 領導者</div>
+        <div class="role-desc">在位帶人，提供方法。功能非頭銜——不是有頭銜才叫 Leader，是真正在帶人才叫 Leader。</div>
+      </div>
+      <div class="role-card">
+        <div class="role-tag tag-fluid">流動角色</div>
+        <div class="role-name">Member 成員</div>
+        <div class="role-desc">基層支援人力，所有角色的起點。好的 Member 跟只是領薪水的 Member，差別在於他是否把工作當成自己的事。</div>
+      </div>
+    </div>
+
+    <div class="blockquote" style="margin-top:1.5rem">角色是功能，不是頭銜。組織需要的，是對的人在對的時機出現在對的位置。</div>
+  </div>
+
+  <!-- ══ D 硬知識 ══ -->
+  <div id="d" class="section">
+    <div class="sec-label">Layer D · Hard Knowledge</div>
+    <div class="sec-title color-d">六大硬知識模組</div>
+    <div class="sec-en">SIX KNOWLEDGE MODULES</div>
+    <div class="sec-desc">招式課，搭配內功使用。六個模組是同一個問題的六個角度——財務告訴你問題在哪裡，其他模組告訴你怎麼解決。</div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-d">D1</span>
+        <span class="module-title">經營管理</span>
+        <span class="module-en">OPERATIONS MANAGEMENT</span>
+      </div>
+      <div class="module-body">
+        <table class="kv-table">
+          <tr><td>PA（月）</td><td>月度計劃與回顧，確保方向不偏移。每月初對齊目標，月底檢討數字與行動落差。</td></tr>
+          <tr><td>WD（週）</td><td>每週例行閉環，讓共識有載體。本週做了什麼、遇到什麼、下週怎麼走——三個問題，不超過30分鐘。</td></tr>
+          <tr><td>Echo 機制</td><td>會後談話，觀察並辨識隱性角色——誰在私下影響決策方向、誰說一套做一套、誰是真正的意見領袖。</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-d">D2</span>
+        <span class="module-title">行銷</span>
+        <span class="module-en">MARKETING</span>
+      </div>
+      <div class="module-body">
+        <table class="kv-table">
+          <tr><td>核心定義</td><td>行銷目的是轉換，不是曝光——訪客變顧客。</td></tr>
+          <tr><td>四層顧客旅程</td><td>怎麼得知 → 體驗 → 留下 → 口碑觸發。口碑餵養第一層，形成閉環。</td></tr>
+          <tr><td>峰終理論</td><td>人記住的是最高峰和最後一刻，在這兩個點集中設計體驗。</td></tr>
+          <tr><td>45 天節奏</td><td>搭配季節節慶排促銷，讓執行有節奏不倉促，製造購買理由和時間壓力。</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-d">D3</span>
+        <span class="module-title">財務預算</span>
+        <span class="module-en">FINANCIAL BUDGETING</span>
+      </div>
+      <div class="module-body">
+        <table class="kv-table">
+          <tr><td>損益兩平點</td><td>固定費用（薪資＋租金＋保勞健）建立每月最低基準，超過才有盈餘。</td></tr>
+          <tr><td>旺淡季結構</td><td>旺季賺的錢需覆蓋淡季虧損加年度固定支出缺口。旺季缺口等於少收幾個學生，倒推行動方案。</td></tr>
+          <tr><td>目標設定邏輯</td><td>從去年數據×排程推年度目標，反向拆解到月、週、「明天做什麼」。</td></tr>
+          <tr><td>財務問題的解法</td><td>不在財務裡——在行銷、服務流程、和團隊建立裡。數字告訴你問題在哪裡，其他模組告訴你怎麼解決。</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-d">D4</span>
+        <span class="module-title">服務流程品質</span>
+        <span class="module-en">SERVICE QUALITY</span>
+      </div>
+      <div class="module-body">
+        <div class="blockquote">服務品質不是讓客人滿意，而是讓客人下次指定你。信任是服務流程的最終產出。</div>
+
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">服務藍圖四層架構</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">
+            <table class="kv-table">
+              <tr><td style="width:90px">顧客行為</td><td>看得見的一切：諮詢、進場、使用服務、付款、離開、分享口碑。</td></tr>
+              <tr><td>前台服務</td><td>直接與顧客互動的動作：主動問好、解說環境、帶位安排、服務評估。</td></tr>
+              <tr><td>後台支援</td><td>顧客看不到但直接影響體驗的作業：備品補充、教具整備、人員排班、訓練師資。</td></tr>
+              <tr><td>支持過程</td><td>整個系統的基礎設施：預約系統、財務結算、安全監控、設備保養、客訴記錄。</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">SERVQUAL 五維度——顧客評估服務的五個角度</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">
+            <table class="kv-table">
+              <tr><td style="width:80px">可靠性</td><td>承諾的事確實做到，不說一套做一套。第一次正確，比補救一百次更有效。</td></tr>
+              <tr><td>回應性</td><td>對顧客的需求有即時反應。等待沒有人理，客人就開始負面評價。</td></tr>
+              <tr><td>保證性</td><td>讓客人感到安心——專業、禮貌、正確的能力。信任來自能力的持續展示。</td></tr>
+              <tr><td>有形性</td><td>環境、設備、人員外觀傳遞的形象。第一印象從看到的開始。</td></tr>
+              <tr><td>同理心</td><td>理解並回應每個客人的個別需求，讓他感到被重視，而不是號碼牌。</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">服務接觸點設計——四接觸點</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">
+            <div class="compare">
+              <div class="compare-box compare-bad">
+                <div class="compare-label">✗ 壞的服務</div>
+                <p>進場沒招呼、收費後沒多問、使用期間沒有關心、沒有製造連結。客人不會抱怨，他只是不回來。</p>
+              </div>
+              <div class="compare-box compare-good">
+                <div class="compare-label">✓ 四接觸點設計</div>
+                <p>①進場主動說明環境<br>②服務中有專人負責<br>③結束後說明狀況與下一步<br>④離場前詢問感受、說明下次安排</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">客訴補救 SOP——七步驟</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">
+            <ul class="step-list">
+              <li class="step-d"><div class="step-num">1</div><div class="step-body"><strong>把握時機</strong><p>客訴在24小時內未被處理，負面情緒加倍。第一時間是黃金窗口。</p></div></li>
+              <li class="step-d"><div class="step-num">2</div><div class="step-body"><strong>認錯道歉</strong><p>先認錯，不辯解。辯解讓客人覺得你在為自己開脫，而不是處理他的感受。</p></div></li>
+              <li class="step-d"><div class="step-num">3</div><div class="step-body"><strong>主動聆聽</strong><p>讓客人完整說完，不打斷，用點頭或簡單回應確認你在聽。</p></div></li>
+              <li class="step-d"><div class="step-num">4</div><div class="step-body"><strong>展現同理心</strong><p>「換作是我也會這樣感受。」——情緒先被接住，才能進入解決。</p></div></li>
+              <li class="step-d"><div class="step-num">5</div><div class="step-body"><strong>提出改善方案</strong><p>具體說明怎麼改，不是泛泛「我們會注意」，而是「下週起我們會安排人在這個區域主動詢問」。</p></div></li>
+              <li class="step-d"><div class="step-num">6</div><div class="step-body"><strong>記錄追蹤</strong><p>填寫客訴記錄，追蹤改善是否落地。讓客人知道你記下來了。</p></div></li>
+              <li class="step-d"><div class="step-num">7</div><div class="step-body"><strong>超出期望</strong><p>補償稍微多一點點。古德曼定理：妥善處理的客訴，客人回購率高於從未抱怨的客人。</p></div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">與客互動語言——十說十不說</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">
+            <div class="compare">
+              <div class="compare-box compare-bad">
+                <div class="compare-label">✗ 不該說</div>
+                <p>「這不是我負責的」<br>「規定就是這樣」<br>「我也不知道」<br>「你先等一下」（然後消失）<br>「這個不可能」</p>
+              </div>
+              <div class="compare-box compare-good">
+                <div class="compare-label">✓ 應該說</div>
+                <p>「我幫您確認一下」<br>「讓我為您安排」<br>「您的感受我理解」<br>「我在這裡，您需要什麼」<br>「我現在能做的是⋯⋯」</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-d">D5</span>
+        <span class="module-title">團隊建立</span>
+        <span class="module-en">TEAM BUILDING</span>
+      </div>
+      <div class="module-body">
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.5rem">三種員工類型</p>
+        <table class="kv-table" style="margin-bottom:1rem">
+          <tr style="background:var(--gray)">
+            <td style="font-weight:700;width:160px">類型</td>
+            <td style="font-weight:700">特徵 · 帶法</td>
+          </tr>
+          <tr>
+            <td><strong>Steady Members</strong><br><span style="font-size:11px;color:var(--muted)">穩定型</span></td>
+            <td>安靜、可靠、默默做事。需要被看見和肯定，不需要被改變。<br><span style="color:var(--d);font-size:12px">帶法：正向強化、避免突然改變、讓他知道穩定本身就是組織的骨幹。</span></td>
+          </tr>
+          <tr>
+            <td><strong>Active Members</strong><br><span style="font-size:11px;color:var(--muted)">積極型</span></td>
+            <td>主動、有想法、渴望舞台。需要新挑戰和成長空間，不需要被管太細。<br><span style="color:var(--d);font-size:12px">帶法：給任務、給資源、給空間發揮，提供明確的成長路徑和下一個目標。</span></td>
+          </tr>
+          <tr>
+            <td><strong>Posing Members</strong><br><span style="font-size:11px;color:var(--muted)">表演型</span></td>
+            <td>表面積極、嘴上同意，實際行動不到位。擅長管理上方印象，說的比做的多。<br><span style="color:var(--c);font-size:12px">帶法：具體任務、具體時限、具體驗收——移除所有曖昧空間。若持續無改變，走五步驟：① 責任還給他「你沒做到是你的問題」② 讓他說出下一步 ③ 讓他看見影響「你我都不舒服，你想怎麼做？」④ 說明對團隊的代價 ⑤ 讓他自己決定去留。</span></td>
+          </tr>
+        </table>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .4rem">服務人才養成四步 SOP</p>
+        <ul class="step-list">
+          <li class="step-d"><div class="step-num">1</div><div class="step-body"><strong>傾聽顧客需求</strong><p>訓練人員不是先說話，是先聽話。聽懂了才能對，沒聽懂就是猜。</p></div></li>
+          <li class="step-d"><div class="step-num">2</div><div class="step-body"><strong>了解市場與競品</strong><p>知道市場上其他人在做什麼，才能說清楚自己的特色是什麼，而不是靠感覺說「我們比較好」。</p></div></li>
+          <li class="step-d"><div class="step-num">3</div><div class="step-body"><strong>找到特色誘因</strong><p>找到客人選擇我們而不是競品的具體理由，並讓每位人員都能清楚說出來。</p></div></li>
+          <li class="step-d"><div class="step-num">4</div><div class="step-body"><strong>從顧客角度分析</strong><p>所有服務設計從「顧客角度」出發，不是從「我們方便」出發。這是服務人員訓練的核心姿態。</p></div></li>
+        </ul>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .4rem">選材三關——招募的三個把關節點</p>
+        <table class="kv-table">
+          <tr><td>第一關 面試</td><td>找過去經驗的脈絡，不找技巧好的表演者。問「你遇過最難處理的顧客是什麼情況？你怎麼做的？」</td></tr>
+          <tr><td>第二關 教育訓練</td><td>觀察學習態度和理解速度。訓練中能不能主動發問、能不能消化後提問。</td></tr>
+          <tr><td>第三關 試用期考核</td><td>真實服務情境中的行為才是最後依據。試用期結束前以360度評估方式收集主管、同事、顧客三方觀察。</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-d">D6</span>
+        <span class="module-title">開發</span>
+        <span class="module-en">BUSINESS DEVELOPMENT</span>
+      </div>
+      <div class="module-body">
+        <div class="blockquote" style="margin-bottom:1rem">停滯是執行問題還是市場上限？組織能力不夠時先開發組織，再往外開發市場。順序錯了，開發來的東西組織接不住。</div>
+        <table class="kv-table">
+          <tr style="background:var(--gray)"><td colspan="2" style="font-weight:700">D6-1 · 市場開發 Market Development</td></tr>
+          <tr><td style="width:110px">新客群</td><td>尚未接觸的族群：樂齡銀髮（水中保健/低衝擊運動）、特殊需求兒童（感統課程）、企業員工福利團體、補習班/安親班合作班次。</td></tr>
+          <tr><td>新課程</td><td>親子共學課程、暑期集訓營隊、學校體育外包、寒暑假日間托育結合運動。用「組合式產品」提高客單價而非只降價吸客。</td></tr>
+          <tr><td>新合作</td><td>與周邊校園簽合作備忘錄、企業ESG體育贊助、跨業（兒科診所/幼教品牌）聯名推廣、社區發展協會公益活動。</td></tr>
+          <tr><td>新型態</td><td>線上直播課程、訂閱制會員方案、運動評量報告書（親子型）、成果發表與比賽作為行銷節點。</td></tr>
+          <tr style="background:var(--gray)"><td colspan="2" style="font-weight:700">D6-2 · 組織開發 Organizational Development</td></tr>
+          <tr><td>新工具</td><td>預約與繳費系統數位化、LINE官方帳號自動化訊息、Google表單替代紙本紀錄、課堂影片作為教育訓練素材。</td></tr>
+          <tr><td>新制度</td><td>薪資結構透明化（底薪＋績效＋課堂費）、考核制度落地（OAEPD五級）、職等體系建立晉升路徑、服務SOP書面化。</td></tr>
+          <tr><td>新文化</td><td>建立「服務不是表演，是習慣」的信念、主管以身作則展示服務標準、每月一次服務案例分享會、讓好的行為被看見被說出來。</td></tr>
+          <tr style="background:var(--gray)"><td colspan="2" style="font-weight:700">大環境診斷</td></tr>
+          <tr><td>少子化</td><td>市場總量縮減→精進品質、提升單客價值、讓每個家庭選擇你而不是競品。</td></tr>
+          <tr><td>高齡化</td><td>樂齡、水中保健、低衝擊運動是未被充分開發的市場，運動場館天然具備優勢。</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-d">D7</span>
+        <span class="module-title">顧客關係管理</span>
+        <span class="module-en">CUSTOMER RELATIONSHIP</span>
+      </div>
+      <div class="module-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">顧客關係是一個動態過程，不是一個靜止的狀態。目標是讓訪客變成夥伴。</p>
+
+        <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;display:block;margin:0 auto 1.25rem;">
+          <!-- Stage 1: 訪客 -->
+          <rect x="4" y="30" width="104" height="80" rx="8" fill="#e6f0fb" stroke="#b0cde8" stroke-width="1.5"/>
+          <text x="56" y="62" text-anchor="middle" font-size="13" font-weight="700" fill="#1a6db5" font-family="-apple-system,sans-serif">訪客</text>
+          <text x="56" y="78" text-anchor="middle" font-size="10" fill="#5a8db5" font-family="-apple-system,sans-serif">Visitors</text>
+          <text x="56" y="97" text-anchor="middle" font-size="10" fill="#777" font-family="-apple-system,sans-serif">製造第一次</text>
+          <text x="56" y="110" text-anchor="middle" font-size="10" fill="#777" font-family="-apple-system,sans-serif">接觸機會</text>
+          <!-- Arrow 1 -->
+          <text x="120" y="76" text-anchor="middle" font-size="18" fill="#b0cde8" font-family="sans-serif">→</text>
+          <!-- Stage 2: 顧客 -->
+          <rect x="136" y="22" width="104" height="96" rx="8" fill="#c5d9f2" stroke="#8ab4d8" stroke-width="1.5"/>
+          <text x="188" y="57" text-anchor="middle" font-size="13" font-weight="700" fill="#0d4878" font-family="-apple-system,sans-serif">顧客</text>
+          <text x="188" y="73" text-anchor="middle" font-size="10" fill="#2a5e8a" font-family="-apple-system,sans-serif">Customers</text>
+          <text x="188" y="92" text-anchor="middle" font-size="10" fill="#444" font-family="-apple-system,sans-serif">值得再試一次</text>
+          <text x="188" y="106" text-anchor="middle" font-size="10" fill="#444" font-family="-apple-system,sans-serif">的感受</text>
+          <!-- Arrow 2 -->
+          <text x="252" y="76" text-anchor="middle" font-size="18" fill="#6b9cd0" font-family="sans-serif">→</text>
+          <!-- Stage 3: 朋友 -->
+          <rect x="268" y="12" width="104" height="116" rx="8" fill="#6b9cd0" stroke="#4d85c0" stroke-width="1.5"/>
+          <text x="320" y="50" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="-apple-system,sans-serif">朋友</text>
+          <text x="320" y="66" text-anchor="middle" font-size="10" fill="#ddeeff" font-family="-apple-system,sans-serif">Friends</text>
+          <text x="320" y="87" text-anchor="middle" font-size="10" fill="#fff" font-family="-apple-system,sans-serif">記得他、讓他</text>
+          <text x="320" y="101" text-anchor="middle" font-size="10" fill="#fff" font-family="-apple-system,sans-serif">感到被重視</text>
+          <!-- Arrow 3 -->
+          <text x="384" y="76" text-anchor="middle" font-size="18" fill="#3a7ab8" font-family="sans-serif">→</text>
+          <!-- Stage 4: 夥伴 -->
+          <rect x="396" y="2" width="100" height="136" rx="8" fill="#1a6db5" stroke="#0e4d8a" stroke-width="1.5"/>
+          <text x="446" y="42" text-anchor="middle" font-size="13" font-weight="700" fill="#fff" font-family="-apple-system,sans-serif">夥伴</text>
+          <text x="446" y="58" text-anchor="middle" font-size="10" fill="#b8d4f0" font-family="-apple-system,sans-serif">Partners</text>
+          <text x="446" y="80" text-anchor="middle" font-size="10" fill="#fff" font-family="-apple-system,sans-serif">主動介紹</text>
+          <text x="446" y="94" text-anchor="middle" font-size="10" fill="#fff" font-family="-apple-system,sans-serif">他人來</text>
+          <!-- Depth label -->
+          <text x="250" y="165" text-anchor="middle" font-size="10" fill="#aaa" font-family="-apple-system,sans-serif" letter-spacing="1">關係深度遞增 · 離開代價遞增</text>
+          <!-- Depth arrow -->
+          <line x1="60" y1="155" x2="440" y2="155" stroke="#ddd" stroke-width="1.5" marker-end="url(#arr)"/>
+          <defs><marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ddd"/></marker></defs>
+        </svg>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .4rem">五種顧客連結方式</p>
+        <table class="kv-table">
+          <tr><td>財務連結</td><td>回數票、年卡、儲值方案——金融承諾讓人更難離開。</td></tr>
+          <tr><td>社交連結</td><td>讓顧客認識彼此，形成社群。他離開時，不只離開你，也離開他的朋友。</td></tr>
+          <tr><td>學習連結</td><td>定期提供與孩子發展相關的知識與評估，讓家長感受到你是他的夥伴，不只是服務提供者。</td></tr>
+          <tr><td>客製連結</td><td>記住每個客人的偏好與孩子的狀況，讓服務「有針對性」。</td></tr>
+          <tr><td>成就連結</td><td>讓顧客看到孩子的成長與進步。成就感是最強的留客理由——他離開等於放棄已有的進展。</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ E 組織思維 ══ -->
+  <div id="e" class="section">
+    <div class="sec-label">Layer E · Organizational Thinking</div>
+    <div class="sec-title color-e">組織性思維</div>
+    <div class="sec-en">ORGANIZATIONAL THINKING FRAMEWORK</div>
+    <div class="sec-desc">看見問題如何發生，再推動解法。主管最大的問題是只能給單點答案，不能給組織性規劃。解法永遠放最後。</div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-e">01</span>
+        <span class="module-title">五層診斷框架</span>
+        <span class="module-en">FIVE-LAYER DIAGNOSIS</span>
+      </div>
+      <div class="module-body">
+        <ul class="step-list">
+          <li class="step-e"><div class="step-num">1</div><div class="step-body"><strong>現象 Phenomenon</strong><p>你看到了什麼？是事實，不是判斷。</p></div></li>
+          <li class="step-e"><div class="step-num">2</div><div class="step-body"><strong>來源 Source</strong><p>這個現象從哪裡來？找到根本原因，不停在表面。</p></div></li>
+          <li class="step-e"><div class="step-num">3</div><div class="step-body"><strong>矛盾 Tension</strong><p>需要被解決，還是被照顧？</p></div></li>
+          <li class="step-e"><div class="step-num">4</div><div class="step-body"><strong>視角 Perspective</strong><p>這件事做完之後還能創造什麼？</p></div></li>
+          <li class="step-e"><div class="step-num">5</div><div class="step-body"><strong>可能性 Possibility</strong><p>在所有可能性裡，哪個最值得推動？——解法在這裡才出現。</p></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-e">02</span>
+        <span class="module-title">反問清單</span>
+        <span class="module-en">SEVEN QUESTIONS BEFORE SOLUTIONS</span>
+      </div>
+      <div class="module-body">
+        <p style="margin-bottom:.75rem;font-size:13px;color:var(--muted)">在這七個問題有答案之前，不往任何解法方向走。</p>
+        <table class="kv-table">
+          <tr><td>① 現象確認</td><td>你說的這件事，是你親眼看到的，還是聽說的？<br><span style="color:var(--light);font-size:12px">員工說「小陳最近態度很差」→ 主管：「你看到什麼具體的事情讓你這樣說？」</span></td></tr>
+          <tr><td>② 頻率</td><td>這種情況發生多久了？是偶爾還是持續？<br><span style="color:var(--light);font-size:12px">「這是這週的狀況，還是這個月都這樣？上個月呢？」</span></td></tr>
+          <tr><td>③ 影響範圍</td><td>只有你感受到，還是整個團隊都有這個感覺？<br><span style="color:var(--light);font-size:12px">「你有沒有問過其他同事？他們有沒有類似的感受？」</span></td></tr>
+          <tr><td>④ 已嘗試</td><td>你有沒有自己試著處理過？結果是什麼？<br><span style="color:var(--light);font-size:12px">「你有沒有直接跟他說過你的感受？他怎麼回應？」</span></td></tr>
+          <tr><td>⑤ 期待</td><td>你希望這件事往哪個方向走？<br><span style="color:var(--light);font-size:12px">「理想的狀態是什麼？你希望三個月後這件事是什麼樣子？」</span></td></tr>
+          <tr><td>⑥ 時機</td><td>如果現在不處理，三個月後會怎樣？<br><span style="color:var(--light);font-size:12px">「如果我們今天什麼都不做，這件事會自己好嗎？還是會更嚴重？」</span></td></tr>
+          <tr><td>⑦ 資源</td><td>如果要解決這件事，你需要什麼？你自己可以做哪一部分？<br><span style="color:var(--light);font-size:12px">「你現在有什麼可以用的？哪一步是你可以自己先做的？」</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ F 年度營運 ══ -->
+  <div id="f" class="section">
+    <div class="sec-label">Layer F · Annual Operations</div>
+    <div class="sec-title color-f">年度營運管理計劃思維</div>
+    <div class="sec-en">ANNUAL OPERATIONS PLANNING</div>
+    <div class="sec-desc">從年度視角規劃場館運營，讓每一個執行動作都有全局依據。年度思維是 Constructor 和 Executor 的必備視角。</div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-f">F1</span>
+        <span class="module-title">年度排程規劃</span>
+        <span class="module-en">ANNUAL SCHEDULING</span>
+      </div>
+      <div class="module-body">
+        <table class="kv-table">
+          <tr><td>排程邏輯</td><td>以季節性和節慶為軸，提前規劃全年活動節點。每個節點預留 45 天執行準備週期，避免倉促執行。</td></tr>
+          <tr><td>旺淡季配置</td><td>旺季（暑假/寒假/特定節慶）集中資源衝刺；淡季以維持關係、提升品質、準備下一波為主。</td></tr>
+          <tr><td>賽事與活動</td><td>內部成果展示、對外賽事、親子活動提前排入年曆，作為行銷和續留的節點支撐。</td></tr>
+          <tr><td>PA/WD 閉環</td><td>年度計劃拆解到月計劃（PA），月計劃拆解到週計劃（WD）。每週確認是否在軌道上，偏移立即調整。</td></tr>
+        </table>
+        <div class="blockquote">年度排程不是行事曆，是資源分配的決策依據。</div>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-f">F2</span>
+        <span class="module-title">年度財務預算編排</span>
+        <span class="module-en">ANNUAL BUDGET PLANNING</span>
+      </div>
+      <div class="module-body">
+        <ul class="step-list">
+          <li class="step-f"><div class="step-num">1</div><div class="step-body"><strong>盤點去年數據</strong><p>逐月收入、固定費用（薪資/租金/保險）、變動費用（水電/修繕/活動）、利息與折舊。</p></div></li>
+          <li class="step-f"><div class="step-num">2</div><div class="step-body"><strong>計算損益兩平點</strong><p>固定費用確立每月最低需達到的收入基準。超過才有盈餘，低於就是虧損。</p></div></li>
+          <li class="step-f"><div class="step-num">3</div><div class="step-body"><strong>旺淡季分月設定目標</strong><p>旺季月份目標需覆蓋淡季虧損總額加年度固定支出缺口。從年度目標拆解到每月，再拆解到週。</p></div></li>
+          <li class="step-f"><div class="step-num">4</div><div class="step-body"><strong>反向對應行動方案</strong><p>每個月份目標對應「我需要服務多少客人/收多少學生」，倒推到「明天要做什麼」。</p></div></li>
+          <li class="step-f"><div class="step-num">5</div><div class="step-body"><strong>加入增購與特殊支出</strong><p>財產增購、年度活動費、裝修維護列入預算，確認全年資金流是否充足。</p></div></li>
+        </ul>
+        <div class="blockquote">財務問題的解法不在財務裡——數字告訴你問題在哪裡，解法在行銷、服務流程和團隊建立裡。</div>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-f">F3</span>
+        <span class="module-title">財產編列與增購計劃</span>
+        <span class="module-en">ASSET MANAGEMENT</span>
+      </div>
+      <div class="module-body">
+        <table class="kv-table">
+          <tr><td>現有財產盤點</td><td>年初進行設備盤點，評估使用年限、維修需求、汰換優先順序。建立財產清冊，定期更新狀態。</td></tr>
+          <tr><td>增購原則</td><td>增購需對應具體需求：新開課程、人力增加、設備老化。避免超前採購造成閒置資產。</td></tr>
+          <tr><td>預算連結</td><td>所有增購項目納入年度財務預算，與收入目標對應——先確認能產生收益或降低成本，再編列採購。</td></tr>
+          <tr><td>維修保養排程</td><td>將定期保養（水質設備、健身器材、教具）排入年度行事曆，避免旺季設備故障影響服務。</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-f">F4</span>
+        <span class="module-title">人力組織規劃</span>
+        <span class="module-en">HUMAN RESOURCE PLANNING</span>
+      </div>
+      <div class="module-body">
+        <div class="blockquote">組織規劃不是人事表格，是一張你腦袋裡的地圖——這個場館需要哪些部門、哪些組、哪些人，才能讓它正常運作？先有地圖，才知道哪裡缺人、哪裡重疊、哪裡沒有人扛。</div>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .5rem">組織結構樹狀圖（範例）</p>
+        <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:680px;display:block;margin:0 auto 1rem;font-family:-apple-system,sans-serif;">
+          <!-- dept centers: 120, 350, 580 ; team centers: 65,175, 295,405, 525,635 -->
+          <!-- GM -->
+          <rect x="275" y="10" width="150" height="36" rx="7" fill="var(--f)"/>
+          <text x="350" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">總經理 GM</text>
+          <!-- GM → H bar -->
+          <line x1="350" y1="46" x2="350" y2="66" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="120" y1="66" x2="580" y2="66" stroke="#bbb" stroke-width="1.5"/>
+          <!-- H bar → dept tops -->
+          <line x1="120" y1="66" x2="120" y2="84" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="350" y1="66" x2="350" y2="84" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="580" y1="66" x2="580" y2="84" stroke="#bbb" stroke-width="1.5"/>
+          <!-- Dept boxes (w=180) -->
+          <rect x="30" y="84" width="180" height="34" rx="6" fill="#3a5f8c" opacity=".85"/>
+          <text x="120" y="106" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">營運部</text>
+          <rect x="260" y="84" width="180" height="34" rx="6" fill="#3a5f8c" opacity=".85"/>
+          <text x="350" y="106" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">行銷企劃部</text>
+          <rect x="490" y="84" width="180" height="34" rx="6" fill="#3a5f8c" opacity=".85"/>
+          <text x="580" y="106" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">行政部</text>
+          <!-- Dept → team H bars -->
+          <line x1="120" y1="118" x2="120" y2="134" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="65" y1="134" x2="175" y2="134" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="65" y1="134" x2="65" y2="150" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="175" y1="134" x2="175" y2="150" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="350" y1="118" x2="350" y2="134" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="295" y1="134" x2="405" y2="134" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="295" y1="134" x2="295" y2="150" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="405" y1="134" x2="405" y2="150" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="580" y1="118" x2="580" y2="134" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="525" y1="134" x2="635" y2="134" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="525" y1="134" x2="525" y2="150" stroke="#bbb" stroke-width="1.5"/>
+          <line x1="635" y1="134" x2="635" y2="150" stroke="#bbb" stroke-width="1.5"/>
+          <!-- Team boxes (w=90, centered on 65,175,295,405,525,635) -->
+          <rect x="20" y="150" width="90" height="28" rx="5" fill="#e8eef6" stroke="#c0cfe0"/>
+          <text x="65" y="169" text-anchor="middle" font-size="11" fill="#3a5f8c" font-weight="600">場館組</text>
+          <rect x="130" y="150" width="90" height="28" rx="5" fill="#e8eef6" stroke="#c0cfe0"/>
+          <text x="175" y="169" text-anchor="middle" font-size="11" fill="#3a5f8c" font-weight="600">客務組</text>
+          <rect x="250" y="150" width="90" height="28" rx="5" fill="#e8eef6" stroke="#c0cfe0"/>
+          <text x="295" y="169" text-anchor="middle" font-size="11" fill="#3a5f8c" font-weight="600">企劃組</text>
+          <rect x="360" y="150" width="90" height="28" rx="5" fill="#e8eef6" stroke="#c0cfe0"/>
+          <text x="405" y="169" text-anchor="middle" font-size="11" fill="#3a5f8c" font-weight="600">設計組</text>
+          <rect x="480" y="150" width="90" height="28" rx="5" fill="#e8eef6" stroke="#c0cfe0"/>
+          <text x="525" y="169" text-anchor="middle" font-size="11" fill="#3a5f8c" font-weight="600">會計組</text>
+          <rect x="590" y="150" width="90" height="28" rx="5" fill="#e8eef6" stroke="#c0cfe0"/>
+          <text x="635" y="169" text-anchor="middle" font-size="11" fill="#3a5f8c" font-weight="600">總務組</text>
+          <!-- Team → member connectors -->
+          <line x1="65" y1="178" x2="65" y2="194" stroke="#ddd" stroke-width="1.5"/>
+          <line x1="175" y1="178" x2="175" y2="194" stroke="#ddd" stroke-width="1.5"/>
+          <line x1="295" y1="178" x2="295" y2="194" stroke="#ddd" stroke-width="1.5"/>
+          <line x1="405" y1="178" x2="405" y2="194" stroke="#ddd" stroke-width="1.5"/>
+          <line x1="525" y1="178" x2="525" y2="194" stroke="#ddd" stroke-width="1.5"/>
+          <line x1="635" y1="178" x2="635" y2="194" stroke="#ddd" stroke-width="1.5"/>
+          <!-- Member boxes -->
+          <rect x="20" y="194" width="90" height="25" rx="4" fill="#f7f6f2" stroke="#ddd"/>
+          <text x="65" y="211" text-anchor="middle" font-size="10" fill="#888">組長＋助理×N</text>
+          <rect x="130" y="194" width="90" height="25" rx="4" fill="#f7f6f2" stroke="#ddd"/>
+          <text x="175" y="211" text-anchor="middle" font-size="10" fill="#888">組長＋助理×N</text>
+          <rect x="250" y="194" width="90" height="25" rx="4" fill="#f7f6f2" stroke="#ddd"/>
+          <text x="295" y="211" text-anchor="middle" font-size="10" fill="#888">組長＋助理×N</text>
+          <rect x="360" y="194" width="90" height="25" rx="4" fill="#f7f6f2" stroke="#ddd"/>
+          <text x="405" y="211" text-anchor="middle" font-size="10" fill="#888">組長＋助理×N</text>
+          <rect x="480" y="194" width="90" height="25" rx="4" fill="#f7f6f2" stroke="#ddd"/>
+          <text x="525" y="211" text-anchor="middle" font-size="10" fill="#888">組長＋助理×N</text>
+          <rect x="590" y="194" width="90" height="25" rx="4" fill="#f7f6f2" stroke="#ddd"/>
+          <text x="635" y="211" text-anchor="middle" font-size="10" fill="#888">組長＋助理×N</text>
+          <!-- Legend -->
+          <rect x="10" y="238" width="13" height="13" rx="3" fill="var(--f)"/>
+          <text x="29" y="249" font-size="11" fill="#666">決策層</text>
+          <rect x="86" y="238" width="13" height="13" rx="3" fill="#3a5f8c" opacity=".85"/>
+          <text x="105" y="249" font-size="11" fill="#666">部門</text>
+          <rect x="152" y="238" width="13" height="13" rx="3" fill="#e8eef6" stroke="#c0cfe0"/>
+          <text x="171" y="249" font-size="11" fill="#666">組別</text>
+          <rect x="220" y="238" width="13" height="13" rx="3" fill="#f7f6f2" stroke="#ddd"/>
+          <text x="239" y="249" font-size="11" fill="#666">成員配置</text>
+        </svg>
+        <p style="font-size:12px;color:var(--light);text-align:center;margin-bottom:1rem">主管應能隨時在白板上畫出這張圖，並說明每個格子裡現在坐的是誰、缺的是誰。</p>
+
+        <table class="kv-table">
+          <tr><td>選（招募）</td><td>面試要找過去經驗的脈絡——他遇過什麼、怎麼回應、從中學到什麼。擅長表達的人說得漂亮，但過去的故事說不假。</td></tr>
+          <tr><td>用（配置）</td><td>Steadies 維持穩定核心，Actives 承擔開創性任務，把對的人放在對的功能上，不強求每個人一樣。</td></tr>
+          <tr><td>育（培育）</td><td>一對一面談追蹤成長目標，任務設計對應個人發展方向。有想做的事，做舞台給他發揮——讓工作成為成長的路徑。</td></tr>
+          <tr><td>留（留才）</td><td>員工最在乎待遇和發展，兩個取其一就會留下來。待遇對齊市場，發展給予明確路徑（職等體系）。</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-f">F5</span>
+        <span class="module-title">員工考核制度</span>
+        <span class="module-en">PERFORMANCE ASSESSMENT</span>
+      </div>
+      <div class="module-body">
+        <div class="blockquote">考核不是懲罰工具，是讓員工看見自己在哪裡、知道往哪裡走。主管的任務是讓考核結果不讓人意外。</div>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:.75rem 0 .4rem">七大考核面向與配分</p>
+        <table class="kv-table">
+          <tr style="background:var(--gray)">
+            <td style="font-weight:700;width:100px">考核面向</td>
+            <td style="font-weight:700;width:60px;text-align:center">滿分</td>
+            <td style="font-weight:700">說明</td>
+          </tr>
+          <tr><td>工作績效</td><td style="text-align:center;font-weight:700">15</td><td>工作效率、創意與完成品質，是否能提前且卓越地達成任務。</td></tr>
+          <tr><td>勤勉負責</td><td style="text-align:center;font-weight:700">15</td><td>責任心、可靠度、交辦事項的完成狀況，能否放心交付。</td></tr>
+          <tr><td>專業知能</td><td style="text-align:center;font-weight:700">15</td><td>對應職位的專業知識與持續學習能力，是否主動求精進。</td></tr>
+          <tr><td>工作態度</td><td style="text-align:center;font-weight:700">15</td><td>對工作的關心與熱忱，面對交辦任務的積極度與配合度。</td></tr>
+          <tr><td>人際關係</td><td style="text-align:center;font-weight:700">15</td><td>上下溝通、平行協調的能力，是否能自動自發與人合作。</td></tr>
+          <tr><td>親師溝通</td><td style="text-align:center;font-weight:700">15</td><td>與家長及外部溝通的意識與表達能力，是否能主動避免誤會。</td></tr>
+          <tr><td>品德言行</td><td style="text-align:center;font-weight:700">10</td><td>廉潔誠信、言行規律，是否足為同仁楷模。</td></tr>
+          <tr style="background:var(--gray)"><td><strong>總分</strong></td><td style="text-align:center;font-weight:700;color:var(--f)">100</td><td>含出勤紀錄（事假/病假/遲到/特休）另行記錄，不計入總分。</td></tr>
+        </table>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .25rem">分數級距</p>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">各項 15 分 · 品德 10 分</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">工作效率高，具卓越創意，能提前完成，足為同仁表率，主動帶領他人創造額外價值。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">各項 13 分 · 品德 8 分</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">表現明顯超出要求水準，可靠準時，持續學習改善，主動關心工作品質。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">各項 11 分 · 品德 7 分</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">工作不誤期，表現符合要求水準，稱職，尚能與人合作達成工作要求。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">各項 8 分 · 品德 5 分</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">勉強適任，需人督促方能完成，協調不善，有時不願接受分派工作或忽視主管建議。</div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-head" onclick="acc(this)">
+            <span class="acc-head-title">各項 5 分 · 品德 3 分</span>
+            <span class="acc-icon">+</span>
+          </div>
+          <div class="acc-body">效率低、時有差錯，需人督促仍無法如期完成，經勸導未改進者，需啟動工作責任協商會議。</div>
+        </div>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .4rem">總分級距（滿分 100 分）</p>
+        <table class="kv-table">
+          <tr style="background:var(--gray)">
+            <td style="font-weight:700;width:90px">總分</td>
+            <td style="font-weight:700;width:160px">整體評等</td>
+            <td style="font-weight:700">對應處理方向</td>
+          </tr>
+          <tr><td>90–100</td><td><strong style="color:var(--d)">整體傑出 O</strong><br><span style="font-size:11px;color:var(--muted);font-weight:400">Outstanding</span></td><td>公開肯定，討論晉升或薪資調整路徑，設計更高挑戰任務。</td></tr>
+          <tr><td>76–89</td><td><strong style="color:var(--d)">整體超乎期待 E</strong><br><span style="font-size:11px;color:var(--muted);font-weight:400">Exceeds Expectation</span></td><td>正向強化，說明距離 O 還差哪一步，製造具體成長動力。</td></tr>
+          <tr><td>61–75</td><td><strong style="color:var(--e)">整體及格 A</strong><br><span style="font-size:11px;color:var(--muted);font-weight:400">Acceptable</span></td><td>維持現況，點出可往 E 提升的具體方向，避免停滯感。</td></tr>
+          <tr><td>46–60</td><td><strong style="color:var(--c)">整體不佳 P</strong><br><span style="font-size:11px;color:var(--muted);font-weight:400">Poor</span></td><td>給予明確改善方向，下次考核前主管追蹤至少兩次。</td></tr>
+          <tr><td>33–45</td><td><strong style="color:var(--c)">整體糟糕 D</strong><br><span style="font-size:11px;color:var(--muted);font-weight:400">Dreadful</span></td><td>不合格者需與部門主管進行工作責任協商會議，視情況啟動人事程序。</td></tr>
+        </table>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .4rem">考核節奏與流程</p>
+        <ul class="step-list">
+          <li class="step-f"><div class="step-num">1</div><div class="step-body"><strong>每年一月、六月各考評一次</strong><p>上下半年各一次，讓員工有充足時間準備和改善。</p></div></li>
+          <li class="step-f"><div class="step-num">2</div><div class="step-body"><strong>主管評分 + 文字評語</strong><p>每個面向給分數，並附上具體說明——不能只給分數沒有依據。</p></div></li>
+          <li class="step-f"><div class="step-num">3</div><div class="step-body"><strong>總經理評語</strong><p>執行長層級針對整體表現與發展方向做最終評語，讓員工感受到組織最高層的關注。</p></div></li>
+          <li class="step-f"><div class="step-num">4</div><div class="step-body"><strong>考核面談</strong><p>結果不是直接發給員工看，而是透過一對一面談說明，結合 B 模組面談技術使用。</p></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="module-divider"></div>
+
+    <div class="module">
+      <div class="module-head">
+        <span class="module-num c-f">F6</span>
+        <span class="module-title">環境分析與供需管理</span>
+        <span class="module-en">SWOT &amp; CAPACITY MANAGEMENT</span>
+      </div>
+      <div class="module-body">
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:.4rem">SWOT 分析——年度計劃的起點</p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem">SWOT 不是填表格，是幫自己看清楚所在位置再決定往哪走。每年計劃書的第一步，先誠實面對現況。</p>
+        <table class="kv-table">
+          <tr><td>S 優勢 Strengths</td><td>我們已有的、競品難以複製的。例：品牌積累、師資年資、特色場地（攀岩/游泳）、家長信任度。</td></tr>
+          <tr><td>W 劣勢 Weaknesses</td><td>我們必須承認的限制。例：場地面積、尖峰時段超載、新進人員比例高、數位化不足。</td></tr>
+          <tr><td>O 機會 Opportunities</td><td>外部可以利用的趨勢。例：周邊校園合作、少子化帶動精品化需求、社區家庭新移入。</td></tr>
+          <tr><td>T 威脅 Threats</td><td>外部需要準備應對的。例：競品場館開業、法規修改、少子化長期市場萎縮。</td></tr>
+        </table>
+
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin:1rem 0 .4rem">供需管理——旺淡季產能調配</p>
+        <div class="compare">
+          <div class="compare-box compare-bad">
+            <div class="compare-label">淡季因應策略</div>
+            <p>降低固定成本比例（降排班）<br>開發新客群（樂齡/親子體驗）<br>差別取價（早鳥/平日優惠）<br>培訓期——人力用於升級能力</p>
+          </div>
+          <div class="compare-box compare-good">
+            <div class="compare-label">旺季因應策略</div>
+            <p>提前招募兼職補充人力<br>延長服務時段/預約制管控流量<br>互補服務組合（課程+票券+營隊）<br>集中資源在最高利潤的服務項目</p>
+          </div>
+        </div>
+        <div class="blockquote">旺季的錢要夠多，才能撐過淡季。淡季的花費要夠少，才能讓旺季的錢有意義。</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function tab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tabs button').forEach(b => {
+    b.className = '';
+  });
+  document.getElementById(id).classList.add('active');
+  if(btn) btn.className = btn.dataset.active;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function acc(head) {
+  const body = head.nextElementSibling;
+  const icon = head.querySelector('.acc-icon');
+  body.classList.toggle('open');
+  icon.classList.toggle('open');
+}
+</script>
+</body>
+</html>
