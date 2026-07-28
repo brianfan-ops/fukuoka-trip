@@ -55,7 +55,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 .sec-title.color-e{color:var(--e);}
 .sec-title.color-f{color:var(--f);}
 .sec-en{font-size:13px;color:var(--light);letter-spacing:.5px;margin-bottom:.5rem;}
-.sec-desc{font-size:14px;color:var(--muted);margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.sec-desc{font-size:14px;color:var(--muted);margin-bottom:1.25rem;}
 
 /* ── OVERVIEW GRID ── */
 .overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:2.5rem;}
@@ -82,8 +82,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 
 /* ── MODULE ITEM (numbered) ── */
 .module{margin-bottom:2.5rem;}
-.module-head{display:flex;align-items:baseline;gap:1rem;margin-bottom:.75rem;}
-.module-num{font-size:11px;font-weight:700;letter-spacing:2px;min-width:28px;}
+.module-head{display:flex;align-items:center;gap:1rem;margin-bottom:.75rem;}
+.module-num{font-size:22px;font-weight:800;letter-spacing:-0.5px;min-width:40px;line-height:1;}
 .module-num.c-a{color:var(--a);}
 .module-num.c-b{color:var(--b);}
 .module-num.c-c{color:var(--c);}
@@ -92,8 +92,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 .module-num.c-f{color:var(--f);}
 .module-title{font-size:16px;font-weight:600;}
 .module-en{font-size:11px;color:var(--light);letter-spacing:.5px;margin-left:auto;}
-.module-body{padding-left:42px;font-size:14px;color:var(--muted);line-height:1.8;}
+.module-body{padding-left:56px;font-size:14px;color:var(--muted);line-height:1.8;}
 .module-divider{height:1px;background:var(--border);margin-bottom:2rem;}
+
+/* ── LAYER PROGRESS ── */
+.layer-progress{display:flex;align-items:center;gap:6px;margin-bottom:1.75rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.layer-pip{width:28px;height:4px;border-radius:2px;background:var(--border);}
+.layer-pip.pip-a{background:var(--a);}
+.layer-pip.pip-b{background:var(--b);}
+.layer-pip.pip-c{background:var(--c);}
+.layer-pip.pip-d{background:var(--d);}
+.layer-pip.pip-e{background:var(--e);}
+.layer-pip.pip-f{background:var(--f);}
+.layer-label{font-size:11px;font-weight:600;letter-spacing:1px;margin-left:4px;}
+.layer-label.c-a{color:var(--a);}
+.layer-label.c-b{color:var(--b);}
+.layer-label.c-c{color:var(--c);}
+.layer-label.c-d{color:var(--d);}
+.layer-label.c-e{color:var(--e);}
+.layer-label.c-f{color:var(--f);}
+
+/* ── OVERVIEW CARDS (enhanced) ── */
+.ov-icon{font-size:28px;margin-bottom:.5rem;}
 
 /* ── KV TABLE (key-value) ── */
 .kv-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:.5rem;}
@@ -237,31 +257,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 
     <div class="overview-grid">
       <div class="ov-card" onclick="tab('a',document.querySelectorAll('.nav-tabs button')[1])">
+        <div class="ov-icon">🧠</div>
         <div class="ov-num c-a">A · PHILOSOPHY</div>
         <div class="ov-title">管理哲學與內功</div>
         <div class="ov-desc">帶領 vs 引導、三層邊界、70% 提案、成長邏輯、第十人法則</div>
       </div>
       <div class="ov-card" onclick="tab('b',document.querySelectorAll('.nav-tabs button')[2])">
+        <div class="ov-icon">💬</div>
         <div class="ov-num c-b">B · INTERVIEW</div>
         <div class="ov-title">一對一面談系統</div>
         <div class="ov-desc">四問題閉環、真誠對話技術、五種典型情境應對</div>
       </div>
       <div class="ov-card" onclick="tab('c',document.querySelectorAll('.nav-tabs button')[3])">
+        <div class="ov-icon">🎯</div>
         <div class="ov-num c-c">C · ROLES</div>
         <div class="ov-title">六角色功能框架</div>
         <div class="ov-desc">功能性、流動的；角色是功能不是頭銜</div>
       </div>
       <div class="ov-card" onclick="tab('d',document.querySelectorAll('.nav-tabs button')[4])">
+        <div class="ov-icon">📚</div>
         <div class="ov-num c-d">D · KNOWLEDGE</div>
         <div class="ov-title">六大硬知識模組</div>
         <div class="ov-desc">行銷、財務、服務流程、顧客關係、團隊、開發</div>
       </div>
       <div class="ov-card" onclick="tab('e',document.querySelectorAll('.nav-tabs button')[5])">
+        <div class="ov-icon">🔍</div>
         <div class="ov-num c-e">E · THINKING</div>
         <div class="ov-title">組織性思維</div>
         <div class="ov-desc">五層診斷框架、七問清單、提案能力</div>
       </div>
       <div class="ov-card" onclick="tab('f',document.querySelectorAll('.nav-tabs button')[6])">
+        <div class="ov-icon">📅</div>
         <div class="ov-num c-f">F · OPERATIONS</div>
         <div class="ov-title">年度營運管理規劃</div>
         <div class="ov-desc">年度排程、財產管理、財務預算、人力組織、考核制度、環境分析</div>
@@ -292,6 +318,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
     <div class="sec-title color-a">管理哲學與內功</div>
     <div class="sec-en">MANAGEMENT PHILOSOPHY &amp; INNER MASTERY</div>
     <div class="sec-desc">核心信念，不因情境改變。帶人技術建立在這些信念之上，信念不穩則技術無根。</div>
+    <div class="layer-progress">
+      <div class="layer-pip pip-a"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div>
+      <span class="layer-label c-a">Layer A · 1 / 6</span>
+    </div>
     <div class="blockquote" style="margin-bottom:2rem;font-size:14px;line-height:1.9;border-left-color:var(--a)">「解決問題的能力並不是找出問題來解決，而是透過各種方法來推動事情的發展。如果你的考量總是否定的，很可能你看到的都是問題，事情也就很難發展了。」<br><span style="font-size:12px;color:var(--light);margin-top:.4rem;display:block">— 《PPAPER 雜誌》創辦人暨總編輯 胡至宜</span></div>
 
     <div class="module">
@@ -491,6 +521,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
     <div class="sec-title color-b">一對一面談系統</div>
     <div class="sec-en">ONE-ON-ONE INTERVIEW SYSTEM</div>
     <div class="sec-desc">每年至少一次，路徑自適應。四個問題依序建立信任，前三問的安全感決定第四問是否說真話。</div>
+    <div class="layer-progress">
+      <div class="layer-pip"></div><div class="layer-pip pip-b"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div>
+      <span class="layer-label c-b">Layer B · 2 / 6</span>
+    </div>
     <div class="blockquote" style="margin-bottom:2rem;font-size:14px;line-height:1.9;border-left-color:var(--b)">「敘述帶來療癒。」<br><span style="font-size:12px;color:var(--light);margin-top:.4rem;display:block">— 西格蒙德・佛洛伊德 Sigmund Freud</span></div>
     <p style="font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:2rem">成人世界習慣以效率解決問題，卻很少真正聆聽或同理感受。懂得發問，才能帶來對話；有了對話，才有敘述；從敘述中，人回到自己的故事、情境與時空——在那個當下，改變才有可能發生，決定才有可能被做出。</p>
 
@@ -715,6 +749,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
     <div class="sec-title color-c">六角色功能框架</div>
     <div class="sec-en">SIX FUNCTIONAL ROLES</div>
     <div class="sec-desc">功能性、流動的，同一個人可同時擔任多角色。角色是功能，不是頭銜——不是有職位才能擔任，是真正在執行這個功能才算。</div>
+    <div class="layer-progress">
+      <div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip pip-c"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div>
+      <span class="layer-label c-c">Layer C · 3 / 6</span>
+    </div>
 
     <div class="role-grid">
       <div class="role-card fixed-role">
@@ -758,6 +796,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
     <div class="sec-title color-d">六大硬知識模組</div>
     <div class="sec-en">SIX KNOWLEDGE MODULES</div>
     <div class="sec-desc">招式課，搭配內功使用。六個模組是同一個問題的六個角度——財務告訴你問題在哪裡，其他模組告訴你怎麼解決。</div>
+    <div class="layer-progress">
+      <div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip pip-d"></div><div class="layer-pip"></div><div class="layer-pip"></div>
+      <span class="layer-label c-d">Layer D · 4 / 6</span>
+    </div>
 
     <div class="module">
       <div class="module-head">
@@ -1072,6 +1114,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
     <div class="sec-title color-e">組織性思維</div>
     <div class="sec-en">ORGANIZATIONAL THINKING FRAMEWORK</div>
     <div class="sec-desc">看見問題如何發生，再推動解法。主管最大的問題是只能給單點答案，不能給組織性規劃。解法永遠放最後。</div>
+    <div class="layer-progress">
+      <div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip pip-e"></div><div class="layer-pip"></div>
+      <span class="layer-label c-e">Layer E · 5 / 6</span>
+    </div>
 
     <div class="module">
       <div class="module-head">
@@ -1137,6 +1183,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
     <div class="sec-title color-f">年度營運管理計劃思維</div>
     <div class="sec-en">ANNUAL OPERATIONS PLANNING</div>
     <div class="sec-desc">從年度視角規劃場館運營，讓每一個執行動作都有全局依據。年度思維是 Constructor 和 Executor 的必備視角。</div>
+    <div class="layer-progress">
+      <div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip"></div><div class="layer-pip pip-f"></div>
+      <span class="layer-label c-f">Layer F · 6 / 6</span>
+    </div>
 
     <div class="module">
       <div class="module-head">
