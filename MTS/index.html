@@ -22,7 +22,7 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;background:#fff;color:var(--text);font-size:15px;line-height:1.7;}
 
 /* ── HEADER ── */
-.site-header{background:#fff;border-bottom:1px solid var(--border);padding:2rem 0 0;}
+.site-header{background:#fff;border-bottom:1px solid var(--border);padding:2rem 0 0;position:sticky;top:0;z-index:100;}
 .header-inner{max-width:900px;margin:0 auto;padding:0 1.5rem;}
 .site-title{font-size:26px;font-weight:600;letter-spacing:-.5px;}
 .site-en{font-size:13px;color:var(--muted);margin-top:2px;letter-spacing:.5px;}
@@ -113,7 +113,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 .layer-label.c-f{color:var(--f);}
 
 /* ── MODULE NAV ── */
-.module-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.5rem;}
+.module-nav{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0;margin-bottom:1.5rem;position:sticky;top:var(--header-h,110px);z-index:90;background:var(--bg);}
 .module-nav button{font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;border:none;cursor:pointer;transition:opacity .15s;}
 #a .module-nav button{background:var(--a);color:#fff;}
 #b .module-nav button{background:var(--b);color:#fff;}
@@ -1583,10 +1583,15 @@ function acc(head) {
   body.classList.toggle('open');
   icon.classList.toggle('open');
 }
-window.addEventListener('scroll', () => {
-  document.getElementById('back-top').classList.toggle('show', window.scrollY > 300);
+document.addEventListener('DOMContentLoaded', () => {
+  const hdr = document.querySelector('.site-header');
+  const setH = () => document.documentElement.style.setProperty('--header-h', hdr.offsetHeight + 'px');
+  setH();
+  window.addEventListener('resize', setH);
+  const bt = document.getElementById('back-top');
+  window.addEventListener('scroll', () => bt.classList.toggle('show', window.scrollY > 300));
+  bt.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 });
-document.getElementById('back-top').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 </script>
 <button id="back-top" title="返回頂部">↑</button>
 </body>
