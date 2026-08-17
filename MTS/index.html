@@ -1583,11 +1583,10 @@ function acc(head) {
   body.classList.toggle('open');
   icon.classList.toggle('open');
 }
-const _bt = document.getElementById('back-top');
 window.addEventListener('scroll', () => {
-  _bt.classList.toggle('show', window.scrollY > 300);
+  document.getElementById('back-top').classList.toggle('show', window.scrollY > 300);
 });
-_bt.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+document.getElementById('back-top').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 </script>
 <button id="back-top" title="返回頂部">↑</button>
 </body>
