@@ -114,12 +114,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 
 /* ── MODULE NAV ── */
 .module-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.5rem;}
-.module-nav button{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
-#a .module-nav button:hover{border-color:var(--a);color:var(--a);background:color-mix(in srgb,var(--a) 8%,transparent);}
-#b .module-nav button:hover{border-color:var(--b);color:var(--b);background:color-mix(in srgb,var(--b) 8%,transparent);}
-#d .module-nav button:hover{border-color:var(--d);color:var(--d);background:color-mix(in srgb,var(--d) 8%,transparent);}
-#e .module-nav button:hover{border-color:var(--e);color:var(--e);background:color-mix(in srgb,var(--e) 8%,transparent);}
-#f .module-nav button:hover{border-color:var(--f);color:var(--f);background:color-mix(in srgb,var(--f) 8%,transparent);}
+.module-nav button{font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;border:none;cursor:pointer;transition:opacity .15s;}
+#a .module-nav button{background:var(--a);color:#fff;}
+#b .module-nav button{background:var(--b);color:#fff;}
+#d .module-nav button{background:var(--d);color:#fff;}
+#e .module-nav button{background:var(--e);color:#fff;}
+#f .module-nav button{background:var(--f);color:#fff;}
+.module-nav button:hover{opacity:.8;}
+
+/* ── BACK TO TOP ── */
+#back-top{position:fixed;bottom:24px;right:20px;width:40px;height:40px;border-radius:50%;border:none;background:var(--text);color:var(--bg);font-size:18px;line-height:40px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s;z-index:999;}
+#back-top.show{opacity:1;pointer-events:auto;}
 
 /* ── OVERVIEW CARDS (enhanced) ── */
 .ov-icon{font-size:28px;margin-bottom:.5rem;}
@@ -1578,6 +1583,12 @@ function acc(head) {
   body.classList.toggle('open');
   icon.classList.toggle('open');
 }
+const _bt = document.getElementById('back-top');
+window.addEventListener('scroll', () => {
+  _bt.classList.toggle('show', window.scrollY > 300);
+});
+_bt.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 </script>
+<button id="back-top" title="返回頂部">↑</button>
 </body>
 </html>
