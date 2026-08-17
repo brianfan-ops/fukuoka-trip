@@ -1566,7 +1566,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-se
 function jump(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  const top = el.getBoundingClientRect().top + window.scrollY - 160;
+  const hdr = document.querySelector('.site-header');
+  const nav = el.closest('.section')?.querySelector('.module-nav');
+  const offset = (hdr ? hdr.offsetHeight : 0) + (nav ? nav.offsetHeight : 0) + 12;
+  const top = el.getBoundingClientRect().top + window.scrollY - offset;
   window.scrollTo({top, behavior:'smooth'});
 }
 function tab(id, btn) {
