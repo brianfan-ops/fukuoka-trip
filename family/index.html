@@ -111,14 +111,27 @@
   .modes button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
   @media screen { [data-mode="wd"] .we, [data-mode="we"] .wd { display:none !important; } }
 
-  /* ── 出門卡 ── */
-  .leave { border-left:4px solid var(--alert); margin-bottom:20px; }
+  /* ── 成員 ── */
+  .members { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .member { display:inline-flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--line);
+            border-radius:999px; padding:5px 14px 5px 6px; font-size:.82rem; color:var(--ink-2); box-shadow:var(--shadow); }
+  .member i { font-style:normal; font-weight:700; font-size:.72rem; color:var(--ink); background:var(--surface-2);
+              border-radius:999px; padding:2px 8px; }
+  .member b { color:var(--ink); font-weight:700; }
+
+  /* ── 平日定點卡 ── */
+  .anchors { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-bottom:20px; }
+  .leave { border-left:4px solid var(--alert); }
   .leave .top { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
   .leave .cd { font-size:.8rem; font-weight:700; color:var(--alert); background:var(--alert-soft); border-radius:999px; padding:2px 11px; }
   .leave ul { list-style:none; margin:10px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:2px 14px; }
   .leave li label { display:flex; gap:9px; align-items:center; padding:5px 0; font-size:.88rem; cursor:pointer; }
   .leave input { width:16px; height:16px; margin:0; accent-color:var(--accent); flex:none; }
   .leave input:checked + span { color:var(--ink-3); text-decoration:line-through; text-decoration-color:var(--line-2); }
+  .chain { list-style:none; margin:10px 0 0; padding:0; display:flex; flex-direction:column; gap:3px; font-size:.86rem; color:var(--ink-2); }
+  .chain b { color:var(--ink); margin-right:9px; }
+  .chain li.late { color:var(--alert); }
+  .chain li.late b { color:var(--alert); }
 
   /* ── timeline ── */
   .tl { display:flex; flex-direction:column; gap:8px; }
@@ -225,7 +238,11 @@
   <header class="head">
     <div class="eyebrow">家庭作息 · 草稿 v2</div>
     <h1>家的一日節奏</h1>
-    <p class="lede">兩個小孩，兩種節奏：<b>平日</b>哥哥 08:30 前出門上學，白天家裡是妹妹的時間；<b>週末</b>四個人一起。原表只填了星期一，固定的骨架照原表，<b>虛線</b>是還沒決定的空白，<b>紅色</b>是等你確認才能往下排的事。</p>
+    <p class="lede">兩個小孩，兩種節奏：<b>平日</b>哥哥 08:30 前出門、17:50 接回，白天九小時家裡是妹妹的時間；<b>週末</b>四個人一起。原表只填了星期一，固定的骨架照原表，<b>虛線</b>是還沒決定的空白，<b>紅色</b>是時間卡得最緊的地方。</p>
+    <div class="members">
+      <span class="member"><i>哥</i><b>哥哥</b> 2023.5.3 · <span id="age-bro">—</span> · 上學</span>
+      <span class="member"><i>妹</i><b>妹妹</b> 2025.1.15 · <span id="age-sis">—</span> · 在家</span>
+    </div>
     <div class="stamp"><span class="dot"></span><span id="nowline">今天 · <b>—</b></span></div>
 
     <div class="arc" aria-hidden="true">
@@ -264,14 +281,30 @@
       <button type="button" id="m-we" aria-pressed="false">週末</button>
     </div>
 
-    <div class="card leave wd">
-      <div class="top">
-        <h3>08:30 出門前</h3>
-        <span class="cd" id="countdown" hidden></span>
+    <div class="anchors wd">
+      <div class="card leave">
+        <div class="top">
+          <h3>08:30 出門</h3>
+          <span class="cd" id="cd-am" hidden></span>
+        </div>
+        <p>早餐在學校吃，所以在家只有「刷牙、換衣服、出門」三件事，但要同時處理兩個小孩。目標訂 <b class="mono">08:20</b>，留十分鐘給突發狀況；前一晚備好書包和衣服，早上只剩穿上、帶走。</p>
+        <ul id="leavelist"></ul>
+        <p class="save-note">勾選每天自動清空。</p>
       </div>
-      <p>07:30 起床到出門只有一小時，而且要同時處理兩個小孩。建議把目標訂在 <b class="mono">08:20</b>，留十分鐘給突發狀況。前一晚就把書包和衣服備好，早上只剩「穿上、帶走」。</p>
-      <ul id="leavelist"></ul>
-      <p class="save-note">勾選每天自動清空。</p>
+      <div class="card leave">
+        <div class="top">
+          <h3>17:50 接放學</h3>
+          <span class="cd" id="cd-pm" hidden></span>
+        </div>
+        <p>哥哥在校九小時，接回來就直接接晚餐。這條動線會吃掉晚餐時段的前半：</p>
+        <ol class="chain">
+          <li><b class="mono">17:30</b> 出發（晚餐先備到「回來就能上桌」）</li>
+          <li><b class="mono">17:50</b> 接到哥哥</li>
+          <li><b class="mono">18:05</b> 到家、洗手</li>
+          <li class="late"><b class="mono">18:15</b> 開飯 — 比原表晚 45 分，只剩 75 分鐘到洗澡</li>
+        </ol>
+        <p style="margin-top:8px;">回程順手帶回：書包、餐袋、聯絡簿 → 直接進洗衣籃／流理台。</p>
+      </div>
     </div>
 
     <div class="tl">
@@ -279,11 +312,11 @@
         <div class="t mono">07:30<small>08:30</small></div>
         <div class="blk">
           <h3>起床盥洗<span class="now-chip">現在</span></h3>
-          <p class="wd">刷牙、喝奶、換衣服。哥哥優先——制服、書包、水壺備好，目標 08:20 出門，最晚 08:30。妹妹這段時間跟著一起弄，不用趕。</p>
+          <p class="wd">刷牙、換衣服、出門。哥哥的早餐在學校吃，家裡不用開伙；妹妹跟著一起弄，喝奶可以留到 08:30 出門吃早餐時。目標 08:20 出門，最晚 08:30。</p>
           <p class="we">刷牙、喝奶、換衣服。兩個小孩一起慢慢來，不趕時間。</p>
           <div class="who wd"><span class="p"><i>哥</i>在家 · 準備出門</span><span class="p"><i>妹</i>在家</span></div>
           <div class="who we"><span class="p"><i>兄妹</i>都在家</span></div>
-          <span class="chip fix wd">平日最緊的一小時</span><span class="chip ask wd">哥哥早餐在家吃、路上吃，還是學校吃？</span><span class="chip fix we">固定</span>
+          <span class="chip fix wd">平日最緊的一小時</span><span class="chip todo wd">學校早餐供應到幾點？出門時間要對得上</span><span class="chip fix we">固定</span>
         </div>
       </div>
 
@@ -291,7 +324,7 @@
         <div class="t mono">08:30<small>09:30</small></div>
         <div class="blk">
           <h3>出門早餐<span class="now-chip">現在</span></h3>
-          <p class="wd">送哥哥到學校，接著帶妹妹吃早餐。回程順路的早餐店最省事。</p>
+          <p class="wd">送哥哥到學校（他在校吃早餐），接著帶妹妹吃。回程順路的早餐店最省事。</p>
           <p class="we">一家人出門吃早餐，可以吃久一點。</p>
           <div class="who wd"><span class="p away"><i>哥</i>在學校</span><span class="p"><i>妹</i>外出 · 早餐</span></div>
           <div class="who we"><span class="p"><i>兄妹</i>一起外出</span></div>
@@ -303,7 +336,7 @@
         <div class="t mono">09:30<small>10:30</small></div>
         <div class="blk">
           <h3>晨間活動<span class="now-chip">現在</span></h3>
-          <p class="wd">妹妹一個人的黃金時段，也是她一天最有電的時候：公園、親子館、圖書館、散步採買擇一。</p>
+          <p class="wd">妹妹一個人的黃金時段，也是她一天最有電的時候：公園、親子館、圖書館、散步採買擇一。哥哥要到 18:05 才回家，白天九小時都是她的。</p>
           <p class="we">兩個小孩一起，可以排跑遠一點、需要兩個大人的行程。</p>
           <div class="who wd"><span class="p away"><i>哥</i>在學校</span><span class="p"><i>妹</i>活動中</span></div>
           <div class="who we"><span class="p"><i>兄妹</i>一起</span></div>
@@ -351,11 +384,11 @@
         <div class="t mono">14:30<small>17:30</small></div>
         <div class="blk">
           <h3>空白 · 午後三小時<span class="now-chip">現在</span></h3>
-          <p class="wd">整份表最大的空白（原表 14:30、15:30、16:30 三格都沒填），而且<b>哥哥放學就落在這一段</b>。前半是妹妹睡醒後的時間，後半變成兩個小孩一起——放學幾點、誰去接，決定了這三小時要怎麼切。</p>
+          <p class="wd">整份表最大的空白（原表 14:30、15:30、16:30 三格都沒填），平日<b>整段都只有妹妹</b>。前半是她睡醒後最有精神的時候，後半要一邊顧她一邊把晚餐備好——因為 <b>17:30 就得出發接哥哥</b>，回來沒有時間再煮。</p>
           <p class="we">三小時空白，四個人都在。適合排一個主行程：戶外放電、朋友家、市場採買。</p>
           <div class="who wd"><span class="p away"><i>哥</i>在學校 → 放學回家</span><span class="p"><i>妹</i>在家</span></div>
           <div class="who we"><span class="p"><i>兄妹</i>一起</span></div>
-          <span class="chip ask wd">放學時間、誰接？待確認</span><span class="chip todo">待決定 · 最優先</span>
+          <span class="chip ask wd">17:30 出發 · 晚餐要先備好</span><span class="chip todo">待決定 · 最優先</span>
         </div>
       </div>
 
@@ -363,9 +396,11 @@
         <div class="t mono">17:30<small>19:30</small></div>
         <div class="blk">
           <h3>晚餐時間<span class="now-chip">現在</span></h3>
-          <p>兩小時，含準備、吃飯、收拾。從這裡開始每天都一樣，四個人都在。</p>
-          <div class="who"><span class="p"><i>全家</i>都在家</span></div>
-          <span class="chip fix">固定</span>
+          <p class="wd">前 35 分鐘其實在路上：17:30 出發 → 17:50 接到哥哥 → 18:05 到家，實際開飯約 <b>18:15</b>，到洗澡只剩 75 分鐘。所以晚餐要在 16:30–17:30 之間就備好，回來只剩加熱和上菜。</p>
+          <p class="we">兩小時，含準備、吃飯、收拾。四個人都在，可以吃慢一點。</p>
+          <div class="who wd"><span class="p away"><i>哥</i>17:50 接到 · 18:05 到家</span><span class="p"><i>妹</i>同行或留家</span></div>
+          <div class="who we"><span class="p"><i>全家</i>都在家</span></div>
+          <span class="chip fix">固定</span><span class="chip ask wd">誰去接？妹妹同行還是留家？</span>
         </div>
       </div>
 
@@ -419,7 +454,7 @@
   <!-- 一週總覽 -->
   <section id="week">
     <div class="sec-head"><h2>一週總覽</h2><span class="num mono">MON — SUN</span></div>
-    <p class="sec-note">一天裡有十個時段七天都一樣，那些壓成一整條「七天相同」。真正要排的是哥哥的上下學時間，加上四條白天時段（平日＝妹妹的安排，週末＝兩個小孩一起）。空格可以直接點進去打字。</p>
+    <p class="sec-note">一天裡有十個時段七天都一樣，那些壓成一整條「七天相同」。平日兩個定點已經確定（08:30 出門、17:50 接），真正要排的是中間四條白天時段：平日＝妹妹的安排，週末＝兩個小孩一起。空格可以直接點進去打字。</p>
 
     <div class="scroll">
       <table>
@@ -434,11 +469,11 @@
           <tr><td class="time mono">07:30–08:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>起床盥洗</b>（平日含送哥哥出門）</td></tr>
           <tr class="bro-row">
             <td class="time">哥哥 · 上學</td>
-            <td><div class="cell" contenteditable="true" data-key="s-1" data-ph="08:30 出門／放學 __:__"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="s-2" data-ph="08:30 出門／放學 __:__"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="s-3" data-ph="08:30 出門／放學 __:__"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="s-4" data-ph="08:30 出門／放學 __:__"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="s-5" data-ph="08:30 出門／放學 __:__"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="s-1">08:30 出門 · 17:50 接</div></td>
+            <td><div class="cell" contenteditable="true" data-key="s-2">08:30 出門 · 17:50 接</div></td>
+            <td><div class="cell" contenteditable="true" data-key="s-3">08:30 出門 · 17:50 接</div></td>
+            <td><div class="cell" contenteditable="true" data-key="s-4">08:30 出門 · 17:50 接</div></td>
+            <td><div class="cell" contenteditable="true" data-key="s-5">08:30 出門 · 17:50 接</div></td>
             <td>在家</td><td>在家</td>
           </tr>
           <tr><td class="time mono">08:30–09:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>出門早餐</b>（平日：送學後帶妹妹吃）</td></tr>
@@ -474,16 +509,16 @@
             <td><div class="cell" contenteditable="true" data-key="w-c-0" data-ph="兩人 · 待定"></div></td>
           </tr>
           <tr>
-            <td class="time mono">16:30–17:30<br><span>放學後</span></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-1" data-ph="兩人 · 待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-2" data-ph="兩人 · 待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-3" data-ph="兩人 · 待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-4" data-ph="兩人 · 待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-5" data-ph="兩人 · 待定"></div></td>
+            <td class="time mono">16:30–17:30<br><span>備晚餐 · 17:30 出發</span></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-1" data-ph="妹妹＋備晚餐"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-2" data-ph="妹妹＋備晚餐"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-3" data-ph="妹妹＋備晚餐"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-4" data-ph="妹妹＋備晚餐"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-5" data-ph="妹妹＋備晚餐"></div></td>
             <td><div class="cell" contenteditable="true" data-key="w-d-6" data-ph="兩人 · 待定"></div></td>
             <td><div class="cell" contenteditable="true" data-key="w-d-0" data-ph="兩人 · 待定"></div></td>
           </tr>
-          <tr><td class="time mono">17:30–21:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>晚餐</b> → <b>洗澡</b> → <b>睡前故事</b>（四個人都在）</td></tr>
+          <tr><td class="time mono">17:30–21:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>晚餐</b> → <b>洗澡</b> → <b>睡前故事</b>（平日 18:15 才開飯）</td></tr>
           <tr><td class="time mono">21:30–00:00</td><td class="fixed-cell" colspan="7">七天相同 · <b>家事時間</b>（平日必洗哥哥的上學服）→ <b>爸媽時間</b></td></tr>
         </tbody>
       </table>
@@ -494,27 +529,27 @@
   <!-- 妹妹的活動 -->
   <section id="sister">
     <div class="sec-head"><h2>妹妹的在家活動</h2><span class="num mono">平日 09:30 — 17:30</span></div>
-    <p class="sec-note">平日哥哥出門後，白天有四個時段是妹妹的。不用每格都排滿——<b>一天挑一到兩個帶著做，其餘讓她自己玩</b>，大人才有餘裕。下面是可以塞進各時段的類型，不是課表。</p>
+    <p class="sec-note">平日哥哥出門到接回來中間有九個小時，白天四個時段都是妹妹的。她現在 <b id="sis-age-inline">—</b>：走得穩、愛模仿、正在語言爆發期，但一次專注大概 10–15 分鐘。所以<b>一天挑一到兩個帶著做，其餘讓她自己玩</b>就夠了——下面是可以塞進各時段的類型，不是課表。</p>
 
     <div class="acts">
-      <div class="act"><div class="slot mono">09:30–10:30</div><h3>出門放電</h3><p>公園、親子館、圖書館、社區走走。一天最有電的時段先用掉，午睡比較好睡。</p></div>
-      <div class="act"><div class="slot mono">10:30–11:30</div><h3>桌邊活動</h3><p>黏土、蠟筆、貼紙、水彩。在家、好收拾，收完剛好吃午餐。</p></div>
-      <div class="act"><div class="slot mono">10:30–11:30 或睡前</div><h3>繪本共讀</h3><p>安靜下來的訊號。可以和晚上的睡前故事共用同一批書。</p></div>
-      <div class="act"><div class="slot mono">14:30–15:30</div><h3>音樂律動</h3><p>睡醒後的暖機時段，唱跳、樂器、追泡泡，不用出門也能動。</p></div>
-      <div class="act"><div class="slot mono">15:30–16:30</div><h3>家事參與</h3><p>收玩具、擦桌子、把髒衣服丟進洗衣籃、幫忙分襪子。她覺得在玩，晚上的家事時間會輕鬆一點。</p></div>
-      <div class="act"><div class="slot mono">16:30–17:30</div><h3>散步採買</h3><p>買晚餐要用的東西，如果放學時間對得上，順路接哥哥。</p></div>
+      <div class="act"><div class="slot mono">09:30–10:30</div><h3>出門放電</h3><p>公園走跳、溜滑梯、追鴿子、社區散步。這個月齡最需要的是走路和爬上爬下，上午先用掉電，午睡好睡。</p></div>
+      <div class="act"><div class="slot mono">10:30–11:30</div><h3>桌邊活動</h3><p>堆疊積木、貼紙、大張紙塗鴉、把東西放進罐子再倒出來。準備兩三種輪流換，每種撐 10 分鐘就算成功。</p></div>
+      <div class="act"><div class="slot mono">10:30–11:30 或睡前</div><h3>繪本共讀</h3><p>指認命名為主（這是狗、這是球），她會跟著說。語言爆發期最有效的投資，也和晚上的睡前故事共用同一批書。</p></div>
+      <div class="act"><div class="slot mono">14:30–15:30</div><h3>音樂律動</h3><p>睡醒後的暖機：唱跳、搖鈴、追泡泡。剛睡醒不出門，先在家動一動。</p></div>
+      <div class="act"><div class="slot mono">15:30–16:30</div><h3>模仿與家事參與</h3><p>擦桌子、把髒衣服丟進洗衣籃、幫忙洗菜玩水、分襪子。她最愛模仿大人的年紀，順手訓練，晚上的家事時間也輕鬆一點。</p></div>
+      <div class="act"><div class="slot mono">16:30–17:30</div><h3>備晚餐時的陪玩</h3><p>這一格大人要備晚餐，給她固定的一套「廚房旁玩具」（鍋碗、豆子罐、貼紙書），或直接推車出門買菜。17:30 準時出發接哥哥。</p></div>
     </div>
 
     <div class="grid2">
       <div class="card"><h3>要不要排主題日？</h3><p>例如週一美勞、週二音樂、週三圖書館、週四公園、週五採買。固定下來大人不用每天想，但也少了彈性——這題留到下週討論。</p></div>
-      <div class="card"><h3>還缺一個資訊</h3><p>妹妹幾歲、還睡不睡上午的小覺，會影響上面的強度與時段長度。確認後再調。</p></div>
+      <div class="card"><h3>午睡與月齡</h3><p>1 歲 7 個月通常一天只睡一覺，12:30–14:30 這一段剛好。如果上午十點左右她開始鬧睏，代表早上的活動可以再往前挪。過幾個月要再回頭看一次這一節。</p></div>
     </div>
   </section>
 
   <!-- 家事與洗衣 -->
   <section id="chores">
     <div class="sec-head"><h2>家事與洗衣</h2><span class="num mono">21:30 — 23:00</span></div>
-    <p class="sec-note">原則：<b>今晚洗的，是明天要穿、要用的東西。</b>哥哥開始上學之後多了一條硬規則——<b>週日到週四晚上，隔天的上學服一定要洗</b>，其他類別排在它後面輪。下面是草案，不合用就直接改。</p>
+    <p class="sec-note">原則：<b>今晚洗的，是明天要穿、要用的東西。</b>哥哥上學之後多了一條硬規則——<b>週日到週四晚上，隔天的上學服和餐袋一定要洗</b>，其他類別排在它後面輪。下面是草案，不合用就直接改。</p>
 
     <div class="card tonight">
       <h3>今晚要洗什麼</h3>
@@ -548,7 +583,7 @@
   <!-- 下週討論 -->
   <section id="talk">
     <div class="sec-head"><h2>下週行程討論</h2><span class="num mono">SUN 23:00</span></div>
-    <p class="sec-note">固定在星期日的爸媽時間談，抓 15 分鐘。<b>紅字那兩題先解決</b>——其他安排都卡在它們後面。勾完的項目就可以寫進一週總覽。</p>
+    <p class="sec-note">固定在星期日的爸媽時間談，抓 15 分鐘。<b>紅字那兩題先解決</b>——晚餐那一格已經被接送壓縮到 75 分鐘，其他都排在它後面。勾完的項目就可以寫進一週總覽。</p>
 
     <div class="card">
       <ul class="todo" id="agenda"></ul>
@@ -572,35 +607,48 @@
   "use strict";
 
   var DOW = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
-  var LEAVE_AT = 510; /* 08:30 */
+  var LEAVE_AT = 510;   /* 08:30 出門 */
+  var PICKUP_GO = 1050; /* 17:30 出發 */
+
+  /* ── 成員 ── */
+  var KIDS = [["age-bro", "2023-05-03"], ["age-sis", "2025-01-15"]];
 
   /* ── 出門前清單（每天自動清空） ── */
-  var LEAVE = ["聯絡簿／作業", "書包", "水壺", "外套", "餐袋／點心", "妹妹的隨行包"];
+  var LEAVE = ["聯絡簿", "書包", "水壺", "餐袋／餐具", "外套", "妹妹的隨行包"];
 
   /* ── 洗衣輪值草案：必洗（隔天要用）＋當晚輪值 ── */
   var LAUNDRY = [
-    { d:0, must:"哥哥的上學服（週一要穿）", also:"厚重衣物、外套、包巾", floor:"清冰箱、倒垃圾、盤點下週衣物" },
-    { d:1, must:"哥哥的上學服", also:"小孩衣物（深色）、圍兜", floor:"吸地（客廳＋房間）" },
-    { d:2, must:"哥哥的上學服", also:"大人衣物（淺色、內著）", floor:"拖地（客廳）" },
-    { d:3, must:"哥哥的上學服", also:"毛巾、擦手巾、口水巾", floor:"吸地（客廳＋房間）" },
-    { d:4, must:"哥哥的上學服（週五最後一天）", also:"小孩衣物（淺色）、睡衣", floor:"拖地（房間）" },
+    { d:0, must:"哥哥的上學服＋餐袋（週一要用）", also:"厚重衣物、外套、包巾", floor:"清冰箱、倒垃圾、盤點下週衣物" },
+    { d:1, must:"哥哥的上學服＋餐袋", also:"小孩衣物（深色）、圍兜", floor:"吸地（客廳＋房間）" },
+    { d:2, must:"哥哥的上學服＋餐袋", also:"大人衣物（淺色、內著）", floor:"拖地（客廳）" },
+    { d:3, must:"哥哥的上學服＋餐袋", also:"毛巾、擦手巾、口水巾", floor:"吸地（客廳＋房間）" },
+    { d:4, must:"哥哥的上學服＋餐袋（週五最後一天）", also:"小孩衣物（淺色）、睡衣", floor:"拖地（房間）" },
     { d:5, must:"明天不上學 · 沒有必洗", also:"大人衣物（深色）、外出服、書包與餐袋", floor:"吸地＋浴室" },
     { d:6, must:"明天不上學 · 沒有必洗", also:"床單、枕套、被套", floor:"廚房、浴室大掃" }
   ];
 
   /* ── 下週討論清單，前兩題是卡住其他安排的 ── */
   var AGENDA = [
-    ["哥哥幾點放學？誰去接？", "其他安排都卡在這題——放學時間決定午後三小時怎麼切", true],
-    ["平日早上的分工：誰負責哥哥、誰顧妹妹？", "目標 08:20 出門，最晚 08:30", true],
-    ["哥哥的早餐在家吃、路上吃，還是學校吃？", "會影響 07:30–08:30 塞不塞得下", false],
-    ["放學到晚餐之間（約 16:30–17:30）做什麼？", "自由玩／戶外／功課，先定一個預設值", false],
+    ["誰去接哥哥？妹妹同行還是留在家？", "17:30 要出發，等於一個大人被抽走 35 分鐘", true],
+    ["晚餐幾點開始準備？", "18:15 才開飯，回來沒時間煮——要在 16:30–17:30 備好", true],
+    ["18:15–19:30 這 75 分鐘怎麼用？", "晚餐、收拾、哥哥回家後的相處全擠在這裡", false],
+    ["平日早上誰負責哥哥、誰顧妹妹？", "目標 08:20 出門，最晚 08:30", false],
+    ["學校早餐供應到幾點？08:30 出門來得及嗎？", "來不及的話出門時間要往前挪", false],
     ["妹妹的在家活動要不要排固定主題日？", "例如週一美勞、週三圖書館、週五採買", false],
     ["午休 12:30–14:30 平日只有妹妹在睡，大人怎麼用？", "整天唯一的整塊安靜時間，別浪費掉", false],
     ["週末兩個小孩一起的午後三小時排什麼？", "和平日分開排，需要兩個大人的行程放這裡", false],
     ["洗衣與吸拖地怎麼分工？上學服要備幾套？", "備三套就能改成兩天洗一次", false],
-    ["下週有沒有學校活動、看診、回老家？", "先卡進一週總覽再排其他", false],
-    ["睡前故事的書單還夠嗎？要不要排圖書館借書日？", "可以塞在妹妹的晨間活動", false]
+    ["下週有沒有學校活動、看診、回老家？", "先卡進一週總覽再排其他", false]
   ];
+
+  /* ── 年齡（依出生日即時計算） ── */
+  function ageText(iso, now) {
+    var b = new Date(iso + "T00:00:00");
+    var months = (now.getFullYear() - b.getFullYear()) * 12 + (now.getMonth() - b.getMonth());
+    if (now.getDate() < b.getDate()) { months -= 1; }
+    var y = Math.floor(months / 12), m = months % 12;
+    return y > 0 ? y + " 歲 " + m + " 個月" : m + " 個月";
+  }
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -720,13 +768,30 @@
       marker.style.display = "none";
     }
 
-    var cd = document.getElementById("countdown");
+    var am = document.getElementById("cd-am");
     if (weekday && mins >= 330 && mins < LEAVE_AT) {
-      cd.hidden = false;
-      cd.textContent = "距離 08:30 出門還有 " + (LEAVE_AT - mins) + " 分";
+      am.hidden = false;
+      am.textContent = "距離出門還有 " + (LEAVE_AT - mins) + " 分";
     } else {
-      cd.hidden = true;
+      am.hidden = true;
     }
+
+    var pm = document.getElementById("cd-pm");
+    if (weekday && mins >= 720 && mins < PICKUP_GO) {
+      pm.hidden = false;
+      pm.textContent = "距離 17:30 出發還有 " + (PICKUP_GO - mins) + " 分";
+    } else if (weekday && mins >= PICKUP_GO && mins < 1095) {
+      pm.hidden = false;
+      pm.textContent = "接送動線進行中";
+    } else {
+      pm.hidden = true;
+    }
+
+    KIDS.forEach(function (k) {
+      document.getElementById(k[0]).textContent = ageText(k[1], now);
+    });
+    var inline = document.getElementById("sis-age-inline");
+    if (inline) { inline.textContent = ageText(KIDS[1][1], now); }
 
     document.querySelectorAll("th.day").forEach(function (th) {
       th.classList.toggle("today", +th.getAttribute("data-dow") === dow);
