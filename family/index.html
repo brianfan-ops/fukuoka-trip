@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="家庭一日作息表的可閱覽版本：一日節奏、一週總覽、家事與洗衣輪值、下週行程討論。">
+<meta name="description" content="家庭一日作息表的可閱覽版本：平日／週末兩種節奏、一週總覽、妹妹的在家活動、家事與洗衣輪值、下週行程討論。">
 <title>家的一日節奏</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,9 @@
     --ink:#1D2320; --ink-2:#4B554F; --ink-3:#7C867F;
     --line:#D7DEDA; --line-2:#BFC8C3;
     --accent:#2F7F78; --accent-ink:#1F5C57; --accent-soft:#DBEBE8;
-    --b-morning:#A96D1A; --bt-morning:#F5E9D2; --arc-label:#FFFFFF;
+    --alert:#A6402C; --alert-soft:#F6E2DD;
+    --arc-label:#FFFFFF;
+    --b-morning:#A96D1A; --bt-morning:#F5E9D2;
     --b-noon:#6A8A4C;   --bt-noon:#E5EDD9;
     --b-after:#2E8078;  --bt-after:#D8EAE7;
     --b-eve:#4152A0;    --bt-eve:#E0E4F5;
@@ -27,7 +29,9 @@
       --ink:#E8EDE9; --ink-2:#B4BEB8; --ink-3:#87918B;
       --line:#2C3330; --line-2:#3C443F;
       --accent:#63B8AE; --accent-ink:#8FD0C7; --accent-soft:#16332F;
-      --b-morning:#DFA84B; --bt-morning:#332715; --arc-label:#14170F;
+      --alert:#E28C77; --alert-soft:#33201B;
+      --arc-label:#14170F;
+      --b-morning:#DFA84B; --bt-morning:#332715;
       --b-noon:#9CBA6F;   --bt-noon:#222B19;
       --b-after:#58B2A8;  --bt-after:#14302D;
       --b-eve:#8494DB;    --bt-eve:#1D2140;
@@ -40,7 +44,9 @@
     --ink:#E8EDE9; --ink-2:#B4BEB8; --ink-3:#87918B;
     --line:#2C3330; --line-2:#3C443F;
     --accent:#63B8AE; --accent-ink:#8FD0C7; --accent-soft:#16332F;
-    --b-morning:#DFA84B; --bt-morning:#332715; --arc-label:#14170F;
+    --alert:#E28C77; --alert-soft:#33201B;
+    --arc-label:#14170F;
+    --b-morning:#DFA84B; --bt-morning:#332715;
     --b-noon:#9CBA6F;   --bt-noon:#222B19;
     --b-after:#58B2A8;  --bt-after:#14302D;
     --b-eve:#8494DB;    --bt-eve:#1D2140;
@@ -58,7 +64,6 @@
   h1,h2,h3 { font-family:"Noto Serif TC","Songti TC",serif; font-weight:700; text-wrap:balance; margin:0; letter-spacing:.01em; }
   p { margin:0; }
   .mono { font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums; }
-
   .wrap { max-width:880px; margin:0 auto; padding:0 18px 72px; }
 
   /* ── header ── */
@@ -88,8 +93,7 @@
         backdrop-filter:blur(8px); border-bottom:1px solid var(--line); margin-top:24px; }
   @supports not (background:color-mix(in srgb, red 50%, transparent)) { nav { background:var(--paper); } }
   .nav-in { max-width:880px; margin:0 auto; padding:0 18px; display:flex; gap:4px; overflow-x:auto; }
-  nav a { flex:none; padding:12px 12px; font-size:.86rem; font-weight:500; color:var(--ink-2); text-decoration:none;
-          border-bottom:2px solid transparent; }
+  nav a { flex:none; padding:12px 10px; font-size:.86rem; font-weight:500; color:var(--ink-2); text-decoration:none; border-bottom:2px solid transparent; }
   nav a:hover { color:var(--accent-ink); border-bottom-color:var(--line-2); }
   nav a.on { color:var(--accent-ink); border-bottom-color:var(--accent); font-weight:700; }
 
@@ -98,6 +102,23 @@
   .sec-head h2 { font-size:1.28rem; }
   .sec-head .num { font-size:.72rem; color:var(--ink-3); letter-spacing:.18em; }
   .sec-note { color:var(--ink-2); font-size:.88rem; margin-bottom:18px; max-width:44em; }
+
+  /* ── 平日 / 週末 切換 ── */
+  .modes { display:inline-flex; padding:3px; gap:3px; background:var(--surface-2); border-radius:999px; margin-bottom:18px; }
+  .modes button { border:none; background:transparent; font:inherit; font-size:.85rem; font-weight:500; color:var(--ink-2);
+                  padding:5px 16px; border-radius:999px; cursor:pointer; }
+  .modes button[aria-pressed="true"] { background:var(--surface); color:var(--ink); font-weight:700; box-shadow:var(--shadow); }
+  .modes button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  @media screen { [data-mode="wd"] .we, [data-mode="we"] .wd { display:none !important; } }
+
+  /* ── 出門卡 ── */
+  .leave { border-left:4px solid var(--alert); margin-bottom:20px; }
+  .leave .top { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .leave .cd { font-size:.8rem; font-weight:700; color:var(--alert); background:var(--alert-soft); border-radius:999px; padding:2px 11px; }
+  .leave ul { list-style:none; margin:10px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:2px 14px; }
+  .leave li label { display:flex; gap:9px; align-items:center; padding:5px 0; font-size:.88rem; cursor:pointer; }
+  .leave input { width:16px; height:16px; margin:0; accent-color:var(--accent); flex:none; }
+  .leave input:checked + span { color:var(--ink-3); text-decoration:line-through; text-decoration-color:var(--line-2); }
 
   /* ── timeline ── */
   .tl { display:flex; flex-direction:column; gap:8px; }
@@ -119,35 +140,55 @@
               background:var(--accent-soft); border-radius:999px; padding:1px 9px; margin-left:8px; }
   .row.is-now .now-chip { display:inline-block; }
 
+  /* 誰在哪裡：實線＝在家／在一起，虛線＋淡色＝不在家 */
+  .who { display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
+  .who .p { display:inline-flex; align-items:center; gap:6px; font-size:.74rem; color:var(--ink-2);
+            border:1px solid var(--line-2); border-radius:999px; padding:2px 10px 2px 3px; }
+  .who .p i { min-width:19px; height:19px; padding:0 5px; border-radius:999px; display:grid; place-items:center;
+              font-style:normal; font-size:.68rem; font-weight:700; line-height:1; white-space:nowrap;
+              background:var(--surface-2); color:var(--ink); flex:none; }
+  .who .p.away { color:var(--ink-3); border-style:dashed; }
+  .who .p.away i { background:transparent; border:1px dashed var(--line-2); color:var(--ink-3); }
+
   .chip { display:inline-block; font-size:.72rem; font-weight:500; padding:1px 9px; border-radius:999px;
-          border:1px solid var(--line-2); color:var(--ink-2); margin:6px 6px 0 0; }
+          border:1px solid var(--line-2); color:var(--ink-2); margin:8px 6px 0 0; }
   .chip.todo { border-style:dashed; color:var(--b-after); border-color:var(--b-after); }
   .chip.fix { background:var(--surface-2); border-color:transparent; }
+  .chip.ask { border-style:dashed; color:var(--alert); border-color:var(--alert); }
 
   /* ── tables ── */
   .scroll { overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface); box-shadow:var(--shadow); }
-  table { border-collapse:collapse; width:100%; font-size:.84rem; min-width:620px; }
+  table { border-collapse:collapse; width:100%; font-size:.84rem; min-width:640px; }
   th,td { padding:9px 12px; text-align:left; border-bottom:1px solid var(--line); vertical-align:top; }
-  thead th { background:var(--surface-2); font-weight:700; font-size:.78rem; color:var(--ink-2); white-space:nowrap; position:sticky; top:0; }
+  thead th { background:var(--surface-2); font-weight:700; font-size:.78rem; color:var(--ink-2); white-space:nowrap; }
   tbody tr:last-child td, tbody tr:last-child th { border-bottom:none; }
-  td.time, th.time { white-space:nowrap; color:var(--ink-2); font-size:.78rem; width:96px; }
+  td.time, th.time { white-space:nowrap; color:var(--ink-2); font-size:.78rem; width:104px; }
+  td.time span { color:var(--ink-3); }
   .fixed-cell { background:var(--surface-2); color:var(--ink-2); font-size:.82rem; }
   .fixed-cell b { color:var(--ink); }
-  th.day { min-width:104px; }
+  .bro-row td { background:var(--bt-morning); }
+  .bro-row td:first-child { font-weight:700; color:var(--ink); }
+  th.day { min-width:106px; }
   th.day.today, td.today { background:var(--accent-soft); }
   .cell { min-height:2.2em; }
   [contenteditable] { outline:none; border-radius:4px; }
   [contenteditable]:hover { background:var(--surface-2); }
   [contenteditable]:focus-visible { outline:2px solid var(--accent); outline-offset:2px; background:var(--surface-2); }
-  [contenteditable]:empty::before { content:attr(data-ph); color:var(--ink-3); font-style:normal; }
+  [contenteditable]:empty::before { content:attr(data-ph); color:var(--ink-3); }
 
   /* ── cards ── */
   .card { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px; box-shadow:var(--shadow); }
   .card h3 { font-size:1rem; margin-bottom:6px; }
   .card p { font-size:.86rem; color:var(--ink-2); }
   .tonight { border-left:4px solid var(--b-night); margin-bottom:16px; }
-  .tonight .big { font-family:"Noto Serif TC",serif; font-weight:700; font-size:1.15rem; color:var(--ink); margin-top:4px; }
+  .tonight .must { font-family:"Noto Serif TC",serif; font-weight:700; font-size:1.15rem; color:var(--ink); margin-top:6px; }
+  .tonight .also { margin-top:4px; }
   .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px; margin-top:14px; }
+  .acts { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; }
+  .act { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 16px; box-shadow:var(--shadow); }
+  .act .slot { font-size:.72rem; letter-spacing:.06em; color:var(--ink-3); }
+  .act h3 { font-size:.98rem; margin:3px 0 4px; }
+  .act p { font-size:.84rem; color:var(--ink-2); }
 
   /* ── checklist ── */
   ul.todo { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; }
@@ -157,6 +198,7 @@
   ul.todo input { margin:5px 0 0; width:16px; height:16px; accent-color:var(--accent); flex:none; }
   ul.todo label span small { display:block; color:var(--ink-3); font-size:.78rem; margin-top:1px; }
   ul.todo input:checked + span { color:var(--ink-3); text-decoration:line-through; text-decoration-color:var(--line-2); }
+  ul.todo label span em { font-style:normal; color:var(--alert); font-weight:700; }
   textarea { width:100%; min-height:120px; margin-top:10px; padding:12px 14px; border:1px dashed var(--line-2);
              border-radius:8px; background:transparent; color:var(--ink); font:inherit; font-size:.88rem; line-height:1.7; resize:vertical; }
   textarea:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
@@ -169,10 +211,10 @@
     .arc-seg { font-size:.66rem; letter-spacing:0; }
   }
   @media print {
-    nav, .save-note { display:none; }
+    nav, .save-note, .modes { display:none; }
     body { background:#fff; font-size:11pt; }
     section { page-break-inside:avoid; padding-top:22px; }
-    .blk, .card, .scroll { box-shadow:none; }
+    .blk, .card, .scroll, .act { box-shadow:none; }
   }
   @media (prefers-reduced-motion:reduce) { * { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
 </style>
@@ -181,9 +223,9 @@
 
 <div class="wrap">
   <header class="head">
-    <div class="eyebrow">家庭作息 · 草稿 v1</div>
+    <div class="eyebrow">家庭作息 · 草稿 v2</div>
     <h1>家的一日節奏</h1>
-    <p class="lede">原始表格只填了星期一，這裡先把它當成七天共用的骨架：<b>固定</b>的部分是已經在跑的日常，<b>虛線</b>的部分是還沒決定、需要一起討論的空白。往下有一週總覽、家事與洗衣輪值，以及下週行程的討論清單。</p>
+    <p class="lede">兩個小孩，兩種節奏：<b>平日</b>哥哥 08:30 前出門上學，白天家裡是妹妹的時間；<b>週末</b>四個人一起。原表只填了星期一，固定的骨架照原表，<b>虛線</b>是還沒決定的空白，<b>紅色</b>是等你確認才能往下排的事。</p>
     <div class="stamp"><span class="dot"></span><span id="nowline">今天 · <b>—</b></span></div>
 
     <div class="arc" aria-hidden="true">
@@ -204,6 +246,7 @@
   <div class="nav-in">
     <a href="#day" class="on">一日節奏</a>
     <a href="#week">一週總覽</a>
+    <a href="#sister">妹妹的活動</a>
     <a href="#chores">家事與洗衣</a>
     <a href="#talk">下週討論</a>
   </div>
@@ -212,59 +255,160 @@
 <div class="wrap">
 
   <!-- 一日節奏 -->
-  <section id="day">
+  <section id="day" data-mode="wd">
     <div class="sec-head"><h2>一日節奏</h2><span class="num mono">07:30 — 00:00</span></div>
-    <p class="sec-note">照表格原本的時段切分。左邊色條是一天的段落：晨、午、午後、晚間、夜。現在所在的時段會自動框起來。</p>
+    <p class="sec-note">時段切分照原表。左邊色條是一天的段落，卡片下方的圓標寫著那個時間誰在家、誰不在（虛線＝不在家）。現在所在的時段會自動框起來。</p>
+
+    <div class="modes" role="group" aria-label="切換平日或週末">
+      <button type="button" id="m-wd" aria-pressed="true">平日</button>
+      <button type="button" id="m-we" aria-pressed="false">週末</button>
+    </div>
+
+    <div class="card leave wd">
+      <div class="top">
+        <h3>08:30 出門前</h3>
+        <span class="cd" id="countdown" hidden></span>
+      </div>
+      <p>07:30 起床到出門只有一小時，而且要同時處理兩個小孩。建議把目標訂在 <b class="mono">08:20</b>，留十分鐘給突發狀況。前一晚就把書包和衣服備好，早上只剩「穿上、帶走」。</p>
+      <ul id="leavelist"></ul>
+      <p class="save-note">勾選每天自動清空。</p>
+    </div>
 
     <div class="tl">
       <div class="row m" data-start="450" data-end="510">
         <div class="t mono">07:30<small>08:30</small></div>
-        <div class="blk"><h3>起床盥洗<span class="now-chip">現在</span></h3><p>刷牙、喝奶、換衣服。</p><span class="chip fix">固定</span></div>
+        <div class="blk">
+          <h3>起床盥洗<span class="now-chip">現在</span></h3>
+          <p class="wd">刷牙、喝奶、換衣服。哥哥優先——制服、書包、水壺備好，目標 08:20 出門，最晚 08:30。妹妹這段時間跟著一起弄，不用趕。</p>
+          <p class="we">刷牙、喝奶、換衣服。兩個小孩一起慢慢來，不趕時間。</p>
+          <div class="who wd"><span class="p"><i>哥</i>在家 · 準備出門</span><span class="p"><i>妹</i>在家</span></div>
+          <div class="who we"><span class="p"><i>兄妹</i>都在家</span></div>
+          <span class="chip fix wd">平日最緊的一小時</span><span class="chip ask wd">哥哥早餐在家吃、路上吃，還是學校吃？</span><span class="chip fix we">固定</span>
+        </div>
       </div>
+
       <div class="row m" data-start="510" data-end="570">
         <div class="t mono">08:30<small>09:30</small></div>
-        <div class="blk"><h3>出門早餐<span class="now-chip">現在</span></h3><p>在外面吃早餐，順便把人帶出門。</p><span class="chip fix">固定</span><span class="chip todo">週六日要不要改在家煮？</span></div>
+        <div class="blk">
+          <h3>出門早餐<span class="now-chip">現在</span></h3>
+          <p class="wd">送哥哥到學校，接著帶妹妹吃早餐。回程順路的早餐店最省事。</p>
+          <p class="we">一家人出門吃早餐，可以吃久一點。</p>
+          <div class="who wd"><span class="p away"><i>哥</i>在學校</span><span class="p"><i>妹</i>外出 · 早餐</span></div>
+          <div class="who we"><span class="p"><i>兄妹</i>一起外出</span></div>
+          <span class="chip fix">固定</span><span class="chip todo we">週六日要不要改在家煮？</span>
+        </div>
       </div>
+
       <div class="row m" data-start="570" data-end="630">
         <div class="t mono">09:30<small>10:30</small></div>
-        <div class="blk"><h3>晨間活動<span class="now-chip">現在</span></h3><p>時段固定，但每天做什麼還沒排。公園、圖書館、親子館、散步採買都算。</p><span class="chip fix">時段固定</span><span class="chip todo">內容待排</span></div>
+        <div class="blk">
+          <h3>晨間活動<span class="now-chip">現在</span></h3>
+          <p class="wd">妹妹一個人的黃金時段，也是她一天最有電的時候：公園、親子館、圖書館、散步採買擇一。</p>
+          <p class="we">兩個小孩一起，可以排跑遠一點、需要兩個大人的行程。</p>
+          <div class="who wd"><span class="p away"><i>哥</i>在學校</span><span class="p"><i>妹</i>活動中</span></div>
+          <div class="who we"><span class="p"><i>兄妹</i>一起</span></div>
+          <span class="chip fix">時段固定</span><span class="chip todo">內容待排</span>
+        </div>
       </div>
+
       <div class="row m open" data-start="630" data-end="690">
         <div class="t mono">10:30<small>11:30</small></div>
-        <div class="blk"><h3>空白 · 銜接午餐<span class="now-chip">現在</span></h3><p>原表沒填。要嘛把晨間活動延長一小時，要嘛提早回家準備午餐——這件事會決定午餐是外食還是自己煮。</p><span class="chip todo">待決定</span></div>
+        <div class="blk">
+          <h3>空白 · 銜接午餐<span class="now-chip">現在</span></h3>
+          <p class="wd">原表沒填。建議收心：回家做安靜的活動（美勞、繪本），順便準備午餐、收玩具。</p>
+          <p class="we">原表沒填。要嘛把晨間活動延長，要嘛提早回家準備午餐。</p>
+          <div class="who wd"><span class="p away"><i>哥</i>在學校</span><span class="p"><i>妹</i>在家</span></div>
+          <div class="who we"><span class="p"><i>兄妹</i>一起</span></div>
+          <span class="chip todo">待決定</span>
+        </div>
       </div>
+
       <div class="row n" data-start="690" data-end="750">
         <div class="t mono">11:30<small>12:30</small></div>
-        <div class="blk"><h3>用餐（午餐）<span class="now-chip">現在</span></h3><p>吃飽準備睡午覺。</p><span class="chip fix">固定</span></div>
+        <div class="blk">
+          <h3>用餐（午餐）<span class="now-chip">現在</span></h3>
+          <p class="wd">妹妹和在家的大人吃；哥哥在學校吃。份量和菜色都好抓。</p>
+          <p class="we">四個人一起吃。</p>
+          <div class="who wd"><span class="p away"><i>哥</i>在學校用餐</span><span class="p"><i>妹</i>在家用餐</span></div>
+          <div class="who we"><span class="p"><i>兄妹</i>一起</span></div>
+          <span class="chip fix">固定</span>
+        </div>
       </div>
+
       <div class="row n" data-start="750" data-end="870">
         <div class="t mono">12:30<small>14:30</small></div>
-        <div class="blk"><h3>午休時間<span class="now-chip">現在</span></h3><p>兩小時，一天裡最長的一段。</p><span class="chip fix">固定</span><span class="chip todo">大人一起睡，還是輪流做事？</span></div>
+        <div class="blk">
+          <h3>午休時間<span class="now-chip">現在</span></h3>
+          <p class="wd">妹妹午睡。哥哥在學校、妹妹在睡——這是平日家裡最安靜的兩小時，整天唯一能專心做事的整塊時間。</p>
+          <p class="we">兩個小孩一起午睡。哥哥若睡不著，改成床上安靜活動（看書、拼圖）。</p>
+          <div class="who wd"><span class="p away"><i>哥</i>在學校</span><span class="p"><i>妹</i>午睡</span></div>
+          <div class="who we"><span class="p"><i>兄妹</i>一起午睡</span></div>
+          <span class="chip fix">固定</span><span class="chip todo wd">這兩小時大人要拿來做什麼？</span>
+        </div>
       </div>
+
       <div class="row a open" data-start="870" data-end="1050">
         <div class="t mono">14:30<small>17:30</small></div>
-        <div class="blk"><h3>空白 · 午後三小時<span class="now-chip">現在</span></h3><p>整份表最大的一塊空白（原表 14:30、15:30、16:30 三格都沒填）。這三小時決定一天的性格：戶外放電、才藝課、朋友家、超市採買，還是在家玩＋下午點心。建議先決定「平日固定做什麼」，週末再另外排。</p><span class="chip todo">待決定 · 最優先</span></div>
+        <div class="blk">
+          <h3>空白 · 午後三小時<span class="now-chip">現在</span></h3>
+          <p class="wd">整份表最大的空白（原表 14:30、15:30、16:30 三格都沒填），而且<b>哥哥放學就落在這一段</b>。前半是妹妹睡醒後的時間，後半變成兩個小孩一起——放學幾點、誰去接，決定了這三小時要怎麼切。</p>
+          <p class="we">三小時空白，四個人都在。適合排一個主行程：戶外放電、朋友家、市場採買。</p>
+          <div class="who wd"><span class="p away"><i>哥</i>在學校 → 放學回家</span><span class="p"><i>妹</i>在家</span></div>
+          <div class="who we"><span class="p"><i>兄妹</i>一起</span></div>
+          <span class="chip ask wd">放學時間、誰接？待確認</span><span class="chip todo">待決定 · 最優先</span>
+        </div>
       </div>
+
       <div class="row e" data-start="1050" data-end="1170">
         <div class="t mono">17:30<small>19:30</small></div>
-        <div class="blk"><h3>晚餐時間<span class="now-chip">現在</span></h3><p>兩小時，含準備、吃飯、收拾。</p><span class="chip fix">固定</span></div>
+        <div class="blk">
+          <h3>晚餐時間<span class="now-chip">現在</span></h3>
+          <p>兩小時，含準備、吃飯、收拾。從這裡開始每天都一樣，四個人都在。</p>
+          <div class="who"><span class="p"><i>全家</i>都在家</span></div>
+          <span class="chip fix">固定</span>
+        </div>
       </div>
+
       <div class="row e" data-start="1170" data-end="1230">
         <div class="t mono">19:30<small>20:30</small></div>
-        <div class="blk"><h3>晚上洗澡<span class="now-chip">現在</span></h3><p>洗完換睡衣，脫下來的衣服直接進洗衣籃 → 接到 21:30 的洗衣。</p><span class="chip fix">固定</span></div>
+        <div class="blk">
+          <h3>晚上洗澡<span class="now-chip">現在</span></h3>
+          <p class="wd">兩個人輪流洗，換上睡衣。<b>哥哥的上學服脫下來直接進洗衣籃</b>——今晚一定要洗，明天還要穿。</p>
+          <p class="we">兩個人輪流洗，換上睡衣，脫下的衣服進洗衣籃。</p>
+          <div class="who"><span class="p"><i>全家</i>都在家</span></div>
+          <span class="chip fix">固定</span>
+        </div>
       </div>
+
       <div class="row e" data-start="1230" data-end="1290">
         <div class="t mono">20:30<small>21:30</small></div>
-        <div class="blk"><h3>睡前故事<span class="now-chip">現在</span></h3><p>燈光調暗，講完就睡。</p><span class="chip fix">固定</span><span class="chip todo">書單／借書日待定</span></div>
+        <div class="blk">
+          <h3>睡前故事<span class="now-chip">現在</span></h3>
+          <p>燈光調暗，講完就睡。兩個小孩年齡差，可以一本共讀＋哥哥自己再看一下。</p>
+          <div class="who"><span class="p"><i>全家</i>都在家</span></div>
+          <span class="chip fix">固定</span><span class="chip todo">書單／借書日待定</span>
+        </div>
       </div>
+
       <div class="row g" data-start="1290" data-end="1380">
         <div class="t mono">21:30<small>23:00</small></div>
-        <div class="blk"><h3>家事時間<span class="now-chip">現在</span></h3><p>洗衣、吸地、拖地。洗的是<b>明天要穿、要用的東西</b>，所以每天洗的種類不同 —— 見下方輪值表。</p><span class="chip fix">固定</span><span class="chip">見「家事與洗衣」</span></div>
+        <div class="blk">
+          <h3>家事時間<span class="now-chip">現在</span></h3>
+          <p class="wd">洗衣、吸地、拖地。平日的第一順位是<b>哥哥隔天的上學服</b>，剩下的容量再放當晚的輪值類別——見下方輪值表。</p>
+          <p class="we">洗衣、吸地、拖地。週末沒有上學服要趕，適合排寢具、厚重衣物這類大件。</p>
+          <span class="chip fix">固定</span><span class="chip">見「家事與洗衣」</span>
+        </div>
       </div>
+
       <div class="row g" data-start="1380" data-end="1440">
         <div class="t mono">23:00<small>00:00</small></div>
-        <div class="blk"><h3>爸媽時間<span class="now-chip">現在</span></h3><p>一天裡唯一沒有小孩的一小時。星期日的這一小時拿 15 分鐘來對下週行程就夠了。</p><span class="chip fix">固定</span></div>
+        <div class="blk">
+          <h3>爸媽時間<span class="now-chip">現在</span></h3>
+          <p>一天裡唯一沒有小孩的一小時。星期日的這一小時拿 15 分鐘來對下週行程就夠了。</p>
+          <span class="chip fix">固定</span>
+        </div>
       </div>
+
       <div class="row rest" data-start="0" data-end="450">
         <div class="t mono">00:00<small>07:30</small></div>
         <div class="blk"><h3>睡眠<span class="now-chip">現在</span></h3></div>
@@ -275,7 +419,7 @@
   <!-- 一週總覽 -->
   <section id="week">
     <div class="sec-head"><h2>一週總覽</h2><span class="num mono">MON — SUN</span></div>
-    <p class="sec-note">一天裡有十個時段七天都一樣，那些用一整條標成「七天相同」；真正要排的只有下面四條。空格可以直接點進去打字（只存在這台裝置的瀏覽器裡）。</p>
+    <p class="sec-note">一天裡有十個時段七天都一樣，那些壓成一整條「七天相同」。真正要排的是哥哥的上下學時間，加上四條白天時段（平日＝妹妹的安排，週末＝兩個小孩一起）。空格可以直接點進去打字。</p>
 
     <div class="scroll">
       <table>
@@ -287,72 +431,103 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td class="time mono">07:30–09:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>起床盥洗</b> → <b>出門早餐</b></td></tr>
+          <tr><td class="time mono">07:30–08:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>起床盥洗</b>（平日含送哥哥出門）</td></tr>
+          <tr class="bro-row">
+            <td class="time">哥哥 · 上學</td>
+            <td><div class="cell" contenteditable="true" data-key="s-1" data-ph="08:30 出門／放學 __:__"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="s-2" data-ph="08:30 出門／放學 __:__"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="s-3" data-ph="08:30 出門／放學 __:__"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="s-4" data-ph="08:30 出門／放學 __:__"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="s-5" data-ph="08:30 出門／放學 __:__"></div></td>
+            <td>在家</td><td>在家</td>
+          </tr>
+          <tr><td class="time mono">08:30–09:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>出門早餐</b>（平日：送學後帶妹妹吃）</td></tr>
           <tr>
-            <td class="time mono">09:30–10:30<br><span style="color:var(--ink-3)">晨間活動</span></td>
-            <td><div class="cell" contenteditable="true" data-key="w-a-1" data-ph="待排"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-a-2" data-ph="待排"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-a-3" data-ph="待排"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-a-4" data-ph="待排"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-a-5" data-ph="待排"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-a-6" data-ph="待排"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-a-0" data-ph="待排"></div></td>
+            <td class="time mono">09:30–10:30<br><span>晨間活動</span></td>
+            <td><div class="cell" contenteditable="true" data-key="w-a-1" data-ph="妹妹 · 待排"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-a-2" data-ph="妹妹 · 待排"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-a-3" data-ph="妹妹 · 待排"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-a-4" data-ph="妹妹 · 待排"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-a-5" data-ph="妹妹 · 待排"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-a-6" data-ph="兩人 · 待排"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-a-0" data-ph="兩人 · 待排"></div></td>
           </tr>
           <tr>
-            <td class="time mono">10:30–11:30<br><span style="color:var(--ink-3)">空白</span></td>
-            <td><div class="cell" contenteditable="true" data-key="w-b-1" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-b-2" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-b-3" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-b-4" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-b-5" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-b-6" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-b-0" data-ph="待定"></div></td>
+            <td class="time mono">10:30–11:30<br><span>空白</span></td>
+            <td><div class="cell" contenteditable="true" data-key="w-b-1" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-b-2" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-b-3" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-b-4" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-b-5" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-b-6" data-ph="兩人 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-b-0" data-ph="兩人 · 待定"></div></td>
           </tr>
-          <tr><td class="time mono">11:30–14:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>用餐</b> → <b>午休時間</b>（兩小時）</td></tr>
+          <tr><td class="time mono">11:30–14:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>用餐</b> → <b>午休</b>（平日只有妹妹在家午睡）</td></tr>
           <tr>
-            <td class="time mono">14:30–16:30<br><span style="color:var(--ink-3)">午後前半</span></td>
-            <td><div class="cell" contenteditable="true" data-key="w-c-1" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-c-2" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-c-3" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-c-4" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-c-5" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-c-6" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-c-0" data-ph="待定"></div></td>
+            <td class="time mono">14:30–16:30<br><span>午後前半</span></td>
+            <td><div class="cell" contenteditable="true" data-key="w-c-1" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-c-2" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-c-3" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-c-4" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-c-5" data-ph="妹妹 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-c-6" data-ph="兩人 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-c-0" data-ph="兩人 · 待定"></div></td>
           </tr>
           <tr>
-            <td class="time mono">16:30–17:30<br><span style="color:var(--ink-3)">午後後半</span></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-1" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-2" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-3" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-4" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-5" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-6" data-ph="待定"></div></td>
-            <td><div class="cell" contenteditable="true" data-key="w-d-0" data-ph="待定"></div></td>
+            <td class="time mono">16:30–17:30<br><span>放學後</span></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-1" data-ph="兩人 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-2" data-ph="兩人 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-3" data-ph="兩人 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-4" data-ph="兩人 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-5" data-ph="兩人 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-6" data-ph="兩人 · 待定"></div></td>
+            <td><div class="cell" contenteditable="true" data-key="w-d-0" data-ph="兩人 · 待定"></div></td>
           </tr>
-          <tr><td class="time mono">17:30–21:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>晚餐</b> → <b>洗澡</b> → <b>睡前故事</b></td></tr>
-          <tr><td class="time mono">21:30–00:00</td><td class="fixed-cell" colspan="7">七天相同 · <b>家事時間</b>（洗衣／吸拖地，每天種類不同）→ <b>爸媽時間</b></td></tr>
+          <tr><td class="time mono">17:30–21:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>晚餐</b> → <b>洗澡</b> → <b>睡前故事</b>（四個人都在）</td></tr>
+          <tr><td class="time mono">21:30–00:00</td><td class="fixed-cell" colspan="7">七天相同 · <b>家事時間</b>（平日必洗哥哥的上學服）→ <b>爸媽時間</b></td></tr>
         </tbody>
       </table>
     </div>
     <p class="save-note">編輯內容只保存在這台裝置的瀏覽器；換手機或清除瀏覽資料就會不見。定案後記得寫回原始表格。</p>
   </section>
 
+  <!-- 妹妹的活動 -->
+  <section id="sister">
+    <div class="sec-head"><h2>妹妹的在家活動</h2><span class="num mono">平日 09:30 — 17:30</span></div>
+    <p class="sec-note">平日哥哥出門後，白天有四個時段是妹妹的。不用每格都排滿——<b>一天挑一到兩個帶著做，其餘讓她自己玩</b>，大人才有餘裕。下面是可以塞進各時段的類型，不是課表。</p>
+
+    <div class="acts">
+      <div class="act"><div class="slot mono">09:30–10:30</div><h3>出門放電</h3><p>公園、親子館、圖書館、社區走走。一天最有電的時段先用掉，午睡比較好睡。</p></div>
+      <div class="act"><div class="slot mono">10:30–11:30</div><h3>桌邊活動</h3><p>黏土、蠟筆、貼紙、水彩。在家、好收拾，收完剛好吃午餐。</p></div>
+      <div class="act"><div class="slot mono">10:30–11:30 或睡前</div><h3>繪本共讀</h3><p>安靜下來的訊號。可以和晚上的睡前故事共用同一批書。</p></div>
+      <div class="act"><div class="slot mono">14:30–15:30</div><h3>音樂律動</h3><p>睡醒後的暖機時段，唱跳、樂器、追泡泡，不用出門也能動。</p></div>
+      <div class="act"><div class="slot mono">15:30–16:30</div><h3>家事參與</h3><p>收玩具、擦桌子、把髒衣服丟進洗衣籃、幫忙分襪子。她覺得在玩，晚上的家事時間會輕鬆一點。</p></div>
+      <div class="act"><div class="slot mono">16:30–17:30</div><h3>散步採買</h3><p>買晚餐要用的東西，如果放學時間對得上，順路接哥哥。</p></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card"><h3>要不要排主題日？</h3><p>例如週一美勞、週二音樂、週三圖書館、週四公園、週五採買。固定下來大人不用每天想，但也少了彈性——這題留到下週討論。</p></div>
+      <div class="card"><h3>還缺一個資訊</h3><p>妹妹幾歲、還睡不睡上午的小覺，會影響上面的強度與時段長度。確認後再調。</p></div>
+    </div>
+  </section>
+
   <!-- 家事與洗衣 -->
   <section id="chores">
     <div class="sec-head"><h2>家事與洗衣</h2><span class="num mono">21:30 — 23:00</span></div>
-    <p class="sec-note">原則很單純：<b>今晚洗的，是明天要穿、要用的東西。</b>下面這份輪值是先給的一版草案，不合用就直接改。</p>
+    <p class="sec-note">原則：<b>今晚洗的，是明天要穿、要用的東西。</b>哥哥開始上學之後多了一條硬規則——<b>週日到週四晚上，隔天的上學服一定要洗</b>，其他類別排在它後面輪。下面是草案，不合用就直接改。</p>
 
     <div class="card tonight">
       <h3>今晚要洗什麼</h3>
       <p id="tonight-day">—</p>
-      <p class="big" id="tonight-what">—</p>
-      <p id="tonight-for" style="margin-top:4px;">—</p>
+      <p class="must" id="tonight-must">—</p>
+      <p class="also" id="tonight-also">—</p>
+      <p class="also" id="tonight-floor">—</p>
     </div>
 
     <div class="scroll">
       <table>
         <thead>
-          <tr><th style="width:76px;">星期</th><th style="min-width:170px;">今晚洗的種類</th><th style="min-width:150px;">給隔天用</th><th style="min-width:140px;">同時段的地板家事</th></tr>
+          <tr><th style="width:76px;">星期</th><th style="min-width:180px;">必洗 · 隔天要用</th><th style="min-width:170px;">當晚輪值類別</th><th style="min-width:140px;">地板家事</th></tr>
         </thead>
         <tbody id="laundry"></tbody>
       </table>
@@ -361,11 +536,11 @@
     <div class="grid2">
       <div class="card">
         <h3>時間怎麼卡</h3>
-        <p>21:30 丟洗衣機 → 22:15 晾／進烘乾 → 洗衣機在轉的時候吸地拖地 → 23:00 收工，剛好接爸媽時間。</p>
+        <p>19:30 洗澡時，哥哥的上學服直接進洗衣籃 → 21:30 開洗 → 22:15 晾／進烘乾 → 洗衣機在轉的時候吸地拖地 → 23:00 收工，接爸媽時間。</p>
       </div>
       <div class="card">
-        <h3>還沒決定的</h3>
-        <p>誰負責哪一天？要不要固定「一人洗衣、一人地板」？寢具是每週還是隔週洗？先記在下方討論清單。</p>
+        <h3>上學服要幾套？</h3>
+        <p>如果只有一套，等於每晚都被綁住，遇到烘不乾就開天窗。備到<b>三套</b>就能改成兩天洗一次，週末補洗，彈性差很多。</p>
       </div>
     </div>
   </section>
@@ -373,7 +548,7 @@
   <!-- 下週討論 -->
   <section id="talk">
     <div class="sec-head"><h2>下週行程討論</h2><span class="num mono">SUN 23:00</span></div>
-    <p class="sec-note">固定在星期日的爸媽時間談，抓 15 分鐘。勾選代表已經有共識，勾完的項目就可以寫進上面的一週總覽。</p>
+    <p class="sec-note">固定在星期日的爸媽時間談，抓 15 分鐘。<b>紅字那兩題先解決</b>——其他安排都卡在它們後面。勾完的項目就可以寫進一週總覽。</p>
 
     <div class="card">
       <ul class="todo" id="agenda"></ul>
@@ -381,14 +556,14 @@
 
     <div style="margin-top:16px;">
       <h3 style="font-size:1rem;">這週的臨時行程與記事</h3>
-      <p class="sec-note" style="margin:4px 0 0;">看診、回老家、加班、朋友來訪、要買的東西——先寫下來，下週日一起看。</p>
-      <textarea data-key="notes" placeholder="例：週三下午打疫苗；週六爸爸要加班，午後三小時要換方案；奶粉剩兩週。"></textarea>
+      <p class="sec-note" style="margin:4px 0 0;">學校活動、看診、回老家、加班、要買的東西——先寫下來，下週日一起看。</p>
+      <textarea data-key="notes" placeholder="例：週三哥哥學校運動會，要請假半天；週五爸爸加班，接送要換人；妹妹的黏土用完了。"></textarea>
       <p class="save-note">同樣只存在這台裝置的瀏覽器。</p>
     </div>
   </section>
 
   <footer>
-    家的一日節奏 · 依原始「家庭一日作息表」整理的草稿版本。固定時段照原表，空白時段與輪值內容為建議，待討論後定案。
+    家的一日節奏 · 依原始「家庭一日作息表」整理的草稿版本。固定時段照原表；平日／週末的差異依「哥哥上學、妹妹在家」補上。空白時段、活動建議與洗衣輪值皆為提案，待討論後定案。
   </footer>
 </div>
 
@@ -397,76 +572,102 @@
   "use strict";
 
   var DOW = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+  var LEAVE_AT = 510; /* 08:30 */
 
-  /* ── 洗衣輪值草案（今晚洗 → 明天用） ── */
+  /* ── 出門前清單（每天自動清空） ── */
+  var LEAVE = ["聯絡簿／作業", "書包", "水壺", "外套", "餐袋／點心", "妹妹的隨行包"];
+
+  /* ── 洗衣輪值草案：必洗（隔天要用）＋當晚輪值 ── */
   var LAUNDRY = [
-    { d:0, what:"厚重衣物、外套、包巾", forWhom:"下週開工的外出服", floor:"清冰箱、倒垃圾、盤點下週衣物" },
-    { d:1, what:"小孩衣物（深色）、圍兜", forWhom:"週二的外出服", floor:"吸地（客廳＋房間）" },
-    { d:2, what:"大人衣物（淺色、內著）", forWhom:"週三上班穿的", floor:"拖地（客廳）" },
-    { d:3, what:"毛巾、擦手巾、口水巾", forWhom:"週四整天要換的", floor:"吸地（客廳＋房間）" },
-    { d:4, what:"小孩衣物（淺色）、睡衣", forWhom:"週五的外出服與睡衣", floor:"拖地（房間）" },
-    { d:5, what:"大人衣物（深色）、外出服", forWhom:"週末出門穿的", floor:"吸地＋浴室" },
-    { d:6, what:"床單、枕套、被套", forWhom:"週日換上乾淨的床", floor:"廚房、浴室大掃" }
+    { d:0, must:"哥哥的上學服（週一要穿）", also:"厚重衣物、外套、包巾", floor:"清冰箱、倒垃圾、盤點下週衣物" },
+    { d:1, must:"哥哥的上學服", also:"小孩衣物（深色）、圍兜", floor:"吸地（客廳＋房間）" },
+    { d:2, must:"哥哥的上學服", also:"大人衣物（淺色、內著）", floor:"拖地（客廳）" },
+    { d:3, must:"哥哥的上學服", also:"毛巾、擦手巾、口水巾", floor:"吸地（客廳＋房間）" },
+    { d:4, must:"哥哥的上學服（週五最後一天）", also:"小孩衣物（淺色）、睡衣", floor:"拖地（房間）" },
+    { d:5, must:"明天不上學 · 沒有必洗", also:"大人衣物（深色）、外出服、書包與餐袋", floor:"吸地＋浴室" },
+    { d:6, must:"明天不上學 · 沒有必洗", also:"床單、枕套、被套", floor:"廚房、浴室大掃" }
   ];
 
+  /* ── 下週討論清單，前兩題是卡住其他安排的 ── */
+  var AGENDA = [
+    ["哥哥幾點放學？誰去接？", "其他安排都卡在這題——放學時間決定午後三小時怎麼切", true],
+    ["平日早上的分工：誰負責哥哥、誰顧妹妹？", "目標 08:20 出門，最晚 08:30", true],
+    ["哥哥的早餐在家吃、路上吃，還是學校吃？", "會影響 07:30–08:30 塞不塞得下", false],
+    ["放學到晚餐之間（約 16:30–17:30）做什麼？", "自由玩／戶外／功課，先定一個預設值", false],
+    ["妹妹的在家活動要不要排固定主題日？", "例如週一美勞、週三圖書館、週五採買", false],
+    ["午休 12:30–14:30 平日只有妹妹在睡，大人怎麼用？", "整天唯一的整塊安靜時間，別浪費掉", false],
+    ["週末兩個小孩一起的午後三小時排什麼？", "和平日分開排，需要兩個大人的行程放這裡", false],
+    ["洗衣與吸拖地怎麼分工？上學服要備幾套？", "備三套就能改成兩天洗一次", false],
+    ["下週有沒有學校活動、看診、回老家？", "先卡進一週總覽再排其他", false],
+    ["睡前故事的書單還夠嗎？要不要排圖書館借書日？", "可以塞在妹妹的晨間活動", false]
+  ];
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) { n.className = cls; }
+    if (text) { n.textContent = text; }
+    return n;
+  }
+
+  /* ── 本機保存（只存在這台裝置） ── */
+  var PREFIX = "jia.v2.";
+  function load(k) { try { return window.localStorage.getItem(PREFIX + k); } catch (e) { return null; } }
+  function save(k, v) { try { window.localStorage.setItem(PREFIX + k, v); } catch (e) { /* 無法保存時照常使用 */ } }
+
+  /* ── 出門清單 ── */
+  var todayKey = new Date().toISOString().slice(0, 10);
+  if (load("leave-date") !== todayKey) {
+    LEAVE.forEach(function (_, i) { save("leave-" + i, "0"); });
+    save("leave-date", todayKey);
+  }
+  var ll = document.getElementById("leavelist");
+  LEAVE.forEach(function (item, i) {
+    var li = el("li"), label = el("label"), box = el("input");
+    box.type = "checkbox";
+    box.setAttribute("data-key", "leave-" + i);
+    label.appendChild(box);
+    label.appendChild(el("span", null, item));
+    li.appendChild(label);
+    ll.appendChild(li);
+  });
+
+  /* ── 洗衣表 ── */
   var tb = document.getElementById("laundry");
-  var order = [1,2,3,4,5,6,0];
-  order.forEach(function (d) {
-    var r = LAUNDRY.filter(function (x) { return x.d === d; })[0];
-    var tr = document.createElement("tr");
+  [1, 2, 3, 4, 5, 6, 0].forEach(function (d) {
+    var r = LAUNDRY[d], tr = el("tr");
     tr.setAttribute("data-dow", d);
-    [DOW[d].replace("星期","週"), r.what, r.forWhom, r.floor].forEach(function (txt, i) {
-      var td = document.createElement("td");
-      td.textContent = txt;
+    [DOW[d].replace("星期", "週"), r.must, r.also, r.floor].forEach(function (txt, i) {
+      var td = el("td", null, txt);
       if (i === 0) { td.style.whiteSpace = "nowrap"; td.style.fontWeight = "700"; }
+      if (i === 1 && d !== 5 && d !== 6) { td.style.fontWeight = "700"; }
       tr.appendChild(td);
     });
     tb.appendChild(tr);
   });
 
-  /* ── 下週討論清單 ── */
-  var AGENDA = [
-    ["午後三小時（14:30–17:30）怎麼過？", "先決定平日的固定版本，週末再另外排"],
-    ["10:30–11:30 要延長晨間活動，還是提早回家煮午餐？", "這題會連帶決定午餐外食或自煮"],
-    ["週六、週日的早餐要不要改成在家吃？", "省一小時，但要提前準備"],
-    ["午休 12:30–14:30，大人一起睡還是輪流做事？", "輪流的話，誰排哪一天"],
-    ["要不要固定一天上才藝課或親子課？", "選一天塞進午後時段"],
-    ["下週有沒有看診、回老家、加班等固定行程？", "先卡進一週總覽再排其他"],
-    ["洗衣與吸拖地怎麼分工？", "固定一人洗衣、一人地板，或每天輪"],
-    ["睡前故事的書單還夠嗎？要不要排圖書館借書日？", "可以塞在晨間活動"]
-  ];
-
+  /* ── 討論清單 ── */
   var ul = document.getElementById("agenda");
   AGENDA.forEach(function (item, i) {
-    var li = document.createElement("li");
-    var label = document.createElement("label");
-    var box = document.createElement("input");
+    var li = el("li"), label = el("label"), box = el("input");
     box.type = "checkbox";
     box.setAttribute("data-key", "ag-" + i);
-    var span = document.createElement("span");
-    span.textContent = item[0];
-    var small = document.createElement("small");
-    small.textContent = item[1];
-    span.appendChild(small);
+    var span = el("span");
+    if (item[2]) {
+      span.appendChild(el("em", null, "先決定 · "));
+    }
+    span.appendChild(document.createTextNode(item[0]));
+    span.appendChild(el("small", null, item[1]));
     label.appendChild(box);
     label.appendChild(span);
     li.appendChild(label);
     ul.appendChild(li);
   });
 
-  /* ── 本機保存（只存在這台裝置） ── */
-  var PREFIX = "jia.v1.";
-  function load(key) {
-    try { return window.localStorage.getItem(PREFIX + key); } catch (e) { return null; }
-  }
-  function save(key, val) {
-    try { window.localStorage.setItem(PREFIX + key, val); } catch (e) { /* 無法保存時照常使用 */ }
-  }
-
-  document.querySelectorAll("[contenteditable][data-key]").forEach(function (el) {
-    var v = load(el.getAttribute("data-key"));
-    if (v) { el.textContent = v; }
-    el.addEventListener("input", function () { save(el.getAttribute("data-key"), el.textContent); });
+  /* ── 綁定保存 ── */
+  document.querySelectorAll("[contenteditable][data-key]").forEach(function (n) {
+    var v = load(n.getAttribute("data-key"));
+    if (v) { n.textContent = v; }
+    n.addEventListener("input", function () { save(n.getAttribute("data-key"), n.textContent); });
   });
   var ta = document.querySelector("textarea[data-key]");
   if (ta) {
@@ -474,33 +675,42 @@
     if (tv) { ta.value = tv; }
     ta.addEventListener("input", function () { save(ta.getAttribute("data-key"), ta.value); });
   }
-  document.querySelectorAll("input[type=checkbox][data-key]").forEach(function (el) {
-    if (load(el.getAttribute("data-key")) === "1") { el.checked = true; }
-    el.addEventListener("change", function () { save(el.getAttribute("data-key"), el.checked ? "1" : "0"); });
+  document.querySelectorAll("input[type=checkbox][data-key]").forEach(function (n) {
+    if (load(n.getAttribute("data-key")) === "1") { n.checked = true; }
+    n.addEventListener("change", function () { save(n.getAttribute("data-key"), n.checked ? "1" : "0"); });
   });
 
+  /* ── 平日／週末切換 ── */
+  var daySec = document.getElementById("day");
+  var bWd = document.getElementById("m-wd"), bWe = document.getElementById("m-we");
+  function setMode(m) {
+    daySec.setAttribute("data-mode", m);
+    bWd.setAttribute("aria-pressed", m === "wd" ? "true" : "false");
+    bWe.setAttribute("aria-pressed", m === "we" ? "true" : "false");
+  }
+  bWd.addEventListener("click", function () { setMode("wd"); });
+  bWe.addEventListener("click", function () { setMode("we"); });
+  var d0 = new Date().getDay();
+  setMode(d0 === 0 || d0 === 6 ? "we" : "wd");
+
   /* ── 現在時間 ── */
-  var DAY_START = 450, DAY_END = 1440, SPAN = DAY_END - DAY_START;
+  var DAY_START = 450, SPAN = 1440 - DAY_START;
+  function pad(n) { return String(n).padStart(2, "0"); }
   function tick() {
-    var now = new Date();
-    var mins = now.getHours() * 60 + now.getMinutes();
-    var dow = now.getDay();
+    var now = new Date(), mins = now.getHours() * 60 + now.getMinutes(), dow = now.getDay();
+    var weekday = dow >= 1 && dow <= 5;
 
     var current = null;
     document.querySelectorAll(".row").forEach(function (row) {
-      var s = +row.getAttribute("data-start"), e = +row.getAttribute("data-end");
-      var on = mins >= s && mins < e;
+      var on = mins >= +row.getAttribute("data-start") && mins < +row.getAttribute("data-end");
       row.classList.toggle("is-now", on);
       if (on) { current = row.querySelector("h3").firstChild.nodeValue; }
     });
 
     var line = document.getElementById("nowline");
-    var hh = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
-    line.innerHTML = "";
-    line.appendChild(document.createTextNode(DOW[dow] + " " + hh + " · 現在是 "));
-    var b = document.createElement("b");
-    b.textContent = current || "非表定時段";
-    line.appendChild(b);
+    line.textContent = DOW[dow] + " " + pad(now.getHours()) + ":" + pad(now.getMinutes())
+      + "（" + (weekday ? "平日" : "週末") + "） · 現在是 ";
+    line.appendChild(el("b", null, current || "非表定時段"));
 
     var marker = document.getElementById("arcnow");
     if (mins >= DAY_START) {
@@ -508,6 +718,14 @@
       marker.style.left = ((mins - DAY_START) / SPAN * 100) + "%";
     } else {
       marker.style.display = "none";
+    }
+
+    var cd = document.getElementById("countdown");
+    if (weekday && mins >= 330 && mins < LEAVE_AT) {
+      cd.hidden = false;
+      cd.textContent = "距離 08:30 出門還有 " + (LEAVE_AT - mins) + " 分";
+    } else {
+      cd.hidden = true;
     }
 
     document.querySelectorAll("th.day").forEach(function (th) {
@@ -518,10 +736,11 @@
       tr.querySelectorAll("td").forEach(function (td) { td.classList.toggle("today", on); });
     });
 
-    var t = LAUNDRY.filter(function (x) { return x.d === dow; })[0];
+    var t = LAUNDRY[dow];
     document.getElementById("tonight-day").textContent = "今天是 " + DOW[dow] + "，21:30 家事時間";
-    document.getElementById("tonight-what").textContent = t.what;
-    document.getElementById("tonight-for").textContent = "給 " + t.forWhom + "　·　地板：" + t.floor;
+    document.getElementById("tonight-must").textContent = t.must;
+    document.getElementById("tonight-also").textContent = "接著洗：" + t.also;
+    document.getElementById("tonight-floor").textContent = "地板：" + t.floor;
   }
   tick();
   window.setInterval(tick, 60000);
