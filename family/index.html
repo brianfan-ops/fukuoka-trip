@@ -197,6 +197,8 @@
   .tonight { border-left:4px solid var(--b-night); margin-bottom:16px; }
   .tonight .must { font-family:"Noto Serif TC",serif; font-weight:700; font-size:1.15rem; color:var(--ink); margin-top:6px; }
   .tonight .also { margin-top:4px; }
+  .lf-state.due { color:var(--alert); font-weight:700; }
+  .lf-state.ok { color:var(--ink-3); }
   .grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px; margin-top:14px; }
   .acts { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; }
   .act { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 16px; box-shadow:var(--shadow); }
@@ -267,7 +269,7 @@
     <a href="#day" class="on">一日節奏</a>
     <a href="#week">一週總覽</a>
     <a href="#sister">妹妹的活動</a>
-    <a href="#chores">家事與洗衣</a>
+    <a href="#chores">家事輪值</a>
     <a href="#talk">下週討論</a>
   </div>
 </nav>
@@ -296,17 +298,17 @@
       </div>
       <div class="card leave">
         <div class="top">
-          <h3>17:50 接放學</h3>
+          <h3>17:50 爸爸接回</h3>
           <span class="cd" id="cd-pm" hidden></span>
         </div>
-        <p>早上是爸爸送，晚上誰接還沒定——<b>這題決定媽媽的 16:30–17:30 長什麼樣</b>。爸爸下班順路接，媽媽就能專心備晚餐；媽媽帶妹妹去接，晚餐得在 16:30 前就完成。動線本身是固定的：</p>
+        <p>爸爸下班順路接，媽媽和妹妹留在家把晚餐備好。這條動線的好處是媽媽下午不用出門，16:30 之後可以專心備餐：</p>
         <ol class="chain">
-          <li><b class="mono">17:30</b> 出發（晚餐先備到「回來就能上桌」）</li>
-          <li><b class="mono">17:50</b> 接到哥哥</li>
+          <li><b class="mono">17:50</b> 爸爸接到哥哥</li>
           <li><b class="mono">18:05</b> 到家、洗手</li>
-          <li class="late"><b class="mono">18:15</b> 開飯 — 比原表晚 45 分，只剩 75 分鐘到洗澡</li>
+          <li><b class="mono">18:15</b> 開飯 — 到洗澡 75 分鐘，經驗上夠用</li>
+          <li><b class="mono">19:15</b> 收拾、洗碗，接 19:30 洗澡</li>
         </ol>
-        <p style="margin-top:8px;">回程順手帶回：書包、餐袋、聯絡簿 → 直接進洗衣籃／流理台。</p>
+        <p style="margin-top:8px;">爸爸回程順手帶回：書包、餐袋、聯絡簿 → 書包放定位、餐袋直接洗。</p>
       </div>
     </div>
 
@@ -395,11 +397,11 @@
         <div class="t mono">14:30<small>17:30</small></div>
         <div class="blk">
           <h3>空白 · 午後三小時<span class="now-chip">現在</span></h3>
-          <p class="wd">整份表最大的空白（原表 14:30、15:30、16:30 三格都沒填），平日<b>整段都只有妹妹</b>。前半是她睡醒後最有精神的時候，後半要一邊顧她一邊把晚餐備好——因為 <b>17:30 就得出發接哥哥</b>，回來沒有時間再煮。</p>
+          <p class="wd">整份表最大的空白（原表 14:30、15:30、16:30 三格都沒填），平日<b>整段都只有媽媽和妹妹</b>。前半是她睡醒後最有精神的時候（適合主題活動），16:30 之後轉成備晚餐——爸爸 18:05 就帶哥哥進門，備好了就能直接上桌。</p>
           <p class="we">三小時空白，四個人都在。適合排一個主行程：戶外放電、朋友家、市場採買。</p>
           <div class="who wd"><span class="p away"><i>哥</i>在學校 → 17:50 接</span><span class="p away"><i>爸</i>上班</span><span class="p"><i>媽＋妹</i>在家</span></div>
           <div class="who we"><span class="p"><i>全家</i>一起</span></div>
-          <span class="chip ask wd">17:30 出發 · 晚餐要先備好</span><span class="chip todo">待決定 · 最優先</span>
+          <span class="chip fix wd">16:30 後備晚餐</span><span class="chip todo">內容待排</span>
         </div>
       </div>
 
@@ -407,11 +409,11 @@
         <div class="t mono">17:30<small>19:30</small></div>
         <div class="blk">
           <h3>晚餐時間<span class="now-chip">現在</span></h3>
-          <p class="wd">前 35 分鐘其實在路上：17:30 出發 → 17:50 接到哥哥 → 18:05 到家，實際開飯約 <b>18:15</b>，到洗澡只剩 75 分鐘。所以晚餐要在 16:30–17:30 之間就備好，回來只剩加熱和上菜。</p>
+          <p class="wd">爸爸 17:50 接到哥哥、18:05 到家，實際開飯約 <b>18:15</b>，到洗澡 75 分鐘——經驗上夠用。條件是晚餐在 16:30–17:30 之間就備好，進門只剩加熱和上菜。吃完順手洗碗，別留到家事時間。</p>
           <p class="we">兩小時，含準備、吃飯、收拾。四個人都在，可以吃慢一點。</p>
-          <div class="who wd"><span class="p away"><i>哥</i>17:50 接到 · 18:05 到家</span><span class="p"><i>爸媽</i>誰去接 · 待定</span></div>
+          <div class="who wd"><span class="p"><i>爸＋哥</i>18:05 到家</span><span class="p"><i>媽＋妹</i>在家備晚餐</span></div>
           <div class="who we"><span class="p"><i>全家</i>都在家</span></div>
-          <span class="chip fix">固定</span><span class="chip ask wd">誰去接？妹妹同行還是留家？</span>
+          <span class="chip fix">固定</span><span class="chip fix wd">爸爸接回 · 18:15 開飯</span>
         </div>
       </div>
 
@@ -440,9 +442,9 @@
         <div class="t mono">21:30<small>23:00</small></div>
         <div class="blk">
           <h3>家事時間<span class="now-chip">現在</span></h3>
-          <p class="wd">洗衣、吸地、拖地。平日的第一順位是<b>哥哥隔天的上學服</b>，剩下的容量再放當晚的輪值類別。誰洗、誰拖還沒講定——見下方輪值表。</p>
-          <p class="we">洗衣、吸地、拖地。週末沒有上學服要趕，適合排寢具、厚重衣物這類大件。</p>
-          <span class="chip fix">固定</span><span class="chip todo">分工輪值待討論</span><span class="chip">見「家事與洗衣」</span>
+          <p class="wd">洗衣（當天的種類）、折昨天晾的、吸地拖地。孩子衣物夠輪替，不必每天洗，所以照種類分天跑就好。誰洗、誰拖還沒講定——見下方輪值表。</p>
+          <p class="we">洗衣、折衣、吸地拖地。週末適合排大件與長週期家事：床單被套、冷氣濾網、陽台。</p>
+          <span class="chip fix">固定</span><span class="chip todo">分工輪值待討論</span><span class="chip">見「家事輪值」</span>
         </div>
       </div>
 
@@ -465,7 +467,7 @@
   <!-- 一週總覽 -->
   <section id="week">
     <div class="sec-head"><h2>一週總覽</h2><span class="num mono">MON — SUN</span></div>
-    <p class="sec-note">一天裡有十個時段七天都一樣，那些壓成一整條「七天相同」。平日兩個定點已經確定（08:30 出門、17:50 接），真正要排的是中間四條白天時段：平日＝妹妹的安排，週末＝兩個小孩一起。空格可以直接點進去打字。</p>
+    <p class="sec-note">一天裡有十個時段七天都一樣，那些壓成一整條「七天相同」。平日兩個定點已經確定（08:30 爸爸帶哥哥出門、17:50 爸爸接回），真正要排的是中間四條白天時段：平日＝妹妹的安排，週末＝兩個小孩一起。空格可以直接點進去打字。</p>
 
     <div class="scroll">
       <table>
@@ -520,7 +522,7 @@
             <td><div class="cell" contenteditable="true" data-key="w-c-0" data-ph="兩人 · 待定"></div></td>
           </tr>
           <tr>
-            <td class="time mono">16:30–17:30<br><span>備晚餐 · 17:30 出發</span></td>
+            <td class="time mono">16:30–17:30<br><span>備晚餐</span></td>
             <td><div class="cell" contenteditable="true" data-key="w-d-1" data-ph="妹妹＋備晚餐"></div></td>
             <td><div class="cell" contenteditable="true" data-key="w-d-2" data-ph="妹妹＋備晚餐"></div></td>
             <td><div class="cell" contenteditable="true" data-key="w-d-3" data-ph="妹妹＋備晚餐"></div></td>
@@ -529,8 +531,8 @@
             <td><div class="cell" contenteditable="true" data-key="w-d-6" data-ph="兩人 · 待定"></div></td>
             <td><div class="cell" contenteditable="true" data-key="w-d-0" data-ph="兩人 · 待定"></div></td>
           </tr>
-          <tr><td class="time mono">17:30–21:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>晚餐</b> → <b>洗澡</b> → <b>睡前故事</b>（平日 18:15 才開飯）</td></tr>
-          <tr><td class="time mono">21:30–00:00</td><td class="fixed-cell" colspan="7">七天相同 · <b>家事時間</b>（平日必洗哥哥的上學服）→ <b>爸媽時間</b></td></tr>
+          <tr><td class="time mono">17:30–21:30</td><td class="fixed-cell" colspan="7">七天相同 · <b>晚餐</b> → <b>洗澡</b> → <b>睡前故事</b>（平日 18:15 開飯，含洗碗）</td></tr>
+          <tr><td class="time mono">21:30–00:00</td><td class="fixed-cell" colspan="7">七天相同 · <b>家事時間</b>（當天種類的洗衣＋折昨天的＋地板）→ <b>爸媽時間</b></td></tr>
         </tbody>
       </table>
     </div>
@@ -548,49 +550,79 @@
       <div class="act"><div class="slot mono">10:30–11:30 或睡前</div><h3>繪本共讀</h3><p>指認命名為主（這是狗、這是球），她會跟著說。語言爆發期最有效的投資，也和晚上的睡前故事共用同一批書。</p></div>
       <div class="act"><div class="slot mono">14:30–15:30</div><h3>音樂律動</h3><p>睡醒後的暖機：唱跳、搖鈴、追泡泡。剛睡醒不出門，先在家動一動。</p></div>
       <div class="act"><div class="slot mono">15:30–16:30</div><h3>模仿與家事參與</h3><p>擦桌子、把髒衣服丟進洗衣籃、幫忙洗菜玩水、分襪子。她最愛模仿大人的年紀，順手訓練，晚上的家事時間也輕鬆一點。</p></div>
-      <div class="act"><div class="slot mono">16:30–17:30</div><h3>備晚餐時的陪玩</h3><p>這一格大人要備晚餐，給她固定的一套「廚房旁玩具」（鍋碗、豆子罐、貼紙書），或直接推車出門買菜。17:30 準時出發接哥哥。</p></div>
+      <div class="act"><div class="slot mono">16:30–17:30</div><h3>備晚餐時的陪玩</h3><p>這一格媽媽要備晚餐，給她固定的一套「廚房旁玩具」（鍋碗、豆子罐、貼紙書）。備好了爸爸 18:05 帶哥哥進門就能直接上桌。</p></div>
     </div>
 
+    <h3 style="font-size:1rem; margin:28px 0 8px;">主題日提案</h3>
+    <p class="sec-note">一天挑一格當主題，其他時段照原本的節奏走。固定下來的好處是大人早上不用再想「今天要幹嘛」，而且東西可以前一晚就備好。這是提案，換順序或整週不排都行。</p>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th style="width:110px;">星期 · 主題</th><th style="width:96px;">放哪一格</th><th style="min-width:230px;">具體做什麼</th><th style="min-width:150px;">前一晚要備</th></tr>
+        </thead>
+        <tbody id="themes"></tbody>
+      </table>
+    </div>
+    <p class="sec-note" style="margin:12px 0 0;">每天都做、不算主題的：<b>繪本共讀</b>（睡前或午餐前）和<b>家事參與</b>（收玩具、丟洗衣籃）。週六日不排主題——上午多半是爸爸帶或全家出門。</p>
+
     <div class="grid2">
-      <div class="card"><h3>要不要排主題日？</h3><p>例如週一美勞、週二音樂、週三圖書館、週四公園、週五採買。固定下來大人不用每天想，但也少了彈性——這題留到下週討論。</p></div>
+      <div class="card"><h3>前一晚備好</h3><p>主題日最容易失敗的原因是早上找不到東西。睡前故事講完、進家事時間之前，順手把隔天要用的（紙筆、借書證、購物袋）放到門口，早上就不用想。</p></div>
       <div class="card"><h3>午睡與月齡</h3><p>1 歲 7 個月通常一天只睡一覺，12:30–14:30 這一段剛好。如果上午十點左右她開始鬧睏，代表早上的活動可以再往前挪。過幾個月要再回頭看一次這一節。</p></div>
     </div>
   </section>
 
-  <!-- 家事與洗衣 -->
+  <!-- 家事輪值 -->
   <section id="chores">
-    <div class="sec-head"><h2>家事與洗衣</h2><span class="num mono">21:30 — 23:00</span></div>
-    <p class="sec-note">兩件事要分開看：<b>洗什麼</b>（跟著隔天的需求跑）和<b>誰來洗</b>（要講好輪值）。原則：<b>今晚洗的，是明天要穿、要用的東西。</b>哥哥上學之後多了一條硬規則——<b>週日到週四晚上，隔天的上學服和餐袋一定要洗</b>，其他類別排在它後面輪。下面是草案，不合用就直接改。</p>
+    <div class="sec-head"><h2>家事輪值</h2><span class="num mono">21:30 — 23:00</span></div>
+    <p class="sec-note">家事分三層：<b>每晚都要做的</b>（不用排，照做）、<b>每週輪值的</b>（照種類分天，不用每天洗）、<b>長週期的</b>（隔幾週才一次，最容易忘）。誰做誰不做是提案，表格裡可以直接改。</p>
 
     <div class="card tonight">
-      <h3>今晚要洗什麼</h3>
+      <h3>今晚要做什麼</h3>
       <p id="tonight-day">—</p>
-      <p class="must" id="tonight-must">—</p>
-      <p class="also" id="tonight-also">—</p>
+      <p class="must" id="tonight-wash">—</p>
       <p class="also" id="tonight-floor">—</p>
+      <p class="also" id="tonight-duty">—</p>
     </div>
 
+    <h3 style="font-size:1rem; margin:26px 0 8px;">一、每晚固定</h3>
+    <div class="acts">
+      <div class="act"><div class="slot mono">18:15–19:30</div><h3>洗碗</h3><p>吃完就洗，不要留到家事時間——晚餐那 75 分鐘本來就含收拾。</p></div>
+      <div class="act"><div class="slot mono">18:05 進門後</div><h3>餐袋、水壺</h3><p>爸爸帶回來就直接沖洗晾著，隔天要用。這兩樣不進洗衣機。</p></div>
+      <div class="act"><div class="slot mono">21:30–23:00</div><h3>折昨天晾的衣服</h3><p>今晚洗 → 明晚折，永遠差一天，量固定也好抓。邊看電視邊折就行。</p></div>
+      <div class="act"><div class="slot mono">21:30 開洗</div><h3>當天種類的那一批</h3><p>21:30 開洗 → 22:15 晾／進烘乾。洗衣機在轉的時候順手吸地拖地。</p></div>
+    </div>
+
+    <h3 style="font-size:1rem; margin:26px 0 8px;">二、每週輪值</h3>
+    <p class="sec-note">孩子衣物夠輪替，不用每天洗，所以照<b>種類</b>分天跑：小孩衣物一週兩批（週一、週四），大人衣物兩批，毛巾類一批。最右欄的分工是提案，可以直接改。</p>
     <div class="scroll">
       <table>
         <thead>
-          <tr><th style="width:76px;">星期</th><th style="min-width:180px;">必洗 · 隔天要用</th><th style="min-width:170px;">當晚輪值類別</th><th style="min-width:140px;">地板家事</th><th style="min-width:132px;">負責 · 洗衣／地板</th></tr>
+          <tr><th style="width:76px;">星期</th><th style="min-width:210px;">洗衣 · 種類</th><th style="min-width:150px;">地板家事</th><th style="min-width:136px;">負責 · 洗衣／地板</th></tr>
         </thead>
         <tbody id="laundry"></tbody>
       </table>
     </div>
 
+    <h3 style="font-size:1rem; margin:26px 0 8px;">三、長週期家事</h3>
+    <p class="sec-note">這些不會有人提醒你，所以填一下「上次完成」——超過建議間隔就會自己標紅。填 <span class="mono">2026-08-15</span> 或 <span class="mono">8/15</span> 都認得。</p>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th style="min-width:150px;">項目</th><th style="width:96px;">建議間隔</th><th style="min-width:120px;">上次完成</th><th style="min-width:110px;">狀態</th><th style="min-width:190px;">排在哪</th></tr>
+        </thead>
+        <tbody id="lowfreq"></tbody>
+      </table>
+    </div>
+    <p class="save-note">日期只存在這台裝置的瀏覽器。</p>
+
     <div class="grid2">
       <div class="card">
         <h3>輪值怎麼分（提案）</h3>
-        <p>原則：<b>誰白天顧得多，晚上就少做一點</b>。平日媽媽單獨帶妹妹九小時，所以洗衣（開機、晾收）偏向爸爸，地板由媽媽白天順手或當晚處理，週三、週五對調一次；週六日兩人一起清大件。表格最右欄可以直接改，這是提案不是定案。</p>
+        <p>原則：<b>誰白天顧得多，晚上就少做一點</b>。平日媽媽單獨帶妹妹九小時，所以洗衣（開機、晾收）偏向爸爸，地板由媽媽白天順手或當晚處理，週三、週五對調一次；週六日兩人一起清大件。</p>
       </div>
       <div class="card">
-        <h3>時間怎麼卡</h3>
-        <p>19:30 洗澡時，哥哥的上學服直接進洗衣籃 → 21:30 開洗 → 22:15 晾／進烘乾 → 洗衣機在轉的時候吸地拖地 → 23:00 收工，接爸媽時間。</p>
-      </div>
-      <div class="card">
-        <h3>上學服要幾套？</h3>
-        <p>如果只有一套，等於每晚都被綁住，遇到烘不乾就開天窗。備到<b>三套</b>就能改成兩天洗一次，週末補洗，彈性差很多。</p>
+        <h3>長週期家事排哪裡</h3>
+        <p>晚上的家事時間只夠做小的。冷氣濾網、陽台、儲物間這種，建議排在<b>假日上午</b>——爸爸帶孩子出門那三小時，或反過來由媽媽帶孩子、爸爸留守做一件。一次做一件就好。</p>
       </div>
     </div>
   </section>
@@ -598,7 +630,7 @@
   <!-- 下週討論 -->
   <section id="talk">
     <div class="sec-head"><h2>下週行程討論</h2><span class="num mono">SUN 23:00</span></div>
-    <p class="sec-note">固定在星期日的爸媽時間談，抓 15 分鐘。<b>紅字那三題先解決</b>——接送分工、家事輪值、晚餐備料，其他安排都排在它們後面。勾完的項目就可以寫進一週總覽。</p>
+    <p class="sec-note">固定在星期日的爸媽時間談，抓 15 分鐘。<b>紅字那兩題先解決</b>——每晚家事怎麼分、長週期家事誰做。接送和晚餐已經有答案了。勾完的項目就可以寫進一週總覽。</p>
 
     <div class="card">
       <ul class="todo" id="agenda"></ul>
@@ -623,7 +655,7 @@
 
   var DOW = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
   var LEAVE_AT = 510;   /* 08:30 出門 */
-  var PICKUP_GO = 1050; /* 17:30 出發 */
+  var HOME_AT = 1085;   /* 18:05 爸爸帶哥哥到家 */
 
   /* ── 成員 ── */
   var KIDS = [["age-bro", "2023-05-03"], ["age-sis", "2025-01-15"]];
@@ -631,28 +663,44 @@
   /* ── 出門前清單（每天自動清空） ── */
   var LEAVE = ["聯絡簿", "書包", "水壺", "餐袋／餐具", "外套", "妹妹的隨行包"];
 
-  /* ── 洗衣輪值草案：必洗（隔天要用）＋當晚輪值 ── */
+  /* ── 每週輪值：依種類分天，不用每天洗 ── */
   var LAUNDRY = [
-    { d:0, must:"哥哥的上學服＋餐袋（週一要用）", also:"厚重衣物、外套、包巾", floor:"清冰箱、倒垃圾、盤點下週衣物", duty:"兩人一起" },
-    { d:1, must:"哥哥的上學服＋餐袋", also:"小孩衣物（深色）、圍兜", floor:"吸地（客廳＋房間）", duty:"洗衣 爸 · 地板 媽" },
-    { d:2, must:"哥哥的上學服＋餐袋", also:"大人衣物（淺色、內著）", floor:"拖地（客廳）", duty:"洗衣 爸 · 地板 媽" },
-    { d:3, must:"哥哥的上學服＋餐袋", also:"毛巾、擦手巾、口水巾", floor:"吸地（客廳＋房間）", duty:"洗衣 媽 · 地板 爸" },
-    { d:4, must:"哥哥的上學服＋餐袋（週五最後一天）", also:"小孩衣物（淺色）、睡衣", floor:"拖地（房間）", duty:"洗衣 爸 · 地板 媽" },
-    { d:5, must:"明天不上學 · 沒有必洗", also:"大人衣物（深色）、外出服、書包與餐袋", floor:"吸地＋浴室", duty:"洗衣 媽 · 地板 爸" },
-    { d:6, must:"明天不上學 · 沒有必洗", also:"床單、枕套、被套", floor:"廚房、浴室大掃", duty:"兩人一起" }
+    { d:0, wash:"補洗 · 書包、隔天要用的零星", floor:"倒垃圾、下週衣物盤點", duty:"兩人一起" },
+    { d:1, wash:"小孩衣物 第一批（哥哥上學服＋妹妹）", floor:"吸地（客廳＋房間）", duty:"洗衣 爸 · 地板 媽" },
+    { d:2, wash:"大人衣物（淺色、內著）", floor:"拖地（客廳）", duty:"洗衣 爸 · 地板 媽" },
+    { d:3, wash:"毛巾、口水巾、圍兜", floor:"吸地（客廳＋房間）", duty:"洗衣 媽 · 地板 爸" },
+    { d:4, wash:"小孩衣物 第二批（含睡衣）", floor:"拖地（房間）", duty:"洗衣 爸 · 地板 媽" },
+    { d:5, wash:"大人衣物（深色、外出服）", floor:"吸地＋浴室", duty:"洗衣 媽 · 地板 爸" },
+    { d:6, wash:"大件 · 厚重衣物、外套（床單被套見長週期）", floor:"廚房、浴室大掃", duty:"兩人一起" }
+  ];
+
+  /* ── 長週期家事：建議間隔（天） ── */
+  var LOWFREQ = [
+    { name:"床單、被套、枕套", every:14, where:"週六家事時間，或假日上午" },
+    { name:"洗冷氣濾網", every:30, where:"假日上午 · 夏天用得凶可縮到 2–3 週" },
+    { name:"清冰箱", every:30, where:"大採買的前一天，順便盤點" },
+    { name:"洗陽台", every:42, where:"挑天氣好的假日上午" },
+    { name:"整理儲物間", every:90, where:"換季時一起做" }
+  ];
+
+  /* ── 妹妹的主題日提案 ── */
+  var THEMES = [
+    ["週一 · 美勞日", "10:30–11:30", "蠟筆塗鴉（大張紙）、貼紙、黏土。桌邊活動好收拾，收完剛好吃午餐。", "紙、蠟筆、圍兜"],
+    ["週二 · 公園日", "09:30–10:30", "溜滑梯、走路、追鴿子。上午先把電放掉，午睡好睡。", "帽子、水壺、換洗衣"],
+    ["週三 · 圖書館日", "09:30–10:30", "借書、現場翻書；回家後新書當天講。順便補睡前故事的書單。", "借書證、環保袋"],
+    ["週四 · 音樂日", "14:30–15:30", "唱跳、搖鈴、追泡泡。剛睡醒不出門，在家動一動暖機。", "泡泡水、樂器"],
+    ["週五 · 採買日", "15:30–16:30", "推車去市場或超市，邊走邊認食物名稱，順便買齊晚餐材料——回家剛好接 16:30 備晚餐。", "推車、購物袋、清單"]
   ];
 
   /* ── 下週討論清單，前兩題是卡住其他安排的 ── */
   var AGENDA = [
-    ["誰去接哥哥？爸爸下班順路，還是媽媽帶妹妹去？", "這題決定媽媽的 16:30–17:30 是備晚餐還是出門", true],
-    ["家事怎麼輪值？洗衣和地板各歸誰？", "媽媽白天已經單獨顧九小時，晚上的分配要講清楚", true],
-    ["晚餐幾點開始準備？", "18:15 才開飯，回來沒時間煮——要在 16:30–17:30 備好", true],
+    ["每晚的四件家事怎麼分？洗碗、洗衣、折衣、地板", "媽媽白天已經單獨顧九小時——先把輪值表最右欄填出一版", true],
+    ["長週期家事誰負責？排在哪個假日上午？", "冷氣濾網、陽台、儲物間、床單被套，一次一件就好", true],
+    ["妹妹的主題日提案要不要採用？從哪一天開始？", "美勞、公園、圖書館、音樂、採買——換順序也行", false],
+    ["16:30–17:30 備晚餐能不能穩定做到？", "做不到就改成前一晚備料，18:15 才有辦法準時開飯", false],
     ["假日上午爸爸帶孩子時，媽媽要做什麼？", "先寫下來，不然預設值會變成做家事，等於沒休息到", false],
     ["12:30–14:30 媽媽的午休要不要保護起來？", "約好這段不排家事，家事一律放到晚上", false],
-    ["18:15–19:30 這 75 分鐘怎麼用？", "晚餐、收拾、哥哥回家後的相處全擠在這裡", false],
-    ["妹妹的在家活動要不要排固定主題日？", "例如週一美勞、週三圖書館、週五採買", false],
     ["週末兩個小孩一起的午後三小時排什麼？", "需要兩個大人的行程放這裡", false],
-    ["上學服要備幾套？", "備三套就能改成兩天洗一次，不用每晚被綁住", false],
     ["下週有沒有學校活動、看診、回老家？", "先卡進一週總覽再排其他", false]
   ];
 
@@ -694,15 +742,15 @@
     ll.appendChild(li);
   });
 
-  /* ── 洗衣表 ── */
+  /* ── 每週輪值表 ── */
   var tb = document.getElementById("laundry");
   [1, 2, 3, 4, 5, 6, 0].forEach(function (d) {
     var r = LAUNDRY[d], tr = el("tr");
     tr.setAttribute("data-dow", d);
-    [DOW[d].replace("星期", "週"), r.must, r.also, r.floor].forEach(function (txt, i) {
+    [DOW[d].replace("星期", "週"), r.wash, r.floor].forEach(function (txt, i) {
       var td = el("td", null, txt);
       if (i === 0) { td.style.whiteSpace = "nowrap"; td.style.fontWeight = "700"; }
-      if (i === 1 && d !== 5 && d !== 6) { td.style.fontWeight = "700"; }
+      if (i === 1) { td.style.fontWeight = "700"; }
       tr.appendChild(td);
     });
     var dutyCell = el("td");
@@ -712,6 +760,76 @@
     dutyCell.appendChild(duty);
     tr.appendChild(dutyCell);
     tb.appendChild(tr);
+  });
+
+  /* ── 長週期家事表 ── */
+  var lf = document.getElementById("lowfreq");
+  LOWFREQ.forEach(function (r, i) {
+    var tr = el("tr");
+    var name = el("td", null, r.name);
+    name.style.fontWeight = "700";
+    tr.appendChild(name);
+    var span = r.every % 30 === 0 ? (r.every / 30) + " 個月"
+             : r.every % 7 === 0 ? (r.every / 7) + " 週" : r.every + " 天";
+    tr.appendChild(el("td", null, span));
+    var dateCell = el("td");
+    var date = el("div", "cell");
+    date.setAttribute("contenteditable", "true");
+    date.setAttribute("data-key", "lf-" + i);
+    date.setAttribute("data-ph", "年-月-日");
+    date.addEventListener("input", function () { window.setTimeout(refreshLowFreq, 0); });
+    dateCell.appendChild(date);
+    tr.appendChild(dateCell);
+    var st = el("td", "lf-state", "—");
+    st.setAttribute("data-i", i);
+    tr.appendChild(st);
+    tr.appendChild(el("td", null, r.where));
+    lf.appendChild(tr);
+  });
+
+  /* 把「上次完成」解析成日期：2026-08-15 或 8/15 都收 */
+  function parseDate(txt) {
+    var t = (txt || "").trim();
+    if (!t) { return null; }
+    var full = t.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
+    if (full) { return new Date(+full[1], +full[2] - 1, +full[3]); }
+    var short = t.match(/^(\d{1,2})[-/.](\d{1,2})$/);
+    if (short) {
+      var now = new Date(), d = new Date(now.getFullYear(), +short[1] - 1, +short[2]);
+      if (d > now) { d.setFullYear(now.getFullYear() - 1); }
+      return d;
+    }
+    return null;
+  }
+
+  function refreshLowFreq() {
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    document.querySelectorAll(".lf-state").forEach(function (cell) {
+      var i = +cell.getAttribute("data-i");
+      var input = document.querySelector('[data-key="lf-' + i + '"]');
+      var d = parseDate(input ? input.textContent : "");
+      cell.className = "lf-state";
+      if (!d) { cell.textContent = "—"; return; }
+      var days = Math.round((today - d) / 86400000);
+      if (days < 0) { cell.textContent = "—"; return; }
+      cell.textContent = days + " 天前";
+      cell.classList.add(days > LOWFREQ[i].every ? "due" : "ok");
+      if (days > LOWFREQ[i].every) { cell.textContent = days + " 天前 · 該做了"; }
+    });
+  }
+
+  /* ── 主題日提案表 ── */
+  var th = document.getElementById("themes");
+  THEMES.forEach(function (row) {
+    var tr = el("tr");
+    row.forEach(function (txt, i) {
+      var td = el("td", i === 1 ? "mono" : null, txt);
+      if (i === 0) { td.style.fontWeight = "700"; td.style.whiteSpace = "nowrap"; }
+      if (i === 1) { td.style.fontSize = ".78rem"; td.style.color = "var(--ink-2)"; }
+      tr.appendChild(td);
+    });
+    th.appendChild(tr);
   });
 
   /* ── 討論清單 ── */
@@ -798,12 +916,12 @@
     }
 
     var pm = document.getElementById("cd-pm");
-    if (weekday && mins >= 720 && mins < PICKUP_GO) {
+    if (weekday && mins >= 780 && mins < HOME_AT) {
       pm.hidden = false;
-      pm.textContent = "距離 17:30 出發還有 " + (PICKUP_GO - mins) + " 分";
-    } else if (weekday && mins >= PICKUP_GO && mins < 1095) {
+      pm.textContent = "距離父子到家還有 " + (HOME_AT - mins) + " 分";
+    } else if (weekday && mins >= HOME_AT && mins < 1110) {
       pm.hidden = false;
-      pm.textContent = "接送動線進行中";
+      pm.textContent = "到家了 · 準備開飯";
     } else {
       pm.hidden = true;
     }
@@ -823,12 +941,13 @@
     });
 
     var t = LAUNDRY[dow];
-    document.getElementById("tonight-day").textContent = "今天是 " + DOW[dow] + "，21:30 家事時間";
-    document.getElementById("tonight-must").textContent = t.must;
-    document.getElementById("tonight-also").textContent = "接著洗：" + t.also;
+    document.getElementById("tonight-day").textContent = "今天是 " + DOW[dow] + "，21:30 家事時間（另有每晚固定：洗碗、餐袋、折昨天晾的）";
+    document.getElementById("tonight-wash").textContent = t.wash;
     document.getElementById("tonight-floor").textContent = "地板：" + t.floor;
+    document.getElementById("tonight-duty").textContent = "分工：" + t.duty;
   }
   tick();
+  refreshLowFreq();
   window.setInterval(tick, 60000);
 
   /* ── 導覽高亮 ── */
