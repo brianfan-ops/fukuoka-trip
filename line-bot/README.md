@@ -32,6 +32,7 @@ LINE Platform ──webhook──▶ Cloudflare Worker ──▶ KV（待辦、�
 | `家事` | 每晚固定、今晚輪值、長週期進度（逾期會標紅，按鈕記錄「今天做了」） |
 | `討論` | 下週要決定的清單 |
 | `說明` | 指令說明 |
+| `安裝選單` | 裝上／重裝下方那排常駐按鈕 |
 
 排程推播（台北時間）：
 
@@ -108,14 +109,16 @@ npm run deploy
 
 ### 4. 圖文選單
 
+**在 LINE 裡打「安裝選單」就好**，不用終端機。重打一次會清掉舊的重裝，可以重複執行。
+
+選單是 3×2 六格：今天 / 待辦 / 一週 / 家事 / 討論 / 說明。改版面的話：
+
 ```bash
 npx playwright install chromium   # 只有產圖需要
 npm run richmenu:image            # assets/richmenu.html → assets/richmenu.png
-LINE_CHANNEL_ACCESS_TOKEN=xxx npm run richmenu:upload
+npm run richmenu:module           # PNG → src/richmenu-image.js（Worker 用的）
+npm run deploy                    # 部署後在 LINE 打「安裝選單」
 ```
-
-選單是 3×2 六格：今天 / 待辦 / 一週 / 家事 / 討論 / 說明。
-改版面就改 `assets/richmenu.html`，重跑上面兩行（`node scripts/richmenu.js --clean` 可清掉舊的）。
 
 ## 改內容
 

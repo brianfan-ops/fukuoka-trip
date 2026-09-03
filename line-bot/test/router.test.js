@@ -146,3 +146,40 @@ test("內建網頁與 family/index.html 一致", async () => {
   const source = await readFile(new URL("../../family/index.html", import.meta.url), "utf8");
   assert.equal(page, source, "family/index.html 改過了，請執行 npm run page 重新產生 src/page.js");
 });
+
+test("在聊天裡安裝選單：清舊的、建新的、設成預設", async () => {
+  const calls = [];
+  const original = globalThis.fetch;
+  globalThis.fetch = async (url, init) => {
+    calls.push(`${init?.method || "GET"} ${String(url)}`);
+    if (String(url).endsWith("/richmenu/list")) {
+      return new Response(JSON.stringify({ richmenus: [{ richMenuId: "old-1" }] }), { status: 200 });
+    }
+    if (String(url).endsWith("/v2/bot/richmenu")) {
+      return new Response(JSON.stringify({ richMenuId: "new-1" }), { status: 200 });
+    }
+    return new Response("{}", { status: 200 });
+  };
+
+  const ctx = { ...ctxOf(fakeKv()), token: "test-token" };
+  const messages = await respond(ctx, "安裝選單");
+  globalThis.fetch = original;
+
+  assert.match(messages[0].text, /裝好了/);
+  assert.deepEqual(calls, [
+    "GET https://api.line.me/v2/bot/richmenu/list",
+    "DELETE https://api.line.me/v2/bot/richmenu/old-1",
+    "POST https://api.line.me/v2/bot/richmenu",
+    "POST https://api-data.line.me/v2/bot/richmenu/new-1/content",
+    "POST https://api.line.me/v2/bot/user/all/richmenu/new-1",
+  ]);
+});
+
+test("選單安裝失敗會把錯誤回給使用者，不是靜靜失敗", async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = async () => new Response("bad token", { status: 401 });
+  const ctx = { ...ctxOf(fakeKv()), token: "nope" };
+  const messages = await respond(ctx, "安裝選單");
+  globalThis.fetch = original;
+  assert.match(messages[0].text, /選單安裝失敗/);
+});

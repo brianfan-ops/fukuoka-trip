@@ -84,6 +84,7 @@ async function handleEvent(event, env) {
     kv: env.FAMILY,
     now: taipei(),
     siteUrl: env.SITE_URL || "",
+    token,
     userName: await resolveName(env, userId),
   };
 

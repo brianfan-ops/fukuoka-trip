@@ -7,6 +7,7 @@ import {
 import { daysBetween, parseDate } from "./time.js";
 import * as store from "./store.js";
 import * as flex from "./flex.js";
+import { installRichMenu } from "./richmenu.js";
 import { text, quick } from "./line.js";
 
 const COMMANDS = [
@@ -16,6 +17,7 @@ const COMMANDS = [
   { cmd: "chores", words: ["家事", "輪值", "洗衣"] },
   { cmd: "agenda", words: ["討論", "下週", "議題"] },
   { cmd: "help", words: ["說明", "指令", "怎麼用", "help"] },
+  { cmd: "menu", words: ["安裝選單", "裝選單", "選單", "menu"] },
 ];
 
 /* 把「一週安排？」這種尾巴修掉，才對得上指令；「洗衣機壞了」不會被削成「洗衣」。 */
@@ -102,6 +104,8 @@ export async function respond(ctx, input) {
       return [flex.agendaBubble(AGENDA)];
     case "done":
       return [await completeByIndex(ctx, arg)];
+    case "menu":
+      return [await setupMenu(ctx)];
     case "add":
       return [await addTodo(ctx, arg)];
     default:
@@ -133,6 +137,29 @@ export async function respondPostback(ctx, data) {
     return [text(`記下了：${item.name} 今天做過，下次約 ${item.every} 天後。`, MENU)];
   }
   return [helpText()];
+}
+
+/** 在對話裡安裝圖文選單，省掉跑指令那一段。 */
+async function setupMenu(ctx) {
+  if (!ctx.token) return text("這裡拿不到權杖，沒辦法安裝選單。", MENU);
+  try {
+    const { replaced } = await installRichMenu(ctx.token);
+    return text(
+      [
+        "圖文選單裝好了。",
+        replaced ? `（順手清掉 ${replaced} 個舊的）` : "",
+        "",
+        "回到聊天室，鍵盤上方應該會出現「選單」，點開就是六個按鈕：",
+        "今天／待辦／一週／家事／討論／說明。",
+        "沒看到的話把聊天室關掉重開一次。",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+      MENU,
+    );
+  } catch (err) {
+    return text(`選單安裝失敗：\n${String(err.message).slice(0, 300)}`, MENU);
+  }
 }
 
 async function addTodo(ctx, content) {
@@ -205,6 +232,7 @@ function helpText() {
       "· 一週 → 七天的安排",
       "· 家事 → 輪值與長週期進度",
       "· 討論 → 下週要決定的事",
+      "· 安裝選單 → 裝上／重裝下方的按鈕列",
       "",
       "每天 21:30 會提醒今晚的家事，週日晚上提醒下週討論。",
     ].join("\n"),
