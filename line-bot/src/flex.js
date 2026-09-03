@@ -130,7 +130,17 @@ export function todoBubble(open, done) {
         alignItems: "center",
         contents: [
           { type: "text", text: String(i + 1), size: "xs", color: MUTED, flex: 0, align: "center" },
-          line(t.text, { flex: 5 }),
+          {
+            type: "box",
+            layout: "vertical",
+            flex: 5,
+            contents: [
+              line(t.text),
+              ...(t.due
+                ? [{ type: "text", text: `⏰ ${t.due.replace("T", " ")}`, size: "xxs", color: ACCENT }]
+                : []),
+            ],
+          },
           {
             type: "button",
             style: "secondary",

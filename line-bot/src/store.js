@@ -44,7 +44,7 @@ export async function listTodos(kv) {
   return readJson(kv, KEYS.todos, []);
 }
 
-export async function addTodo(kv, content, by) {
+export async function addTodo(kv, content, by, extra = {}) {
   const todos = await listTodos(kv);
   const todo = {
     id: newId(),
@@ -52,6 +52,7 @@ export async function addTodo(kv, content, by) {
     by: by || "",
     at: new Date().toISOString(),
     done: false,
+    ...extra,
   };
   todos.push(todo);
   await kv.put(KEYS.todos, JSON.stringify(trim(todos)));
@@ -75,6 +76,40 @@ export async function removeTodo(kv, id) {
   if (!todo) return null;
   await kv.put(KEYS.todos, JSON.stringify(todos.filter((t) => t.id !== id)));
   return todo;
+}
+
+/** 到期又還沒提醒過的。stamp 是「YYYY-MM-DDTHH:MM」台北時間。 */
+export async function dueTodos(kv, stamp) {
+  const todos = await listTodos(kv);
+  return todos.filter((t) => !t.done && t.due && !t.remindedAt && t.due <= stamp);
+}
+
+export async function markReminded(kv, ids, at) {
+  const todos = await listTodos(kv);
+  for (const todo of todos) {
+    if (ids.includes(todo.id)) todo.remindedAt = at;
+  }
+  await kv.put(KEYS.todos, JSON.stringify(todos));
+}
+
+/** 拿掉提醒時間，待辦本身留著。 */
+export async function clearDue(kv, id) {
+  const todos = await listTodos(kv);
+  const todo = todos.find((t) => t.id === id);
+  if (!todo) return null;
+  delete todo.due;
+  delete todo.remindedAt;
+  await kv.put(KEYS.todos, JSON.stringify(todos));
+  return todo;
+}
+
+/** 每晚那則有沒有發過，避免五分鐘一次的排程重複推。 */
+export async function nightlySentOn(kv) {
+  return (await kv.get("lastNightly")) || "";
+}
+
+export async function markNightlySent(kv, iso) {
+  await kv.put("lastNightly", iso);
 }
 
 export async function getLowfreq(kv) {

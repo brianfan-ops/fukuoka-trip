@@ -8,6 +8,7 @@ import { daysBetween, parseDate } from "./time.js";
 import * as store from "./store.js";
 import * as flex from "./flex.js";
 import { installRichMenu } from "./richmenu.js";
+import { parseWhen } from "./when.js";
 import { text, quick } from "./line.js";
 
 const COMMANDS = [
@@ -149,6 +150,20 @@ export async function respondPostback(ctx, data) {
     const todo = await store.setDone(ctx.kv, value, false, ctx.userName);
     return [text(todo ? `放回待辦：${todo.text}` : "找不到這一筆。", MENU)];
   }
+  if (kind === "snooze") {
+    const todos = await store.listTodos(ctx.kv);
+    const todo = todos.find((t) => t.id === value);
+    if (!todo) return [text("找不到這一筆。", MENU)];
+    const when = parseWhen("60分鐘後", ctx.now);
+    todo.due = when.due;
+    delete todo.remindedAt;
+    await ctx.kv.put("todos", JSON.stringify(todos));
+    return [text(`好，${when.label} 再提醒你：${todo.text}`, MENU)];
+  }
+  if (kind === "unset") {
+    const todo = await store.clearDue(ctx.kv, value);
+    return [text(todo ? `不提醒了，待辦留著：${todo.text}` : "找不到這一筆。", MENU)];
+  }
   if (kind === "del") {
     const todo = await store.removeTodo(ctx.kv, value);
     return [text(todo ? `已收回：${todo.text}` : "找不到這一筆。", MENU)];
@@ -219,15 +234,29 @@ async function removeByIndex(ctx, arg) {
 
 async function addTodo(ctx, content) {
   if (!content) return [helpText()];
-  const todo = await store.addTodo(ctx.kv, content, ctx.userName);
+  const when = parseWhen(content, ctx.now);
+  const todo = await store.addTodo(ctx.kv, content, ctx.userName, {
+    byId: ctx.userId || "",
+    ...(when ? { due: when.due } : {}),
+  });
   const open = (await store.listTodos(ctx.kv)).filter((t) => !t.done);
+
+  const actions = [
+    { label: "完成", data: `done:${todo.id}` },
+    { label: "收回", data: `del:${todo.id}` },
+  ];
+  if (when) actions.push({ label: "不用提醒", data: `unset:${todo.id}` });
+  else actions.push({ label: "看清單", text: "待辦" });
+
   return text(
-    `加進待辦：${todo.text}\n目前 ${open.length} 件未完成`,
-    quick([
-      { label: "完成", data: `done:${todo.id}` },
-      { label: "收回", data: `del:${todo.id}` },
-      { label: "看清單", text: "待辦" },
-    ]),
+    [
+      `加進待辦：${todo.text}`,
+      when ? `⏰ ${when.label} 會提醒你` : "",
+      `目前 ${open.length} 件未完成`,
+    ]
+      .filter(Boolean)
+      .join("\n"),
+    quick(actions),
   );
 }
 
@@ -281,6 +310,7 @@ function helpText() {
       "可以這樣用：",
       "",
       "· 直接打一句話 → 加進待辦",
+      "· 帶時間就會提醒，例如「明天9點打疫苗」「30分鐘後收衣服」",
       "· 待辦 → 看清單，點按鈕勾完成",
       "· 完成 2 → 把第 2 件標完成",
       "· 刪除 2 → 把第 2 件刪掉（打錯用這個）",

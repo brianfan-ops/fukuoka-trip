@@ -1,4 +1,4 @@
-import { test } from "node:test";
+import { test, mock } from "node:test";
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import worker from "../src/index.js";
@@ -124,21 +124,82 @@ test("群組訊息不理會", async () => {
   assert.equal(line.calls.length, 0);
 });
 
-test("排程推播會發給每個記住的使用者", async () => {
+/** 把時鐘固定住，排程的行為才測得準。傳入的是 UTC。 */
+function freeze(utcIso) {
+  mock.timers.enable({ apis: ["Date"], now: new Date(utcIso) });
+  return () => mock.timers.reset();
+}
+
+test("21:30 之後的排程會把家事提醒發給每個人，而且一天只發一次", async () => {
   const kv = fakeKv({
     users: JSON.stringify([{ id: "U1", name: "爸爸" }, { id: "U2", name: "媽媽" }]),
     todos: JSON.stringify([{ id: "a", text: "買奶粉", done: false }]),
   });
+  const unfreeze = freeze("2026-09-03T13:35:00Z"); // 台北 21:35
   const line = captureLine();
   const { ctx, settle } = ctxOf();
 
-  await worker.scheduled({ cron: "30 13 * * *" }, envOf(kv), ctx);
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), ctx);
   await settle();
-  line.restore();
 
   const pushes = line.calls.filter((c) => c.url.endsWith("/message/push"));
   assert.equal(pushes.length, 2);
   assert.deepEqual(pushes.map((p) => p.body.to), ["U1", "U2"]);
   assert.match(pushes[0].body.messages[0].text, /家事時間/);
   assert.match(pushes[0].body.messages[0].text, /買奶粉/);
+
+  // 五分鐘後再跑一次，不該重複發
+  const second = ctxOf();
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), second.ctx);
+  await second.settle();
+  line.restore();
+  unfreeze();
+
+  assert.equal(line.calls.filter((c) => c.url.endsWith("/message/push")).length, 2);
+});
+
+test("21:30 之前不推家事提醒", async () => {
+  const kv = fakeKv({ users: JSON.stringify([{ id: "U1" }]) });
+  const unfreeze = freeze("2026-09-03T06:00:00Z"); // 台北 14:00
+  const line = captureLine();
+  const { ctx, settle } = ctxOf();
+
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), ctx);
+  await settle();
+  line.restore();
+  unfreeze();
+
+  assert.equal(line.calls.length, 0);
+});
+
+test("到期的待辦只提醒寫下它的人，而且只提醒一次", async () => {
+  const kv = fakeKv({
+    users: JSON.stringify([{ id: "U1", name: "爸爸" }, { id: "U2", name: "媽媽" }]),
+    todos: JSON.stringify([
+      { id: "t1", text: "打疫苗", done: false, due: "2026-09-03T09:00", byId: "U2" },
+      { id: "t2", text: "還沒到期", done: false, due: "2026-09-03T23:00", byId: "U2" },
+      { id: "t3", text: "已完成的不提醒", done: true, due: "2026-09-03T08:00", byId: "U2" },
+    ]),
+  });
+  const unfreeze = freeze("2026-09-03T06:00:00Z"); // 台北 14:00
+  const line = captureLine();
+  const { ctx, settle } = ctxOf();
+
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), ctx);
+  await settle();
+
+  let pushes = line.calls.filter((c) => c.url.endsWith("/message/push"));
+  assert.equal(pushes.length, 1, "只有一筆到期，而且只發給 U2");
+  assert.equal(pushes[0].body.to, "U2");
+  assert.match(pushes[0].body.messages[0].text, /⏰ 提醒：打疫苗/);
+
+  const second = ctxOf();
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), second.ctx);
+  await second.settle();
+  line.restore();
+  unfreeze();
+
+  pushes = line.calls.filter((c) => c.url.endsWith("/message/push"));
+  assert.equal(pushes.length, 1, "第二次跑不該重複提醒");
+  assert.ok(JSON.parse(kv._dump().todos).find((t) => t.id === "t1").remindedAt);
 });

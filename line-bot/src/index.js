@@ -6,13 +6,16 @@
  *   POST /webhook  ← LINE 的事件（要先驗簽章）
  *   GET  /health   ← 部署後自己確認用
  *
- * Cron（wrangler.toml 設定的是 UTC）：
- *   13:30 UTC = 台北 21:30 → 今晚的家事提醒；星期日那則會多接下週討論清單
+ * Cron：每 5 分鐘跑一次，做兩件事——
+ *   1. 把到期的待辦提醒推出去（所以提醒最多晚 5 分鐘）
+ *   2. 台北 21:30 之後推當天的家事提醒，一天只推一次
+ * 用同一個觸發器是因為免費方案整個帳號只有 5 個 cron 額度。
  */
-import { verifySignature, reply, push, getProfile, text } from "./line.js";
+import { verifySignature, reply, push, getProfile, text, quick } from "./line.js";
 import { respond, respondPostback, helpText, MENU } from "./router.js";
 import { nightlyMessage } from "./push.js";
 import { taipei } from "./time.js";
+import { nowStamp } from "./when.js";
 import page from "./page.js";
 import * as store from "./store.js";
 
@@ -85,6 +88,7 @@ async function handleEvent(event, env) {
     now: taipei(),
     siteUrl: env.SITE_URL || "",
     token,
+    userId,
     userName: await resolveName(env, userId),
   };
 
@@ -123,7 +127,45 @@ async function resolveName(env, userId) {
 }
 
 async function broadcast(env) {
-  const message = await nightlyMessage(env.FAMILY, taipei());
+  const now = taipei();
+  await sendReminders(env, now);
+  await sendNightly(env, now);
+}
+
+/** 到期的待辦：只推給當初寫下它的人，找不到人才發給全家。 */
+async function sendReminders(env, now) {
+  const dueList = await store.dueTodos(env.FAMILY, nowStamp(now));
+  if (!dueList.length) return;
+
+  const users = await store.listUsers(env.FAMILY);
+  const sent = [];
+  for (const todo of dueList) {
+    const targets = todo.byId ? [todo.byId] : users.map((u) => u.id);
+    const message = text(
+      `⏰ 提醒：${todo.text}`,
+      quick([
+        { label: "完成", data: `done:${todo.id}` },
+        { label: "一小時後再說", data: `snooze:${todo.id}` },
+      ]),
+    );
+    for (const to of targets) {
+      try {
+        await push(env.LINE_CHANNEL_ACCESS_TOKEN, to, [message]);
+      } catch (err) {
+        console.error("reminder failed", to, err.message);
+      }
+    }
+    sent.push(todo.id);
+  }
+  await store.markReminded(env.FAMILY, sent, new Date().toISOString());
+}
+
+/** 每晚 21:30 那則，一天只推一次。 */
+async function sendNightly(env, now) {
+  if (now.mins < 21 * 60 + 30) return;
+  if ((await store.nightlySentOn(env.FAMILY)) === now.iso) return;
+
+  const message = await nightlyMessage(env.FAMILY, now);
   const users = await store.listUsers(env.FAMILY);
   for (const user of users) {
     try {
@@ -132,6 +174,7 @@ async function broadcast(env) {
       console.error("push failed", user.id, err.message);
     }
   }
+  await store.markNightlySent(env.FAMILY, now.iso);
 }
 
 function json(data) {

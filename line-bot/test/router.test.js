@@ -60,9 +60,9 @@ test("下一個時段：跨過午夜要回到睡眠", () => {
 
 test("一句話就進待辦，回覆帶完成與收回按鈕", async () => {
   const kv = fakeKv();
-  const messages = await respond(ctxOf(kv), "明天要帶餐袋");
+  const messages = await respond(ctxOf(kv), "買奶粉");
   assert.equal(messages.length, 1);
-  assert.match(messages[0].text, /明天要帶餐袋/);
+  assert.match(messages[0].text, /買奶粉/);
   const labels = messages[0].quickReply.items.map((i) => i.action.label);
   assert.deepEqual(labels, ["完成", "收回", "看清單"]);
 
@@ -70,6 +70,33 @@ test("一句話就進待辦，回覆帶完成與收回按鈕", async () => {
   assert.equal(todos.length, 1);
   assert.equal(todos[0].by, "爸爸");
   assert.equal(todos[0].done, false);
+  assert.equal(todos[0].due, undefined, "沒寫時間就不該排提醒");
+});
+
+test("帶時間的待辦會排提醒，並回報排在什麼時候", async () => {
+  const kv = fakeKv();
+  const messages = await respond(ctxOf(kv), "明天9點打疫苗");
+
+  assert.match(messages[0].text, /明天 09:00 會提醒你/);
+  const labels = messages[0].quickReply.items.map((i) => i.action.label);
+  assert.deepEqual(labels, ["完成", "收回", "不用提醒"]);
+
+  const todo = (await store.listTodos(kv))[0];
+  assert.equal(todo.due, "2026-09-04T09:00");
+});
+
+test("不用提醒：拿掉時間但待辦留著", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+  await respond(ctx, "明天9點打疫苗");
+  const id = (await store.listTodos(kv))[0].id;
+
+  const messages = await respondPostback(ctx, `unset:${id}`);
+  assert.match(messages[0].text, /不提醒了/);
+
+  const todo = (await store.listTodos(kv))[0];
+  assert.equal(todo.due, undefined);
+  assert.equal(todo.done, false);
 });
 
 test("完成 1 會標掉清單上的第一件", async () => {
