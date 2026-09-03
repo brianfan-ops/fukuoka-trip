@@ -2,27 +2,115 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500&family=Noto+Serif+TC:wght@700&display=swap">
 <style>
+  /*
+    圖文選單 2500×1686，在手機上大約只有 375pt 寬——所有東西都要放大、放簡單。
+    顏色沿用作息表那條「一天的色帶」：晨、午、午後、晚、夜。
+    上排是最常用的三個，用飽和色；下排轉暗，做出主次。
+  */
   html, body { margin:0; padding:0; }
-  body { width:2500px; height:1686px; background:#F1F3F1; font-family:"Noto Sans TC","PingFang TC",sans-serif; }
-  .grid { display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr); width:100%; height:100%; gap:6px; background:#D7DEDA; }
-  .cell { background:#FFFFFF; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; }
-  .cell .mark { width:150px; height:150px; border-radius:999px; display:grid; place-items:center; font-size:74px; font-weight:700; color:#FFFFFF; }
-  .cell .name { font-size:96px; font-weight:700; color:#1D2320; letter-spacing:.04em; }
-  .cell .hint { font-size:46px; color:#7C867F; }
-  .c1 .mark { background:#A96D1A; } .c2 .mark { background:#2F7F78; } .c3 .mark { background:#6A8A4C; }
-  .c4 .mark { background:#4152A0; } .c5 .mark { background:#33366B; } .c6 .mark { background:#7C867F; }
+  body {
+    width:2500px; height:1686px; background:#1D2320;
+    font-family:"Noto Sans TC","PingFang TC",sans-serif;
+  }
+  .grid {
+    display:grid; width:100%; height:100%;
+    grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr);
+    gap:7px;
+  }
+  .cell {
+    position:relative; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:40px;
+    overflow:hidden;
+  }
+  /* 右下角一塊更深的斜角，讓純色塊不死板 */
+  .cell::after {
+    content:""; position:absolute; right:-180px; bottom:-260px;
+    width:520px; height:520px; border-radius:50%;
+    background:rgba(0,0,0,.10);
+  }
+  .mark { height:150px; display:flex; align-items:flex-end; justify-content:center; gap:14px; }
+  .name {
+    font-family:"Noto Serif TC",serif; font-weight:700; font-size:112px;
+    color:#fff; letter-spacing:.06em; line-height:1;
+  }
+  .hint { font-size:44px; color:rgba(255,255,255,.72); letter-spacing:.08em; }
+
+  .c-today  { background:#A96D1A; }
+  .c-todo   { background:#2F7F78; }
+  .c-week   { background:#6A8A4C; }
+  .c-chore  { background:#3B4A8F; }
+  .c-talk   { background:#2E3160; }
+  .c-help   { background:#3D4642; }
+
+  /* 今天：一天的色帶 */
+  .bar { width:34px; border-radius:8px; background:#fff; }
+  .bar.a { height:66px;  opacity:.55; }
+  .bar.b { height:104px; opacity:.75; }
+  .bar.c { height:150px; opacity:1; }
+  .bar.d { height:104px; opacity:.75; }
+  .bar.e { height:66px;  opacity:.55; }
+
+  /* 待辦：打勾的方框 */
+  .box { width:132px; height:132px; border:14px solid #fff; border-radius:26px; position:relative; }
+  .box::before {
+    content:""; position:absolute; left:24px; top:40px; width:76px; height:36px;
+    border-left:16px solid #fff; border-bottom:16px solid #fff;
+    transform:rotate(-45deg); transform-origin:left bottom;
+  }
+  /* 一週：月曆的一頁，今天那格填實 */
+  .cal { width:168px; height:150px; border:12px solid #fff; border-radius:22px; padding:0; position:relative; box-sizing:border-box; }
+  .cal .top { position:absolute; left:0; right:0; top:0; height:34px; background:#fff; }
+  .cal .dots {
+    position:absolute; left:14px; right:14px; top:52px;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:11px;
+  }
+  .cal .dots i { height:16px; border-radius:4px; background:#fff; opacity:.55; display:block; }
+  .cal .dots i.on { opacity:1; }
+
+  /* 家事：折好的三疊 */
+  .fold { width:170px; height:30px; border-radius:10px; background:#fff; }
+  .fold.two { width:132px; opacity:.8; }
+  .fold.three { width:96px; opacity:.6; }
+  .stack { flex-direction:column; align-items:center; gap:20px; display:flex; }
+
+  /* 討論：兩顆對話框 */
+  .talk { position:relative; width:190px; height:150px; }
+  .talk i { position:absolute; border-radius:28px; background:#fff; display:block; }
+  .talk i.one { left:0; top:0; width:132px; height:96px; opacity:.95; }
+  .talk i.two { right:0; bottom:0; width:112px; height:80px; opacity:.6; }
+
+  /* 說明：問號 */
+  .q { font-family:"Noto Serif TC",serif; font-weight:700; font-size:150px; color:#fff; line-height:1; }
 </style>
 </head>
 <body>
   <div class="grid">
-    <div class="cell c1"><div class="mark">今</div><div class="name">今天</div><div class="hint">現在的時段</div></div>
-    <div class="cell c2"><div class="mark">辦</div><div class="name">待辦</div><div class="hint">勾完成</div></div>
-    <div class="cell c3"><div class="mark">週</div><div class="name">一週</div><div class="hint">七天安排</div></div>
-    <div class="cell c4"><div class="mark">事</div><div class="name">家事</div><div class="hint">輪值與逾期</div></div>
-    <div class="cell c5"><div class="mark">議</div><div class="name">討論</div><div class="hint">下週要決定</div></div>
-    <div class="cell c6"><div class="mark">?</div><div class="name">說明</div><div class="hint">怎麼用</div></div>
+    <div class="cell c-today">
+      <div class="mark"><i class="bar a"></i><i class="bar b"></i><i class="bar c"></i><i class="bar d"></i><i class="bar e"></i></div>
+      <div class="name">今天</div><div class="hint">現在到晚上</div>
+    </div>
+    <div class="cell c-todo">
+      <div class="mark"><div class="box"></div></div>
+      <div class="name">待辦</div><div class="hint">勾完成</div>
+    </div>
+    <div class="cell c-week">
+      <div class="mark"><div class="cal"><span class="top"></span><span class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span></div></div>
+      <div class="name">一週</div><div class="hint">七天安排</div>
+    </div>
+    <div class="cell c-chore">
+      <div class="mark"><div class="stack"><i class="fold"></i><i class="fold two"></i><i class="fold three"></i></div></div>
+      <div class="name">家事</div><div class="hint">今晚輪誰</div>
+    </div>
+    <div class="cell c-talk">
+      <div class="mark"><div class="talk"><i class="one"></i><i class="two"></i></div></div>
+      <div class="name">討論</div><div class="hint">週五要談</div>
+    </div>
+    <div class="cell c-help">
+      <div class="mark"><div class="q">?</div></div>
+      <div class="name">說明</div><div class="hint">怎麼用</div>
+    </div>
   </div>
 </body>
 </html>
