@@ -354,8 +354,8 @@ async function buildToday(ctx) {
   const [todos, lfMap] = await Promise.all([store.listTodos(ctx.kv), store.getLowfreq(ctx.kv)]);
   return flex.todayBubble({
     dow,
+    mins,
     block: blockAt(mins),
-    nextBlock: nextBlock(mins),
     laundry: LAUNDRY[dow],
     theme: THEMES[dow],
     overdue: lowfreqStatus(lfMap, iso).filter((i) => i.overdue),

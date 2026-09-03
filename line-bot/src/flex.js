@@ -2,7 +2,7 @@
  * Flex 版型。LINE 在深色模式下會把沒指定背景的泡泡變深，
  * 所以每個容器都明確給底色與字色。
  */
-import { DOW, LAUNDRY, THEMES, NIGHTLY, ANCHORS, isWeekday } from "./data.js";
+import { ARC, BANDS, BLOCKS, DOW, LAUNDRY, THEMES, NIGHTLY, ANCHORS, hhmm, isWeekday } from "./data.js";
 
 const INK = "#1D2320";
 const MUTED = "#7C867F";
@@ -88,26 +88,125 @@ function button(labelText, data, style = "secondary") {
   };
 }
 
-/** 今天：現在時段、今晚家事、主題日。 */
-export function todayBubble({ dow, block, nextBlock, laundry, theme, overdue, openCount }) {
+/**
+ * 一天的色帶：橫向按分鐘數分配寬度，跟作息表網頁上那條同一個做法。
+ * 下面再排一列標出「現在」的位置。
+ */
+function dayArc(mins) {
+  const START = 450;
+  const END = 1440;
+  const bar = {
+    type: "box",
+    layout: "horizontal",
+    height: "14px",
+    cornerRadius: "4px",
+    contents: ARC.map((seg) => ({
+      type: "box",
+      layout: "vertical",
+      flex: seg.end - seg.start,
+      backgroundColor: mins >= seg.end ? BANDS[seg.band].tint : BANDS[seg.band].color,
+      contents: [{ type: "filler" }],
+    })),
+  };
+
+  if (mins < START || mins >= END) return [bar];
+
+  const before = Math.max(mins - START, 1);
+  const after = Math.max(END - mins, 1);
+  return [
+    bar,
+    {
+      type: "box",
+      layout: "horizontal",
+      height: "10px",
+      margin: "xs",
+      contents: [
+        { type: "box", layout: "vertical", flex: before, contents: [{ type: "filler" }] },
+        { type: "box", layout: "vertical", flex: 0, width: "3px", backgroundColor: INK, contents: [{ type: "filler" }] },
+        { type: "box", layout: "vertical", flex: after, contents: [{ type: "filler" }] },
+      ],
+    },
+  ];
+}
+
+/**
+ * 一天的時段列表。過去的淡掉，現在的框起來——一眼就知道自己在哪。
+ * 不畫睡眠那格：它佔掉 Flex 的 10 KB 額度，但沒有人需要被提醒自己在睡覺。
+ */
+function timeline(mins) {
+  return BLOCKS.filter((b) => b.band !== "rest").map((block) => {
+    const band = BANDS[block.band];
+    const now = mins >= block.start && mins < block.end;
+    const past = !now && mins >= block.end;
+
+    return {
+      type: "box",
+      layout: "horizontal",
+      spacing: "sm",
+      paddingAll: now ? "6px" : undefined,
+      backgroundColor: now ? "#EAF2F0" : undefined,
+      cornerRadius: now ? "6px" : undefined,
+      contents: [
+        {
+          type: "box",
+          layout: "vertical",
+          flex: 0,
+          width: "6px",
+          cornerRadius: "3px",
+          backgroundColor: past ? band.tint : band.color,
+          contents: [{ type: "filler" }],
+        },
+        {
+          type: "text",
+          text: `${hhmm(block.start)}  ${block.title}`,
+          size: "sm",
+          flex: 5,
+          color: past ? MUTED : INK,
+          weight: now ? "bold" : undefined,
+        },
+        ...(now
+          ? [{ type: "text", text: "現在", size: "xxs", flex: 0, color: ACCENT, weight: "bold", align: "end" }]
+          : []),
+      ],
+    };
+  });
+}
+
+/** 今天：現在在一天的哪裡、今晚家事、主題日。 */
+export function todayBubble({ dow, mins, block, laundry, theme, overdue, openCount }) {
   const weekday = isWeekday(dow);
   const body = [
-    row("現在", block ? block.title : "非表定時段"),
-    row("接下來", nextBlock ? `${nextBlock.at} ${nextBlock.title}` : "—"),
+    {
+      type: "box",
+      layout: "baseline",
+      spacing: "sm",
+      contents: [
+        { type: "text", text: block ? block.title : "非表定時段", size: "lg", weight: "bold", color: INK, flex: 5, wrap: true },
+        {
+          type: "text",
+          text: block ? `${hhmm(block.start)}–${hhmm(block.end)}` : "",
+          size: "xs",
+          color: MUTED,
+          align: "end",
+          flex: 3,
+        },
+      ],
+    },
+    ...dayArc(mins),
+    separator(),
+    ...timeline(mins),
     separator(),
     row("哥哥", weekday ? `${ANCHORS.leave}／${ANCHORS.home}` : "在家"),
     row("妹妹", theme ? `${theme.name} · ${theme.slot}` : weekday ? "在家（今天沒排主題）" : "全家一起"),
-    separator(),
     row("今晚洗", laundry.wash),
     row("地板", laundry.floor),
     row("分工", laundry.duty),
   ];
-  if (overdue.length) {
-    body.push(separator(), row("逾期家事", overdue.map((o) => o.name).join("、"), ALERT));
-  }
+  if (overdue.length) body.push(row("逾期家事", overdue.map((o) => o.name).join("、"), ALERT));
   body.push(row("未完成待辦", openCount ? `${openCount} 件` : "沒有，清空了"));
+
   return flex(
-    `今天（週${DOW[dow]}）`,
+    `今天（週${DOW[dow]}）· ${block ? block.title : ""}`,
     bubble(
       { title: `今天 · 週${DOW[dow]}`, sub: weekday ? "平日" : "假日" },
       body,

@@ -10,40 +10,62 @@ export const KIDS = [
   { key: "sis", name: "妹妹", birth: "2025-01-15" },
 ];
 
+/**
+ * 一天的五個段落，顏色跟作息表網頁那條色帶一致。
+ * tint 是同色的淡版，用來畫「已經過去」的時段。
+ */
+export const BANDS = {
+  morning: { name: "晨", color: "#A96D1A", tint: "#E4D3B4" },
+  noon: { name: "午", color: "#6A8A4C", tint: "#CFDCBC" },
+  after: { name: "午後", color: "#2E8078", tint: "#B9D5D1" },
+  eve: { name: "晚", color: "#4152A0", tint: "#C3CAE6" },
+  night: { name: "夜", color: "#33366B", tint: "#C2C4DC" },
+  rest: { name: "睡眠", color: "#7C867F", tint: "#D5DAD7" },
+};
+
+/** 色帶上的五段，寬度按分鐘數分配（07:30 到午夜）。 */
+export const ARC = [
+  { band: "morning", start: 450, end: 690 },
+  { band: "noon", start: 690, end: 870 },
+  { band: "after", start: 870, end: 1050 },
+  { band: "eve", start: 1050, end: 1290 },
+  { band: "night", start: 1290, end: 1440 },
+];
+
 /** 一天的時段骨架。start/end 是從 00:00 起算的分鐘數。 */
 export const BLOCKS = [
-  { start: 450, end: 510, title: "起床盥洗",
+  { band: "morning", start: 450, end: 510, title: "起床盥洗",
     wd: "爸爸帶哥哥（刷牙、換衣服、書包），媽媽顧妹妹。目標 08:20 出門。",
     we: "兩個小孩一起慢慢來，不趕時間。" },
-  { start: 510, end: 570, title: "出門早餐",
+  { band: "morning", start: 510, end: 570, title: "出門早餐",
     wd: "爸爸送哥哥上學（在校吃早餐，供應到 09:20），媽媽帶妹妹吃。",
     we: "一家人出門吃早餐。" },
-  { start: 570, end: 630, title: "晨間活動",
+  { band: "morning", start: 570, end: 630, title: "晨間活動",
     wd: "妹妹的時段：公園、圖書館、親子館、散步採買。",
     we: "多半爸爸帶孩子出門，或全家一起。媽媽的自由時間。" },
-  { start: 630, end: 690, title: "銜接午餐",
+  { band: "morning", start: 630, end: 690, title: "銜接午餐",
     wd: "妹妹在家：桌邊活動或繪本，順便準備午餐。",
     we: "接續上午行程，11:15 前回家。" },
-  { start: 690, end: 750, title: "午餐",
+  { band: "noon", start: 690, end: 750, title: "午餐",
     wd: "媽媽和妹妹在家吃，哥哥在學校吃。", we: "四個人一起吃。" },
-  { start: 750, end: 870, title: "午休時間",
+  { band: "noon", start: 750, end: 870, title: "午休時間",
     wd: "妹妹午睡。媽媽整天唯一能喘口氣的兩小時——盡量別排家事。",
     we: "兩個小孩一起午睡。" },
-  { start: 870, end: 1050, title: "午後三小時",
+  { band: "after", start: 870, end: 1050, title: "午後三小時",
     wd: "前半是妹妹睡醒最有精神的時候（主題活動），16:30 後備晚餐。",
     we: "四個人都在，適合排一個主行程。" },
-  { start: 1050, end: 1170, title: "晚餐時間",
+  { band: "eve", start: 1050, end: 1170, title: "晚餐時間",
     wd: "爸爸 17:50 接到哥哥、18:05 到家，18:15 開飯。吃完順手洗碗。",
     we: "兩小時，含準備、吃飯、收拾。" },
-  { start: 1170, end: 1230, title: "晚上洗澡",
+  { band: "eve", start: 1170, end: 1230, title: "晚上洗澡",
     wd: "輪流洗，換睡衣，脫下的衣服進洗衣籃。", we: "輪流洗，換睡衣。" },
-  { start: 1230, end: 1290, title: "睡前故事",
+  { band: "eve", start: 1230, end: 1290, title: "睡前故事",
     wd: "燈光調暗，講完就睡。", we: "燈光調暗，講完就睡。" },
-  { start: 1290, end: 1380, title: "家事時間",
+  { band: "night", start: 1290, end: 1380, title: "家事時間",
     wd: "當天種類的洗衣、折昨天晾的、吸地拖地。", we: "適合排大件與長週期家事。" },
-  { start: 1380, end: 1440, title: "爸媽時間",
+  { band: "night", start: 1380, end: 1440, title: "爸媽時間",
     wd: "一天裡唯一沒有小孩的一小時。", we: "星期五拿 15 分鐘對下週行程。" },
-  { start: 0, end: 450, title: "睡眠", wd: "睡覺。", we: "睡覺。" },
+  { band: "rest", start: 0, end: 450, title: "睡眠", wd: "睡覺。", we: "睡覺。" },
 ];
 
 /** 每週輪值：依種類分天，孩子衣物夠輪替不用每天洗。index = 星期幾（0 = 日）。 */

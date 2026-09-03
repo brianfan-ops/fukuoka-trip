@@ -344,3 +344,74 @@ test("週次以星期五為界", async () => {
   assert.equal(weekKey({ year: 2026, month: 9, day: 6, dow: 0 }), "2026-09-11", "週日 → 下一個週五");
   assert.equal(weekKey({ year: 2026, month: 9, day: 30, dow: 3 }), "2026-10-02", "跨月");
 });
+
+test("今天：現在那一格會被標出來，過去的淡掉", async () => {
+  const kv = fakeKv();
+  const { BLOCKS, blockAt } = await import("../src/data.js");
+  const { todayBubble } = await import("../src/flex.js");
+
+  const mins = 14 * 60 + 50; // 午後三小時
+  const card = todayBubble({
+    dow: 4,
+    mins,
+    block: blockAt(mins),
+    laundry: (await import("../src/data.js")).LAUNDRY[4],
+    theme: null,
+    overdue: [],
+    openCount: 0,
+  });
+
+  const rows = card.contents.body.contents.filter(
+    (c) => c.layout === "horizontal" && c.contents?.[0]?.width === "6px",
+  );
+  assert.equal(rows.length, BLOCKS.filter((b) => b.band !== "rest").length, "睡眠不列進來");
+
+  const current = rows.filter((r) => r.backgroundColor);
+  assert.equal(current.length, 1, "只有一格是現在");
+  assert.match(current[0].contents[1].text, /午後三小時/);
+  assert.equal(current[0].contents[1].weight, "bold");
+  assert.equal(current[0].contents.at(-1).text, "現在");
+
+  // 07:30 已經過去了，字要淡、色條要用淡版
+  assert.match(rows[0].contents[1].text, /07:30/);
+  assert.equal(rows[0].contents[1].color, "#7C867F");
+  assert.equal(rows[0].contents[0].backgroundColor, "#E4D3B4");
+});
+
+test("今天：色帶按分鐘數分配，走過的段落轉淡", async () => {
+  const { ARC, BANDS, LAUNDRY, blockAt } = await import("../src/data.js");
+  const { todayBubble } = await import("../src/flex.js");
+  const mins = 14 * 60 + 50;
+
+  const card = todayBubble({ dow: 4, mins, block: blockAt(mins), laundry: LAUNDRY[4], theme: null, overdue: [], openCount: 0 });
+  const bar = card.contents.body.contents.find((c) => c.height === "14px");
+
+  assert.equal(bar.contents.length, ARC.length);
+  assert.deepEqual(bar.contents.map((c) => c.flex), ARC.map((a) => a.end - a.start));
+  assert.equal(bar.contents[0].backgroundColor, BANDS.morning.tint, "晨已經過完了");
+  assert.equal(bar.contents[2].backgroundColor, BANDS.after.color, "午後正在進行");
+
+  // 標記位置：現在之前與之後的比例
+  const marker = card.contents.body.contents.find((c) => c.height === "10px");
+  assert.equal(marker.contents[0].flex, mins - 450);
+  assert.equal(marker.contents[2].flex, 1440 - mins);
+});
+
+test("今天這張卡不能超過 Flex 的 10 KB 上限", async () => {
+  const { LAUNDRY, blockAt } = await import("../src/data.js");
+  const { todayBubble } = await import("../src/flex.js");
+  const mins = 21 * 60 + 45;
+
+  const card = todayBubble({
+    dow: 4,
+    mins,
+    block: blockAt(mins),
+    laundry: LAUNDRY[4],
+    theme: { name: "音樂日", slot: "14:30–15:30" },
+    overdue: [{ name: "洗冷氣濾網" }, { name: "清冰箱" }],
+    openCount: 12,
+  });
+
+  const bytes = Buffer.byteLength(JSON.stringify(card), "utf8");
+  assert.ok(bytes < 10000, `Flex JSON ${bytes} bytes，超過 10 KB 就送不出去`);
+});
