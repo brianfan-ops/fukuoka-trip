@@ -164,6 +164,18 @@ export function parseWhen(text, now) {
   };
 }
 
+/** 在 YYYY-MM-DD 上加減天數，跨月跨年都安全。 */
+export function shiftIso(isoDate, days) {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  const t = new Date(Date.UTC(y, m - 1, d + days));
+  return t.toISOString().slice(0, 10);
+}
+
+/** 這一天是星期幾，用來標「9/15（週二）」。 */
+export function dowOf(isoDate) {
+  return new Date(`${isoDate}T00:00:00Z`).getUTCDay();
+}
+
 /** 現在的台北時間，格式跟 due 一樣，可以直接比大小。 */
 export function nowStamp(now) {
   return `${iso(now)}T${pad(Math.floor(now.mins / 60))}:${pad(now.mins % 60)}`;

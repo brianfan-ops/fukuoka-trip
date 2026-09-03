@@ -8,7 +8,7 @@ import { daysBetween, parseDate } from "./time.js";
 import * as store from "./store.js";
 import * as flex from "./flex.js";
 import { installRichMenu } from "./richmenu.js";
-import { parseWhen } from "./when.js";
+import { parseWhen, shiftIso, dowOf } from "./when.js";
 import { text, quick } from "./line.js";
 
 const COMMANDS = [
@@ -18,6 +18,8 @@ const COMMANDS = [
   { cmd: "chores", words: ["家事", "輪值", "洗衣"] },
   { cmd: "agenda", words: ["討論", "下週", "議題"] },
   { cmd: "rules", words: ["家規", "已定案", "定案"] },
+  { cmd: "calendar", words: ["行事曆", "月曆", "排程", "接下來"] },
+  { cmd: "log", words: ["紀錄", "記錄", "做過", "歷史"] },
   { cmd: "help", words: ["說明", "指令", "怎麼用", "help"] },
   { cmd: "menu", words: ["安裝選單", "裝選單", "選單", "menu"] },
 ];
@@ -143,6 +145,10 @@ export async function respond(ctx, input) {
       return [await removeByIndex(ctx, arg)];
     case "chore":
       return await logChore(ctx, arg, input);
+    case "calendar":
+      return [flex.calendarBubble(await upcoming(ctx))];
+    case "log":
+      return [flex.logBubble(await history(ctx))];
     case "done":
       return [await completeByIndex(ctx, arg)];
     case "menu":
@@ -319,6 +325,90 @@ async function logChore(ctx, arg, original) {
   ];
 }
 
+/**
+ * 往前看：有指定時間的事，照日期分組。
+ * 例行的（上下學、洗衣輪值）不放進來——那些在「一週」，混在一起會蓋掉真正的行程。
+ */
+export async function upcoming(ctx, days = 14) {
+  const today = ctx.now.iso;
+  const until = shiftIso(today, days);
+  const [todos, lfMap] = await Promise.all([store.listTodos(ctx.kv), store.getLowfreq(ctx.kv)]);
+  const items = [];
+
+  for (const todo of todos) {
+    if (todo.done || !todo.due) continue;
+    const [date, time] = todo.due.split("T");
+    items.push({ date, time, text: todo.text, kind: "todo", by: todo.by });
+  }
+
+  for (const item of LOWFREQ) {
+    const last = lfMap[item.id];
+    if (!last) continue;
+    const next = shiftIso(last, item.every);
+    if (next <= until) items.push({ date: next, time: "", text: `${item.name} 該做了`, kind: "chore" });
+  }
+
+  const friday = weekKey(ctx.now);
+  if (friday <= until) items.push({ date: friday, time: "23:00", text: "爸媽時間 · 這週的討論", kind: "talk" });
+
+  items.sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`));
+  return {
+    today,
+    overdue: items.filter((i) => i.date < today),
+    days: groupByDate(items.filter((i) => i.date >= today && i.date <= until)),
+  };
+}
+
+/** 往回看：做過什麼、決定過什麼。 */
+export async function history(ctx, days = 21) {
+  const since = shiftIso(ctx.now.iso, -days);
+  const [todos, lfMap, answers, weekly, topics] = await Promise.all([
+    store.listTodos(ctx.kv),
+    store.getLowfreq(ctx.kv),
+    store.getAnswers(ctx.kv),
+    store.getWeekly(ctx.kv),
+    store.listTopics(ctx.kv),
+  ]);
+  const items = [];
+
+  for (const todo of todos) {
+    const date = store.taipeiDateOf(todo.doneAt);
+    if (todo.done && date >= since) items.push({ date, text: todo.text, kind: "done", by: todo.doneBy });
+  }
+  for (const item of LOWFREQ) {
+    const date = lfMap[item.id];
+    if (date && date >= since) items.push({ date, text: item.name, kind: "chore" });
+  }
+  SETUP.forEach((q, i) => {
+    const answer = answers[String(i + 1)];
+    const date = store.taipeiDateOf(answer?.at);
+    if (answer && date >= since) items.push({ date, text: answer.text, kind: "rule", by: answer.by });
+  });
+  for (const [key, answer] of Object.entries(weekly)) {
+    const date = store.taipeiDateOf(answer.at);
+    const no = Number(key.split("#")[1]);
+    if (date >= since) items.push({ date, text: `${WEEKLY[no]} → ${answer.text}`, kind: "weekly", by: answer.by });
+  }
+  for (const topic of topics) {
+    const date = store.taipeiDateOf(topic.answeredAt);
+    if (topic.answeredAt && date >= since) {
+      items.push({ date, text: `${topic.text} → ${topic.answer}`, kind: "topic", by: topic.answeredBy });
+    }
+  }
+
+  items.sort((a, b) => b.date.localeCompare(a.date));
+  return { since, days: groupByDate(items.slice(0, 30)) };
+}
+
+function groupByDate(items) {
+  const map = new Map();
+  for (const item of items) {
+    if (!map.has(item.date)) map.set(item.date, []);
+    map.get(item.date).push(item);
+  }
+  return [...map].map(([date, list]) => ({ date, dow: dowOf(date), items: list }));
+}
+
 /** 平常想到的議題丟進來，週日一起看。 */
 async function addTopic(ctx, content) {
   if (!content) return text("要討論什麼？例如「討論 加 要不要換保母」。", MENU);
@@ -427,6 +517,8 @@ function helpText() {
       "· 一週 → 七天的安排",
       "· 家事 → 輪值與長週期進度",
       "· 家事 冷氣濾網 → 記成今天做過；補日期就寫「家事 床單 8/20」",
+      "· 行事曆 → 接下來兩週有時間的事",
+      "· 紀錄 → 最近做過、決定過什麼",
       "· 討論 → 這週要談的事（每週固定題＋你丟的議題）",
       "· 討論 加 要不要換保母 → 平常想到就丟，週五一起看",
       "· 家規 → 已經定案的安排",

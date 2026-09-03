@@ -465,3 +465,81 @@ test("家事卡：每一項都有自己的按鈕", async () => {
   }
   assert.ok(Buffer.byteLength(rendered, "utf8") < 10000, "Flex JSON 不能超過 10 KB");
 });
+
+test("行事曆：有時間的事照日期分組，例行的不混進來", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+  const { upcoming } = await import("../src/router.js");
+
+  await respond(ctx, "明天9點打疫苗");
+  await respond(ctx, "買奶粉"); // 沒時間，不該出現
+  await respond(ctx, "家事 床單 8/25"); // 每 14 天 → 9/8 該做了
+
+  const cal = await upcoming(ctx);
+  const flat = cal.days.flatMap((d) => d.items);
+
+  assert.ok(flat.some((i) => i.kind === "todo" && i.text === "明天9點打疫苗"));
+  assert.ok(!flat.some((i) => i.text === "買奶粉"), "沒排時間的待辦不進行事曆");
+  assert.ok(flat.some((i) => i.kind === "chore" && i.text.startsWith("床單")));
+  assert.ok(flat.some((i) => i.kind === "talk"), "週五的爸媽時間要在裡面");
+  assert.ok(!flat.some((i) => i.text.includes("上學")), "例行的上下學不混進來");
+
+  const dates = cal.days.map((d) => d.date);
+  assert.deepEqual([...dates].sort(), dates, "要照日期排好");
+});
+
+test("行事曆：過期沒處理的另外列出來", async () => {
+  const kv = fakeKv({
+    todos: JSON.stringify([
+      { id: "a", text: "早就該打的疫苗", done: false, due: "2026-08-30T09:00" },
+      { id: "b", text: "明天的事", done: false, due: "2026-09-04T09:00" },
+    ]),
+  });
+  const { upcoming } = await import("../src/router.js");
+  const cal = await upcoming(ctxOf(kv));
+
+  assert.equal(cal.overdue.length, 1);
+  assert.equal(cal.overdue[0].text, "早就該打的疫苗");
+  assert.ok(!cal.days.flatMap((d) => d.items).some((i) => i.text === "早就該打的疫苗"));
+});
+
+test("紀錄：完成的待辦、記下的家事、做過的決定都會留下", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+  const { history } = await import("../src/router.js");
+
+  await respond(ctx, "買奶粉");
+  await respond(ctx, "完成 1");
+  await respond(ctx, "家事 陽台 8/30");
+  await respond(ctx, "討論 1 週三疫苗");
+  await respond(ctx, "討論 加 要不要換保母");
+  await respond(ctx, `討論 ${(await import("../src/data.js")).WEEKLY.length + 1} 先觀察一個月`);
+
+  const log = await history(ctx);
+  const flat = log.days.flatMap((d) => d.items);
+
+  assert.ok(flat.some((i) => i.kind === "done" && i.text === "買奶粉"));
+  assert.ok(flat.some((i) => i.kind === "chore" && i.text === "洗陽台"));
+  assert.ok(flat.some((i) => i.kind === "weekly" && i.text.includes("週三疫苗")));
+  assert.ok(flat.some((i) => i.kind === "topic" && i.text.includes("先觀察一個月")));
+
+  const dates = log.days.map((d) => d.date);
+  assert.deepEqual([...dates].sort().reverse(), dates, "最近的排前面");
+});
+
+test("行事曆和紀錄都不能超過 Flex 的 10 KB", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+  const { upcoming, history } = await import("../src/router.js");
+  const { calendarBubble, logBubble } = await import("../src/flex.js");
+
+  // 塞爆它：60 件長句子的待辦，卡片仍然要送得出去
+  for (let i = 0; i < 60; i++) {
+    await respond(ctx, `明天9點 第${i}件要做的事情故意寫得很長用來測試卡片的大小上限`);
+  }
+
+  const cal = Buffer.byteLength(JSON.stringify(calendarBubble(await upcoming(ctx))), "utf8");
+  const log = Buffer.byteLength(JSON.stringify(logBubble(await history(ctx))), "utf8");
+  assert.ok(cal < 10000, `行事曆 ${cal} bytes`);
+  assert.ok(log < 10000, `紀錄 ${log} bytes`);
+});

@@ -191,6 +191,14 @@ export async function clearAnswers(kv) {
   await kv.put(KEYS.answers, JSON.stringify({}));
 }
 
+/** 完成日期用台北時間比較，所以存的 ISO 要先轉過去。 */
+export function taipeiDateOf(isoTimestamp) {
+  if (!isoTimestamp) return "";
+  const t = new Date(isoTimestamp);
+  if (Number.isNaN(t.getTime())) return "";
+  return new Date(t.getTime() + 8 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
 /** 已完成的只留最近 50 筆，未完成的全留。 */
 function trim(todos) {
   const open = todos.filter((t) => !t.done);

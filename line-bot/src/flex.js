@@ -4,6 +4,9 @@
  */
 import { ARC, BANDS, BLOCKS, DOW, LAUNDRY, THEMES, NIGHTLY, ANCHORS, hhmm, isWeekday } from "./data.js";
 
+const KIND_COLOR = { todo: "#2F7F78", chore: "#A96D1A", talk: "#33366B", done: "#7C867F", rule: "#4152A0", weekly: "#6A8A4C", topic: "#2E8078" };
+const KIND_MARK = { todo: "待辦", chore: "家事", talk: "討論", done: "完成", rule: "家規", weekly: "每週", topic: "議題" };
+
 const INK = "#1D2320";
 const MUTED = "#7C867F";
 const ACCENT = "#2F7F78";
@@ -422,6 +425,83 @@ export function rulesBubble(setup, answers) {
       { title: "目前的家規", sub: `${decided.length}/${setup.length} 題已定案` },
       decided.length ? body.slice(0, -1) : body,
       [{ type: "text", text: "要改：討論 3 新的答案", size: "xxs", color: MUTED, align: "center" }],
+    ),
+  );
+}
+
+/** 一天一組的清單，行事曆和紀錄共用同一種排版。 */
+function dayGroups(groups, todayIso, emptyText, cap = 18) {
+  if (!groups.length) return [line(emptyText, { color: MUTED })];
+
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
+  let shown = 0;
+  const out = [];
+  groups.forEach((group, i) => {
+    if (shown >= cap) return;
+    if (i) out.push(separator());
+    const label =
+      group.date === todayIso
+        ? `今天 · ${group.date.slice(5)}`
+        : `${group.date.slice(5).replace("-", "/")}（週${DOW[group.dow]}）`;
+    out.push({ type: "text", text: label, size: "xs", color: MUTED, weight: "bold", margin: i ? "md" : "none" });
+
+    for (const item of group.items) {
+      if (shown >= cap) break;
+      shown += 1;
+      out.push({
+        type: "box",
+        layout: "baseline",
+        spacing: "sm",
+        margin: "xs",
+        contents: [
+          { type: "text", text: KIND_MARK[item.kind] || "", size: "xxs", color: KIND_COLOR[item.kind] || MUTED, flex: 0 },
+          { type: "text", text: item.time || "", size: "xs", color: MUTED, flex: 0 },
+          { type: "text", text: item.text.slice(0, 60), size: "sm", color: INK, wrap: true, flex: 6 },
+        ],
+      });
+    }
+  });
+  if (total > shown) out.push(line(`⋯ 還有 ${total - shown} 件`, { color: MUTED, size: "xs" }));
+  return out;
+}
+
+/** 行事曆：接下來有時間的事。 */
+export function calendarBubble({ today, overdue, days }) {
+  const body = [];
+  if (overdue.length) {
+    body.push({ type: "text", text: `過期未處理 ${overdue.length} 件`, size: "xs", color: ALERT, weight: "bold" });
+    for (const item of overdue.slice(0, 5)) {
+      body.push({
+        type: "box",
+        layout: "baseline",
+        spacing: "sm",
+        margin: "xs",
+        contents: [
+          { type: "text", text: item.date.slice(5).replace("-", "/"), size: "xs", color: ALERT, flex: 0 },
+          { type: "text", text: item.text.slice(0, 60), size: "sm", color: INK, wrap: true, flex: 6 },
+        ],
+      });
+    }
+    body.push(separator());
+  }
+  body.push(...dayGroups(days, today, "接下來兩週沒有排定時間的事。"));
+
+  return flex(
+    "行事曆",
+    bubble({ title: "行事曆", sub: "接下來兩週" }, body, [
+      { type: "text", text: "帶時間就會排進來：明天9點打疫苗", size: "xxs", color: MUTED, align: "center" },
+    ]),
+  );
+}
+
+/** 紀錄：最近做過、決定過什麼。 */
+export function logBubble({ days }) {
+  return flex(
+    "紀錄",
+    bubble(
+      { title: "紀錄", sub: "最近三週" },
+      dayGroups(days, null, "最近還沒有完成或決定的紀錄。"),
+      [{ type: "text", text: "完成待辦、記家事、答討論都會留在這裡", size: "xxs", color: MUTED, align: "center" }],
     ),
   );
 }
