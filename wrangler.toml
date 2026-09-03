@@ -4,10 +4,11 @@ name = "bbssfamily"
 main = "line-bot/src/index.js"
 compatibility_date = "2026-01-01"
 
-# 台北 21:30 = 13:30 UTC；週日 22:50 = 週日 14:50 UTC。
-# 星期幾要用 SUN 這種寫法，Cloudflare 不接受 0。
+# 只用一個排程：台北 21:30 = 13:30 UTC。
+# 週日的下週討論清單接在同一則後面，不另外開排程——免費方案整個帳號只有
+# 5 個 cron 額度，而且併成一則也少推一次、省訊息額度。
 [triggers]
-crons = ["30 13 * * *", "50 14 * * SUN"]
+crons = ["30 13 * * *"]
 
 [vars]
 # 機器人回「一週」時附的網頁連結，換成你自己的 GitHub Pages 網址。

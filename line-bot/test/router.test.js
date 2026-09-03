@@ -124,3 +124,18 @@ test("一週：七張卡加一則網頁連結", async () => {
   assert.equal(messages[0].contents.contents.length, 7);
   assert.match(messages[1].text, /example\.test/);
 });
+
+test("星期日的排程訊息會接上下週討論清單", async () => {
+  const kv = fakeKv();
+  const { nightlyMessage } = await import("../src/push.js");
+
+  const sunday = { ...NOW, dow: 0, iso: "2026-09-06" };
+  const weekday = { ...NOW, dow: 4 };
+
+  const sundayMsg = await nightlyMessage(kv, sunday);
+  const weekdayMsg = await nightlyMessage(kv, weekday);
+
+  assert.match(sundayMsg.text, /下週行程討論/);
+  assert.match(sundayMsg.text, /【先決定】/);
+  assert.doesNotMatch(weekdayMsg.text, /下週行程討論/);
+});

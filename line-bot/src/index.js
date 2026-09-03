@@ -6,16 +6,13 @@
  *   GET  /health   ← 部署後自己確認用
  *
  * Cron（wrangler.toml 設定的是 UTC）：
- *   13:30 UTC = 台北 21:30 → 今晚的家事提醒
- *   14:50 UTC 週日 = 台北 週日 22:50 → 下週討論清單
+ *   13:30 UTC = 台北 21:30 → 今晚的家事提醒；星期日那則會多接下週討論清單
  */
 import { verifySignature, reply, push, getProfile, text } from "./line.js";
 import { respond, respondPostback, helpText, MENU } from "./router.js";
-import { nightlyMessage, weeklyMessage } from "./push.js";
+import { nightlyMessage } from "./push.js";
 import { taipei } from "./time.js";
 import * as store from "./store.js";
-
-const NIGHTLY_CRON = "30 13 * * *";
 
 export default {
   async fetch(request, env, ctx) {
@@ -55,7 +52,7 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(broadcast(event.cron, env));
+    ctx.waitUntil(broadcast(env));
   },
 };
 
@@ -112,12 +109,8 @@ async function resolveName(env, userId) {
   return name;
 }
 
-async function broadcast(cron, env) {
-  const now = taipei();
-  const message =
-    cron === NIGHTLY_CRON
-      ? await nightlyMessage(env.FAMILY, now)
-      : await weeklyMessage(env.FAMILY);
+async function broadcast(env) {
+  const message = await nightlyMessage(env.FAMILY, taipei());
   const users = await store.listUsers(env.FAMILY);
   for (const user of users) {
     try {
