@@ -1,0 +1,4 @@
+# 複製成 .dev.vars（已被 .gitignore 擋掉）給 wrangler dev 用。
+# 正式環境請改用：npx wrangler secret put LINE_CHANNEL_SECRET
+LINE_CHANNEL_SECRET=你的_Channel_secret
+LINE_CHANNEL_ACCESS_TOKEN=你的_長期存取權杖

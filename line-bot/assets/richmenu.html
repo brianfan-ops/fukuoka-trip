@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+  html, body { margin:0; padding:0; }
+  body { width:2500px; height:1686px; background:#F1F3F1; font-family:"Noto Sans TC","PingFang TC",sans-serif; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr); width:100%; height:100%; gap:6px; background:#D7DEDA; }
+  .cell { background:#FFFFFF; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; }
+  .cell .mark { width:150px; height:150px; border-radius:999px; display:grid; place-items:center; font-size:74px; font-weight:700; color:#FFFFFF; }
+  .cell .name { font-size:96px; font-weight:700; color:#1D2320; letter-spacing:.04em; }
+  .cell .hint { font-size:46px; color:#7C867F; }
+  .c1 .mark { background:#A96D1A; } .c2 .mark { background:#2F7F78; } .c3 .mark { background:#6A8A4C; }
+  .c4 .mark { background:#4152A0; } .c5 .mark { background:#33366B; } .c6 .mark { background:#7C867F; }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="cell c1"><div class="mark">今</div><div class="name">今天</div><div class="hint">現在的時段</div></div>
+    <div class="cell c2"><div class="mark">辦</div><div class="name">待辦</div><div class="hint">勾完成</div></div>
+    <div class="cell c3"><div class="mark">週</div><div class="name">一週</div><div class="hint">七天安排</div></div>
+    <div class="cell c4"><div class="mark">事</div><div class="name">家事</div><div class="hint">輪值與逾期</div></div>
+    <div class="cell c5"><div class="mark">議</div><div class="name">討論</div><div class="hint">下週要決定</div></div>
+    <div class="cell c6"><div class="mark">?</div><div class="name">說明</div><div class="hint">怎麼用</div></div>
+  </div>
+</body>
+</html>

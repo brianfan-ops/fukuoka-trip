@@ -1,0 +1,17 @@
+name = "family-line-bot"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# 台北 21:30 = 13:30 UTC；週日 22:50 = 週日 14:50 UTC。
+[triggers]
+crons = ["30 13 * * *", "50 14 * * 0"]
+
+[vars]
+# 機器人回「一週」時附的網頁連結，換成你自己的 GitHub Pages 網址。
+SITE_URL = "https://brianfan-ops.github.io/fukuoka-trip/family/"
+
+# 待辦、使用者、長週期家事的完成日期都存在這裡。
+# 建立：npx wrangler kv namespace create FAMILY
+[[kv_namespaces]]
+binding = "FAMILY"
+id = "PUT_YOUR_KV_NAMESPACE_ID_HERE"
