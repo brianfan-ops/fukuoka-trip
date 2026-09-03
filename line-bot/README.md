@@ -45,12 +45,31 @@ LINE Platform ──webhook──▶ Cloudflare Worker ──▶ KV（待辦、�
 
 ### 1. LINE 端
 
-1. 到 [LINE Developers Console](https://developers.line.biz/console/) 建立 Provider，
-   再建立一個 **Messaging API** channel。
-2. **Basic settings** → 記下 **Channel secret**。
-3. **Messaging API** → 發行 **Channel access token（long-lived）**，記下來。
-4. 同一頁把 **自動回覆訊息**、**歡迎訊息** 關掉（不然機器人回一次、罐頭回一次）。
-5. **Allow bot to join group chats** 保持關閉——這個帳號只做一對一。
+會用到**兩個後台**，很多人卡在這裡：
+
+| 後台 | 網址 | 在這裡做什麼 |
+| --- | --- | --- |
+| LINE Developers Console | developers.line.biz | 建 channel、拿金鑰、填 Webhook |
+| LINE 官方帳號管理後台 | manager.line.biz | 改回應模式、關自動回應、拿加好友 QR |
+
+兩邊是同一個帳號的兩張臉：在 Developers Console 建立 Messaging API channel 時，
+**系統會自動幫你開一個對應的官方帳號**，不用另外申請。
+
+1. 到 [LINE Developers Console](https://developers.line.biz/console/) 用你的 LINE 帳號登入。
+2. 建立一個 **Provider**（名字隨便，例如「家」）。
+3. 在該 Provider 底下建立 **Messaging API** channel。填名稱（會變成官方帳號的顯示名稱）、
+   類別、地區選台灣。建完就同時有官方帳號了。
+4. **Basic settings** 分頁 → 往下找 **Channel secret**，記下來。
+5. **Messaging API** 分頁 → 最下面 **Channel access token (long-lived)** → 按 **Issue**，記下來。
+6. 同一分頁的 **Allow bot to join group chats** 保持關閉——這個帳號只做一對一。
+7. 到 [LINE 官方帳號管理後台](https://manager.line.biz/) → 選這個帳號 → **設定 → 回應設定**：
+   - 回應模式：**聊天機器人**
+   - **自動回應訊息：關**（不關的話，機器人回一次、罐頭訊息再回一次）
+   - **Webhook：開**
+
+> LINE 的後台改版頻繁，選項名稱可能跟這裡寫的略有出入，但位置大致就在這幾頁。
+
+做完你手上會有兩個值，等一下要用：**Channel secret** 和 **Channel access token**。
 
 ### 2. Cloudflare 端
 
