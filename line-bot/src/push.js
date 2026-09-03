@@ -41,18 +41,21 @@ export async function nightlyMessage(kv, now) {
     lines.push("", `明天是${tomorrow.name}，記得先備：${tomorrow.prep}`);
   }
   if (now.dow === 0) {
-    lines.push("", "──────────", "", ...agendaLines(open));
+    lines.push("", "──────────", "", ...agendaLines(open, await store.getAnswers(kv)));
   }
   return text(lines.join("\n"), MENU);
 }
 
-/** 週日附在後面的下週討論清單。 */
-function agendaLines(open) {
+/** 週日附在後面的下週討論清單。已經有答案的收成一行。 */
+function agendaLines(open, answers) {
+  const undecided = AGENDA.map((a, i) => [i + 1, a]).filter(([no]) => !answers[String(no)]);
   const lines = [
-    "下週行程討論 · 15 分鐘就好",
+    `下週行程討論 · 還有 ${undecided.length}/${AGENDA.length} 題沒決定`,
     "",
-    ...AGENDA.map((a, i) => `${i + 1}. ${a.first ? "【先決定】" : ""}${a.text}`),
+    ...undecided.map(([no, a]) => `${no}. ${a.first ? "【先決定】" : ""}${a.text}`),
   ];
+  if (!undecided.length) lines.push("全部都有答案了，確認一下有沒有要改的。");
+  lines.push("", "照編號回一句就記下來，例如「3. 先試一週」。");
   if (open.length) {
     lines.push("", `這週沒做完的 ${open.length} 件：`, ...open.slice(0, 8).map((t) => `· ${t.text}`));
   }

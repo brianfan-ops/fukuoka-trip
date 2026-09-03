@@ -47,6 +47,16 @@ export function parse(input) {
   m = raw.match(/^(?:完成|做完|done)[\s:：]+(.+)$/is);
   if (m) return { cmd: "done", arg: m[1].trim() };
 
+  // 討論 3 輪班制 → 記下第 3 題的答案
+  m = raw.match(/^(?:討論|決定)[\s:：]+(\d{1,2})[\s.、):：]*(.+)$/s);
+  if (m) return { cmd: "answers", arg: `${m[1]}. ${m[2].trim()}` };
+
+  m = raw.match(/^(?:刪除|刪掉|刪|remove|delete)[\s:：]*(\d+)$/i);
+  if (m) return { cmd: "remove", arg: m[1] };
+
+  // 看完「討論」直接照編號回答，是最自然的用法——不能當成待辦吞掉
+  if (numberedLines(raw).length >= 2) return { cmd: "answers", arg: raw };
+
   m = raw.match(/^(?:待辦|todo)[\s:：,，]+(.+)$/is);
   if (m) return { cmd: "add", arg: m[1].trim() };
   m = raw.match(/^[+＋]\s*(.+)$/s) || raw.match(/^(?:加|新增)[\s:：]+(.+)$/s);
@@ -57,6 +67,15 @@ export function parse(input) {
     if (entry.words.includes(key)) return { cmd: entry.cmd, arg: "" };
   }
   return { cmd: "add", arg: raw };
+}
+
+/** 把「1. 輪班制」這種行拆成 [題號, 答案]。 */
+export function numberedLines(raw) {
+  return String(raw || "")
+    .split(/\r?\n/)
+    .map((line) => line.match(/^\s*(\d{1,2})\s*[.、)：:]\s*(.+?)\s*$/))
+    .filter(Boolean)
+    .map((m) => [Number(m[1]), m[2]]);
 }
 
 /** 長週期家事的目前狀態。 */
@@ -101,7 +120,11 @@ export async function respond(ctx, input) {
     case "chores":
       return [await buildChores(ctx)];
     case "agenda":
-      return [flex.agendaBubble(AGENDA)];
+      return [flex.agendaBubble(AGENDA, await store.getAnswers(ctx.kv))];
+    case "answers":
+      return await recordAnswers(ctx, arg);
+    case "remove":
+      return [await removeByIndex(ctx, arg)];
     case "done":
       return [await completeByIndex(ctx, arg)];
     case "menu":
@@ -160,6 +183,38 @@ async function setupMenu(ctx) {
   } catch (err) {
     return text(`選單安裝失敗：\n${String(err.message).slice(0, 300)}`, MENU);
   }
+}
+
+/** 記下討論清單的答案。同一題再回一次會覆蓋。 */
+async function recordAnswers(ctx, raw) {
+  const entries = numberedLines(raw).filter(([no]) => no >= 1 && no <= AGENDA.length);
+  if (!entries.length) return [await addTodo(ctx, raw)];
+
+  const answers = await store.saveAnswers(ctx.kv, entries, ctx.userName);
+  const answered = AGENDA.filter((_, i) => answers[String(i + 1)]).length;
+  const summary = text(
+    [
+      `記下 ${entries.length} 題的決定（共 ${answered}/${AGENDA.length} 題有答案）。`,
+      "",
+      ...entries.map(([no, value]) => `${no}. ${value}`),
+      "",
+      "打「討論」看完整清單。要改的話再回一次同一個號碼就會覆蓋。",
+      "如果這其實是待辦清單，用「待辦 內容」一筆一筆加。",
+    ].join("\n"),
+    MENU,
+  );
+  return [summary, flex.agendaBubble(AGENDA, answers)];
+}
+
+/** 待辦打錯了要刪掉——只能勾完成的話，錯字會留一輩子。 */
+async function removeByIndex(ctx, arg) {
+  const open = (await store.listTodos(ctx.kv)).filter((t) => !t.done);
+  const n = Number(String(arg).trim());
+  if (!Number.isInteger(n) || n < 1 || n > open.length) {
+    return text(`沒有第 ${arg} 件。輸入「待辦」看目前的編號。`, MENU);
+  }
+  const todo = await store.removeTodo(ctx.kv, open[n - 1].id);
+  return text(`已刪除：${todo.text}`, MENU);
 }
 
 async function addTodo(ctx, content) {
@@ -228,10 +283,12 @@ function helpText() {
       "· 直接打一句話 → 加進待辦",
       "· 待辦 → 看清單，點按鈕勾完成",
       "· 完成 2 → 把第 2 件標完成",
+      "· 刪除 2 → 把第 2 件刪掉（打錯用這個）",
       "· 今天 → 現在的時段、今晚洗什麼",
       "· 一週 → 七天的安排",
       "· 家事 → 輪值與長週期進度",
       "· 討論 → 下週要決定的事",
+      "· 照編號回答（1. …換行 2. …）→ 記成決定，不會變待辦",
       "· 安裝選單 → 裝上／重裝下方的按鈕列",
       "",
       "每天 21:30 會提醒今晚的家事，週日晚上提醒下週討論。",

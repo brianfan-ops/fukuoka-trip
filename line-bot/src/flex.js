@@ -212,26 +212,63 @@ export function choresBubble({ dow, laundry, lowfreq }) {
   );
 }
 
-/** 下週討論清單。 */
-export function agendaBubble(items) {
+/** 下週討論清單。已經有答案的直接顯示在題目下面。 */
+export function agendaBubble(items, answers = {}) {
   const body = [];
+  let decided = 0;
   items.forEach((it, i) => {
+    const answer = answers[String(i + 1)];
+    if (answer) decided += 1;
     body.push({
       type: "box",
-      layout: "baseline",
-      spacing: "sm",
+      layout: "vertical",
+      spacing: "none",
       contents: [
-        { type: "text", text: String(i + 1), size: "xs", color: it.first ? ALERT : MUTED, flex: 0 },
-        { type: "text", text: it.text, size: "sm", color: INK, wrap: true, flex: 8, weight: it.first ? "bold" : undefined },
+        {
+          type: "box",
+          layout: "baseline",
+          spacing: "sm",
+          contents: [
+            { type: "text", text: String(i + 1), size: "xs", color: it.first && !answer ? ALERT : MUTED, flex: 0 },
+            {
+              type: "text",
+              text: it.text,
+              size: "sm",
+              color: answer ? MUTED : INK,
+              wrap: true,
+              flex: 8,
+              weight: it.first && !answer ? "bold" : undefined,
+            },
+          ],
+        },
+        ...(answer
+          ? [{
+              type: "box",
+              layout: "baseline",
+              spacing: "sm",
+              margin: "xs",
+              contents: [
+                { type: "text", text: "→", size: "xs", color: ACCENT, flex: 0 },
+                { type: "text", text: answer.text, size: "sm", color: ACCENT, weight: "bold", wrap: true, flex: 8 },
+              ],
+            }]
+          : []),
       ],
     });
   });
+
   return flex(
     "下週討論",
-    bubble({ title: "下週行程討論", sub: "週日 23:00 爸媽時間 · 15 分鐘" }, [
-      line("前兩題先解決，其他排在它們後面。", { color: MUTED, size: "xs" }),
-      separator(),
-      ...body,
-    ]),
+    bubble(
+      { title: "下週行程討論", sub: `週日 23:00 爸媽時間 · 已決定 ${decided}/${items.length}` },
+      [
+        line(
+          decided === items.length ? "全部都有答案了。" : "照編號回一句就記下來，例如「3. 先試一週」。",
+          { color: MUTED, size: "xs" },
+        ),
+        separator(),
+        ...body,
+      ],
+    ),
   );
 }

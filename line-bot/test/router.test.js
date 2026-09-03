@@ -183,3 +183,89 @@ test("選單安裝失敗會把錯誤回給使用者，不是靜靜失敗", async
   globalThis.fetch = original;
   assert.match(messages[0].text, /選單安裝失敗/);
 });
+
+test("照編號回答會記成討論決定，不會變成待辦", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+  const reply = "1. 輪班制\n2. 兩週一次，週六進行\n3. 主題日採納參考";
+
+  const messages = await respond(ctx, reply);
+
+  assert.match(messages[0].text, /記下 3 題的決定/);
+  assert.equal(messages[1].type, "flex", "第二則要回更新後的清單");
+  assert.equal((await store.listTodos(kv)).length, 0, "不該產生待辦");
+
+  const answers = await store.getAnswers(kv);
+  assert.equal(answers["1"].text, "輪班制");
+  assert.equal(answers["3"].text, "主題日採納參考");
+  assert.equal(answers["1"].by, "爸爸");
+});
+
+test("單獨一行編號還是當待辦，不會誤判成討論答案", async () => {
+  const kv = fakeKv();
+  await respond(ctxOf(kv), "1. 買奶粉");
+  const todos = await store.listTodos(kv);
+  assert.equal(todos.length, 1);
+  assert.equal(todos[0].text, "1. 買奶粉");
+  assert.deepEqual(await store.getAnswers(kv), {});
+});
+
+test("討論 3 先試一週：單題作答，再回一次會覆蓋", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+
+  await respond(ctx, "討論 3 先試一週");
+  assert.equal((await store.getAnswers(kv))["3"].text, "先試一週");
+
+  await respond(ctx, "討論 3 改成兩週");
+  assert.equal((await store.getAnswers(kv))["3"].text, "改成兩週");
+  assert.equal(Object.keys(await store.getAnswers(kv)).length, 1);
+});
+
+test("超出題號範圍的編號清單仍然當待辦", async () => {
+  const kv = fakeKv();
+  await respond(ctxOf(kv), "51. 買奶粉\n52. 買尿布");
+  assert.equal((await store.listTodos(kv)).length, 1);
+  assert.deepEqual(await store.getAnswers(kv), {});
+});
+
+test("討論卡片會顯示已經決定的答案", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+  await respond(ctx, "1. 輪班制\n2. 兩週一次");
+
+  const [bubble] = await respond(ctx, "討論");
+  const rendered = JSON.stringify(bubble);
+  assert.match(rendered, /已決定 2\/8/);
+  assert.match(rendered, /輪班制/);
+});
+
+test("刪除 2 可以把打錯的待辦拿掉", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+  await respond(ctx, "買奶粉");
+  await respond(ctx, "打錯的東西");
+
+  const messages = await respond(ctx, "刪除 2");
+  assert.match(messages[0].text, /已刪除：打錯的東西/);
+
+  const todos = await store.listTodos(kv);
+  assert.equal(todos.length, 1);
+  assert.equal(todos[0].text, "買奶粉");
+});
+
+test("刪除不存在的編號會給提示", async () => {
+  const messages = await respond(ctxOf(fakeKv()), "刪除 9");
+  assert.match(messages[0].text, /沒有第 9 件/);
+});
+
+test("週日推播只列還沒決定的題目", async () => {
+  const kv = fakeKv();
+  const { nightlyMessage } = await import("../src/push.js");
+  await store.saveAnswers(kv, [[1, "輪班制"], [2, "兩週一次"]], "爸爸");
+
+  const msg = await nightlyMessage(kv, { ...NOW, dow: 0, iso: "2026-09-06" });
+  assert.match(msg.text, /還有 6\/8 題沒決定/);
+  assert.doesNotMatch(msg.text, /每晚的四件家事怎麼分/);
+  assert.match(msg.text, /妹妹的主題日提案/);
+});

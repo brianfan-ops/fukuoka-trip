@@ -3,7 +3,7 @@
  * 注意：同一秒內兩個人同時寫，後寫的會蓋掉先寫的。以家庭用量來說可以接受。
  */
 
-const KEYS = { users: "users", todos: "todos", lowfreq: "lowfreq" };
+const KEYS = { users: "users", todos: "todos", lowfreq: "lowfreq", answers: "answers" };
 
 async function readJson(kv, key, fallback) {
   const raw = await kv.get(key);
@@ -86,6 +86,25 @@ export async function setLowfreq(kv, id, iso) {
   map[id] = iso;
   await kv.put(KEYS.lowfreq, JSON.stringify(map));
   return map;
+}
+
+/** 討論清單的答案，key 是題號字串。 */
+export async function getAnswers(kv) {
+  return readJson(kv, KEYS.answers, {});
+}
+
+/** 同一題再回一次就覆蓋掉舊答案。 */
+export async function saveAnswers(kv, entries, by) {
+  const answers = await getAnswers(kv);
+  for (const [no, text] of entries) {
+    answers[String(no)] = { text: text.slice(0, 200), by: by || "", at: new Date().toISOString() };
+  }
+  await kv.put(KEYS.answers, JSON.stringify(answers));
+  return answers;
+}
+
+export async function clearAnswers(kv) {
+  await kv.put(KEYS.answers, JSON.stringify({}));
 }
 
 /** 已完成的只留最近 50 筆，未完成的全留。 */
