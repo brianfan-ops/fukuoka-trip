@@ -415,3 +415,53 @@ test("今天這張卡不能超過 Flex 的 10 KB 上限", async () => {
   const bytes = Buffer.byteLength(JSON.stringify(card), "utf8");
   assert.ok(bytes < 10000, `Flex JSON ${bytes} bytes，超過 10 KB 就送不出去`);
 });
+
+test("長週期家事：打名字就記成今天做過", async () => {
+  const kv = fakeKv();
+  const messages = await respond(ctxOf(kv), "家事 冷氣濾網");
+
+  assert.match(messages[0].text, /洗冷氣濾網 今天 做過/);
+  assert.equal(messages[1].type, "flex", "順便回一張更新後的家事卡");
+  assert.deepEqual(await store.getLowfreq(kv), { filter: "2026-09-03" });
+});
+
+test("長週期家事：可以補以前的日期", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+
+  await respond(ctx, "家事 床單 8/20");
+  assert.equal((await store.getLowfreq(kv)).bedding, "2026-08-20");
+
+  await respond(ctx, "家事 儲物間 2026-07-01");
+  assert.equal((await store.getLowfreq(kv)).storage, "2026-07-01");
+});
+
+test("長週期家事：也吃「◯◯做了」這種講法", async () => {
+  const kv = fakeKv();
+  await respond(ctxOf(kv), "洗陽台做了");
+  assert.equal((await store.getLowfreq(kv)).balcony, "2026-09-03");
+});
+
+test("認不出是哪一項家事就當待辦，不會亂記", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+
+  await respond(ctx, "作業做了");
+  await respond(ctx, "洗車做了");
+
+  assert.deepEqual(await store.getLowfreq(kv), {}, "沒有一項該被記到家事表");
+  const todos = await store.listTodos(kv);
+  assert.deepEqual(todos.map((t) => t.text), ["作業做了", "洗車做了"]);
+});
+
+test("家事卡：每一項都有自己的按鈕", async () => {
+  const kv = fakeKv();
+  const { LOWFREQ } = await import("../src/data.js");
+  const [card] = await respond(ctxOf(kv), "家事");
+
+  const rendered = JSON.stringify(card);
+  for (const item of LOWFREQ) {
+    assert.match(rendered, new RegExp(`lf:${item.id}`), `${item.name} 少了按鈕`);
+  }
+  assert.ok(Buffer.byteLength(rendered, "utf8") < 10000, "Flex JSON 不能超過 10 KB");
+});

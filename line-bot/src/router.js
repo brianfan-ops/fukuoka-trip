@@ -60,6 +60,12 @@ export function parse(input) {
   m = raw.match(/^(?:刪除|刪掉|刪|remove|delete)[\s:：]*(\d+)$/i);
   if (m) return { cmd: "remove", arg: m[1] };
 
+  // 家事 冷氣濾網 8/20 → 記下長週期家事的完成日
+  m = raw.match(/^(?:家事|長週期)[\s:：]+(.+)$/s);
+  if (m) return { cmd: "chore", arg: m[1].trim() };
+  m = raw.match(/^(.+?)\s*(?:做了|洗了|清了|整理了|完成了)$/s);
+  if (m) return { cmd: "chore", arg: m[1].trim() };
+
   // 看完「討論」直接照編號回答，是最自然的用法——不能當成待辦吞掉
   if (numberedLines(raw).length >= 2) return { cmd: "answers", arg: raw };
 
@@ -135,6 +141,8 @@ export async function respond(ctx, input) {
       return await recordAnswers(ctx, arg);
     case "remove":
       return [await removeByIndex(ctx, arg)];
+    case "chore":
+      return await logChore(ctx, arg, input);
     case "done":
       return [await completeByIndex(ctx, arg)];
     case "menu":
@@ -278,6 +286,39 @@ async function recordAnswers(ctx, raw) {
   return [summary, flex.agendaBubble(await weekAgenda(ctx))];
 }
 
+/**
+ * 記下長週期家事做過了。認不出是哪一項就當成一般待辦——
+ * 「作業做了」不該被硬塞進家事表。
+ */
+async function logChore(ctx, arg, original) {
+  const parts = String(arg).trim().split(/\s+/);
+  let iso = ctx.now.iso;
+  if (parts.length > 1) {
+    const parsed = parseDate(parts[parts.length - 1], ctx.now.iso);
+    if (parsed) {
+      iso = parsed;
+      parts.pop();
+    }
+  }
+  const needle = parts.join(" ");
+  // 至少要兩個字才做包含比對，否則「洗車做了」會被當成「洗冷氣濾網」
+  const item =
+    LOWFREQ.find((i) => i.id === needle || i.name === needle) ||
+    (needle.length >= 2
+      ? LOWFREQ.find((i) => i.name.includes(needle) || needle.includes(i.name))
+      : null);
+
+  // 認不出來就照原句當待辦，別把「做了」兩個字吃掉
+  if (!item) return [await addTodo(ctx, original || arg)];
+
+  await store.setLowfreq(ctx.kv, item.id, iso);
+  const when = iso === ctx.now.iso ? "今天" : iso;
+  return [
+    text(`記下了：${item.name} ${when} 做過，下次約 ${item.every} 天後。`, MENU),
+    await buildChores(ctx),
+  ];
+}
+
 /** 平常想到的議題丟進來，週日一起看。 */
 async function addTopic(ctx, content) {
   if (!content) return text("要討論什麼？例如「討論 加 要不要換保母」。", MENU);
@@ -385,6 +426,7 @@ function helpText() {
       "· 今天 → 現在的時段、今晚洗什麼",
       "· 一週 → 七天的安排",
       "· 家事 → 輪值與長週期進度",
+      "· 家事 冷氣濾網 → 記成今天做過；補日期就寫「家事 床單 8/20」",
       "· 討論 → 這週要談的事（每週固定題＋你丟的議題）",
       "· 討論 加 要不要換保母 → 平常想到就丟，週五一起看",
       "· 家規 → 已經定案的安排",

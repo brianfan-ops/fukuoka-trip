@@ -302,7 +302,6 @@ export function choresBubble({ dow, laundry, lowfreq }) {
     separator(),
     label("長週期"),
   ];
-  const footer = [];
   lowfreq.forEach((item) => {
     const state =
       item.days === null
@@ -310,14 +309,37 @@ export function choresBubble({ dow, laundry, lowfreq }) {
         : item.overdue
           ? `${item.days} 天前 · 該做了`
           : `${item.days} 天前`;
-    body.push(row(item.name, state, item.overdue ? ALERT : MUTED));
-    if (item.overdue || item.days === null) {
-      footer.push(button(`${item.name}做了`, `lf:${item.id}`, footer.length ? "secondary" : "primary"));
-    }
+    body.push({
+      type: "box",
+      layout: "horizontal",
+      spacing: "sm",
+      alignItems: "center",
+      contents: [
+        {
+          type: "box",
+          layout: "vertical",
+          flex: 5,
+          contents: [
+            { type: "text", text: item.name, size: "sm", color: INK, wrap: true },
+            { type: "text", text: state, size: "xxs", color: item.overdue ? ALERT : MUTED },
+          ],
+        },
+        {
+          type: "button",
+          style: "secondary",
+          height: "sm",
+          flex: 3,
+          action: { type: "postback", label: "做了", data: `lf:${item.id}`, displayText: `${item.name}做了` },
+        },
+      ],
+    });
   });
+
   return flex(
     "家事輪值",
-    bubble({ title: "家事輪值", sub: "21:30 家事時間" }, body, footer.slice(0, 3).length ? footer.slice(0, 3) : null),
+    bubble({ title: "家事輪值", sub: "21:30 家事時間" }, body, [
+      { type: "text", text: "補以前做的：家事 床單 8/20", size: "xxs", color: MUTED, align: "center" },
+    ]),
   );
 }
 
