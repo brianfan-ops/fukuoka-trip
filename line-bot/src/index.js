@@ -2,6 +2,7 @@
  * LINE 官方帳號的 webhook 與排程推播。
  *
  * 路由：
+ *   GET  /         ← 作息表網頁（機器人回「一週」時附的連結）
  *   POST /webhook  ← LINE 的事件（要先驗簽章）
  *   GET  /health   ← 部署後自己確認用
  *
@@ -12,6 +13,7 @@ import { verifySignature, reply, push, getProfile, text } from "./line.js";
 import { respond, respondPostback, helpText, MENU } from "./router.js";
 import { nightlyMessage } from "./push.js";
 import { taipei } from "./time.js";
+import page from "./page.js";
 import * as store from "./store.js";
 
 export default {
@@ -20,6 +22,16 @@ export default {
 
     if (url.pathname === "/health") {
       return json({ ok: true, now: taipei() });
+    }
+    if (url.pathname === "/" || url.pathname === "/family" || url.pathname === "/family/") {
+      // 頁面帶 noindex，網址也不對外公開，只給家裡人用。
+      return new Response(page, {
+        headers: {
+          "Content-Type": "text/html; charset=utf-8",
+          "Cache-Control": "no-cache",
+          "X-Robots-Tag": "noindex, nofollow",
+        },
+      });
     }
     if (url.pathname !== "/webhook" || request.method !== "POST") {
       return new Response("Not found", { status: 404 });

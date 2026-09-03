@@ -14,7 +14,7 @@ LINE Platform ──webhook──▶ Cloudflare Worker ──▶ KV（待辦、�
    └────── reply / push ────────┘
                                 │  「一週」附連結
                                 ▼
-                    GitHub Pages 上的 family/index.html
+                    同一個 Worker 供應的作息表網頁（src/page.js）
 ```
 
 用的是 LINE 差勤系統那一套做法：**聊天處理一句話就講完的事，複雜的表格丟網頁**。
@@ -122,11 +122,16 @@ LINE_CHANNEL_ACCESS_TOKEN=xxx npm run richmenu:upload
 作息、輪值、主題日、長週期家事、討論清單都在 [`src/data.js`](src/data.js)。
 改完 `npm run deploy` 就生效。
 
-> ⚠️ 同一份內容目前在 `family/index.html` 也有一份，兩邊要一起改。
+網頁本身是 `family/index.html`；Worker 供應的是它包成模組的版本 `src/page.js`。
+**改完網頁要跑 `npm run page` 重新產生**，忘了跑的話 `npm test` 會擋下來。
+
+> ⚠️ 作息內容目前在 `src/data.js` 和 `family/index.html` 各有一份，兩邊要一起改。
 > 之後可以把網頁改成從 Worker 讀資料，就只剩一份。
 
 ## 資料與隱私
 
+- 作息表網頁由 Worker 自己供應，帶 `noindex`，不放 GitHub Pages——那會把小孩的
+  出生日期、上下學時間、家裡白天只有誰在，公開到搜尋引擎上。
 - 待辦、使用者 ID、長週期家事的完成日期存在 Cloudflare KV，只有這個 Worker 讀得到。
 - 不存訊息全文，只存你明確加進待辦的那句話。
 - 退出好友（unfollow）會自動把使用者從推播名單移除。

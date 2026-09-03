@@ -139,3 +139,10 @@ test("星期日的排程訊息會接上下週討論清單", async () => {
   assert.match(sundayMsg.text, /【先決定】/);
   assert.doesNotMatch(weekdayMsg.text, /下週行程討論/);
 });
+
+test("內建網頁與 family/index.html 一致", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const { default: page } = await import("../src/page.js");
+  const source = await readFile(new URL("../../family/index.html", import.meta.url), "utf8");
+  assert.equal(page, source, "family/index.html 改過了，請執行 npm run page 重新產生 src/page.js");
+});

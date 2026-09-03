@@ -8,6 +8,7 @@
     "dev": "wrangler dev --config ../wrangler.toml",
     "deploy": "wrangler deploy --config ../wrangler.toml",
     "test": "node --test test/*.test.js",
+    "page": "node scripts/build-page.mjs",
     "richmenu:image": "node scripts/build-richmenu-image.mjs",
     "richmenu:upload": "node scripts/richmenu.js"
   },

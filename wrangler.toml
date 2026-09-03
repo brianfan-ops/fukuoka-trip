@@ -11,8 +11,9 @@ compatibility_date = "2026-01-01"
 crons = ["30 13 * * *"]
 
 [vars]
-# 機器人回「一週」時附的網頁連結，換成你自己的 GitHub Pages 網址。
-SITE_URL = "https://brianfan-ops.github.io/fukuoka-trip/family/"
+# 機器人回「一週」時附的網頁連結。頁面由這個 Worker 自己供應（見 src/page.js），
+# 不放 GitHub Pages——那會把作息、小孩生日、接送時間公開到搜尋引擎上。
+SITE_URL = "https://bbssfamily.brian-fan.workers.dev/"
 
 # 待辦、使用者、長週期家事的完成日期都存在這裡。
 # Cloudflare 後台的 KV instance「BBSS_family」。binding 名稱是程式裡讀的 env.FAMILY，
