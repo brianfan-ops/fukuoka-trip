@@ -11,7 +11,8 @@ crons = ["30 13 * * *", "50 14 * * 0"]
 SITE_URL = "https://brianfan-ops.github.io/fukuoka-trip/family/"
 
 # 待辦、使用者、長週期家事的完成日期都存在這裡。
-# 建立：npx wrangler kv namespace create FAMILY
+# Cloudflare 後台的 KV instance「BBSS_family」。binding 名稱是程式裡讀的 env.FAMILY，
+# 跟後台顯示的名字無關，不要改。
 [[kv_namespaces]]
 binding = "FAMILY"
-id = "PUT_YOUR_KV_NAMESPACE_ID_HERE"
+id = "72600c3d09ef41928736899953b34461"
