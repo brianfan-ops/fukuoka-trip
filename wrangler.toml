@@ -1,5 +1,7 @@
+# 這份放在 repo 根目錄，是為了讓 Cloudflare Workers Builds 用預設的
+# Root directory「/」就找得到，不必在後台改任何建置設定。
 name = "bbssfamily"
-main = "src/index.js"
+main = "line-bot/src/index.js"
 compatibility_date = "2026-01-01"
 
 # 台北 21:30 = 13:30 UTC；週日 22:50 = 週日 14:50 UTC。

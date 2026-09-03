@@ -5,8 +5,8 @@
   "type": "module",
   "description": "家庭作息的 LINE 官方帳號：待辦、一週安排、家事輪值提醒",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "dev": "wrangler dev --config ../wrangler.toml",
+    "deploy": "wrangler deploy --config ../wrangler.toml",
     "test": "node --test test/*.test.js",
     "richmenu:image": "node scripts/build-richmenu-image.mjs",
     "richmenu:upload": "node scripts/richmenu.js"

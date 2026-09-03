@@ -73,6 +73,9 @@ LINE Platform ──webhook──▶ Cloudflare Worker ──▶ KV（待辦、�
 
 ### 2. Cloudflare 端
 
+設定檔 `wrangler.toml` 放在 **repo 根目錄**，不是這個資料夾——這樣 Cloudflare
+的 Git 連動部署用預設的 Root directory「/」就找得到，後台不用改任何建置設定。
+
 ```bash
 cd line-bot
 npm install
