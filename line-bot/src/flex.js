@@ -222,36 +222,37 @@ export function choresBubble({ dow, laundry, lowfreq }) {
   );
 }
 
-/** 下週討論清單。已經有答案的直接顯示在題目下面。 */
-export function agendaBubble(items, answers = {}) {
+const KIND_LABEL = { weekly: "每週", topic: "議題", setup: "設定" };
+
+/** 這一週的討論清單：每週固定題、你丟的議題、還沒定案的設定題。 */
+export function agendaBubble({ week, items }) {
+  const decided = items.filter((it) => it.answer).length;
   const body = [];
-  let decided = 0;
+
   items.forEach((it, i) => {
-    const answer = answers[String(i + 1)];
-    if (answer) decided += 1;
     body.push({
       type: "box",
       layout: "vertical",
-      spacing: "none",
       contents: [
         {
           type: "box",
           layout: "baseline",
           spacing: "sm",
           contents: [
-            { type: "text", text: String(i + 1), size: "xs", color: it.first && !answer ? ALERT : MUTED, flex: 0 },
+            { type: "text", text: String(i + 1), size: "xs", color: it.first && !it.answer ? ALERT : MUTED, flex: 0 },
             {
               type: "text",
               text: it.text,
               size: "sm",
-              color: answer ? MUTED : INK,
+              color: it.answer ? MUTED : INK,
               wrap: true,
               flex: 8,
-              weight: it.first && !answer ? "bold" : undefined,
+              weight: it.first && !it.answer ? "bold" : undefined,
             },
+            { type: "text", text: KIND_LABEL[it.kind], size: "xxs", color: MUTED, flex: 0, align: "end" },
           ],
         },
-        ...(answer
+        ...(it.answer
           ? [{
               type: "box",
               layout: "baseline",
@@ -259,7 +260,7 @@ export function agendaBubble(items, answers = {}) {
               margin: "xs",
               contents: [
                 { type: "text", text: "→", size: "xs", color: ACCENT, flex: 0 },
-                { type: "text", text: answer.text, size: "sm", color: ACCENT, weight: "bold", wrap: true, flex: 8 },
+                { type: "text", text: it.answer.text, size: "sm", color: ACCENT, weight: "bold", wrap: true, flex: 8 },
               ],
             }]
           : []),
@@ -267,18 +268,39 @@ export function agendaBubble(items, answers = {}) {
     });
   });
 
+  if (!items.length) body.push(line("這週沒有要談的。", { color: MUTED }));
+
   return flex(
-    "下週討論",
+    "這週的討論",
     bubble(
-      { title: "下週行程討論", sub: `週日 23:00 爸媽時間 · 已決定 ${decided}/${items.length}` },
+      { title: "這週的討論", sub: `${week} 爸媽時間 · 已回答 ${decided}/${items.length}` },
       [
-        line(
-          decided === items.length ? "全部都有答案了。" : "照編號回一句就記下來，例如「3. 先試一週」。",
-          { color: MUTED, size: "xs" },
-        ),
+        line("照編號回一句就記下來，例如「3. 先試一週」。", { color: MUTED, size: "xs" }),
         separator(),
         ...body,
       ],
+      [{ type: "text", text: "平常想到：討論 加 要不要換保母", size: "xxs", color: MUTED, align: "center" }],
+    ),
+  );
+}
+
+/** 已經定案的安排——設定題答完就搬到這裡。 */
+export function rulesBubble(setup, answers) {
+  const decided = setup.map((it, i) => [it, answers[String(i + 1)]]).filter(([, a]) => a);
+  const body = decided.length
+    ? decided.flatMap(([it, answer]) => [
+        line(it.text, { size: "xs", color: MUTED }),
+        { type: "text", text: answer.text, size: "sm", color: INK, weight: "bold", wrap: true, margin: "xs" },
+        separator(),
+      ])
+    : [line("還沒有定案的項目。打「討論」把設定題答完。", { color: MUTED })];
+
+  return flex(
+    "家規",
+    bubble(
+      { title: "目前的家規", sub: `${decided.length}/${setup.length} 題已定案` },
+      decided.length ? body.slice(0, -1) : body,
+      [{ type: "text", text: "要改：討論 3 新的答案", size: "xxs", color: MUTED, align: "center" }],
     ),
   );
 }

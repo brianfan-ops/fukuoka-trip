@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parse, lowfreqStatus, nextBlock, respond, respondPostback } from "../src/router.js";
+import { parse, lowfreqStatus, nextBlock, respond, respondPostback, weekAgenda } from "../src/router.js";
+import { SETUP, WEEKLY } from "../src/data.js";
 import * as store from "../src/store.js";
 
 /** 用 Map 假裝 KV，測試不碰網路也不碰 Cloudflare。 */
@@ -152,19 +153,17 @@ test("一週：七張卡加一則網頁連結", async () => {
   assert.match(messages[1].text, /example\.test/);
 });
 
-test("星期日的排程訊息會接上下週討論清單", async () => {
+test("星期日的排程訊息會接上這週的討論清單", async () => {
   const kv = fakeKv();
   const { nightlyMessage } = await import("../src/push.js");
 
-  const sunday = { ...NOW, dow: 0, iso: "2026-09-06" };
-  const weekday = { ...NOW, dow: 4 };
-
+  const sunday = { ...NOW, dow: 0, day: 6, iso: "2026-09-06" };
   const sundayMsg = await nightlyMessage(kv, sunday);
-  const weekdayMsg = await nightlyMessage(kv, weekday);
+  const weekdayMsg = await nightlyMessage(kv, { ...NOW, dow: 4 });
 
-  assert.match(sundayMsg.text, /下週行程討論/);
-  assert.match(sundayMsg.text, /【先決定】/);
-  assert.doesNotMatch(weekdayMsg.text, /下週行程討論/);
+  assert.match(sundayMsg.text, /這週的討論/);
+  assert.match(sundayMsg.text, /下週有沒有特殊行程/);
+  assert.doesNotMatch(weekdayMsg.text, /這週的討論/);
 });
 
 test("內建網頁與 family/index.html 一致", async () => {
@@ -211,21 +210,58 @@ test("選單安裝失敗會把錯誤回給使用者，不是靜靜失敗", async
   assert.match(messages[0].text, /選單安裝失敗/);
 });
 
-test("照編號回答會記成討論決定，不會變成待辦", async () => {
+test("照編號回答會記成決定，不會變成待辦", async () => {
   const kv = fakeKv();
   const ctx = ctxOf(kv);
-  const reply = "1. 輪班制\n2. 兩週一次，週六進行\n3. 主題日採納參考";
 
-  const messages = await respond(ctx, reply);
+  const messages = await respond(ctx, "1. 週三疫苗\n2. 早上太趕，晚十分鐘出門");
 
-  assert.match(messages[0].text, /記下 3 題的決定/);
+  assert.match(messages[0].text, /記下 2 題/);
   assert.equal(messages[1].type, "flex", "第二則要回更新後的清單");
   assert.equal((await store.listTodos(kv)).length, 0, "不該產生待辦");
 
+  // 前四題是每週固定題，答案存在那一週底下，不會蓋掉下一週
+  const weekly = await store.getWeekly(kv);
+  assert.equal(weekly["2026-09-06#0"].text, "週三疫苗");
+  assert.equal(weekly["2026-09-06#1"].by, "爸爸");
+});
+
+test("設定題答完就退出每週清單，改成用家規查", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+
+  const before = await weekAgenda(ctx);
+  assert.equal(before.items.length, WEEKLY.length + SETUP.length);
+  assert.equal(before.items[WEEKLY.length].kind, "setup");
+
+  await respond(ctx, `${WEEKLY.length + 1}. 輪班制\n${WEEKLY.length + 2}. 兩週一次`);
+
   const answers = await store.getAnswers(kv);
-  assert.equal(answers["1"].text, "輪班制");
-  assert.equal(answers["3"].text, "主題日採納參考");
-  assert.equal(answers["1"].by, "爸爸");
+  assert.equal(answers["1"].text, "輪班制", "每週題之後第一項就是第 1 題設定題");
+  const after = await weekAgenda(ctx);
+  assert.equal(after.items.length, before.items.length - 2);
+
+  const [rules] = await respond(ctx, "家規");
+  assert.match(JSON.stringify(rules), /輪班制/);
+  assert.match(JSON.stringify(rules), new RegExp(`2/${SETUP.length} 題已定案`));
+});
+
+test("平常丟的議題會排進這週的清單，答完就消失", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+
+  const added = await respond(ctx, "討論 加 要不要換保母");
+  assert.match(added[0].text, /要不要換保母/);
+
+  const agenda = await weekAgenda(ctx);
+  assert.equal(agenda.items[WEEKLY.length].kind, "topic");
+  assert.equal(agenda.items[WEEKLY.length].text, "要不要換保母");
+
+  // 單獨一行編號還是待辦，所以單題作答要用「討論 N …」
+  await respond(ctx, `討論 ${WEEKLY.length + 1} 先觀察一個月`);
+  const topics = await store.listTopics(kv);
+  assert.equal(topics[0].answer, "先觀察一個月");
+  assert.ok(!(await weekAgenda(ctx)).items.some((it) => it.kind === "topic"));
 });
 
 test("單獨一行編號還是當待辦，不會誤判成討論答案", async () => {
@@ -242,11 +278,12 @@ test("討論 3 先試一週：單題作答，再回一次會覆蓋", async () =>
   const ctx = ctxOf(kv);
 
   await respond(ctx, "討論 3 先試一週");
-  assert.equal((await store.getAnswers(kv))["3"].text, "先試一週");
+  assert.equal((await store.getWeekly(kv))["2026-09-06#2"].text, "先試一週");
 
   await respond(ctx, "討論 3 改成兩週");
-  assert.equal((await store.getAnswers(kv))["3"].text, "改成兩週");
-  assert.equal(Object.keys(await store.getAnswers(kv)).length, 1);
+  const weekly = await store.getWeekly(kv);
+  assert.equal(weekly["2026-09-06#2"].text, "改成兩週");
+  assert.equal(Object.keys(weekly).length, 1);
 });
 
 test("超出題號範圍的編號清單仍然當待辦", async () => {
@@ -256,15 +293,15 @@ test("超出題號範圍的編號清單仍然當待辦", async () => {
   assert.deepEqual(await store.getAnswers(kv), {});
 });
 
-test("討論卡片會顯示已經決定的答案", async () => {
+test("討論卡片會顯示已經回答的內容", async () => {
   const kv = fakeKv();
   const ctx = ctxOf(kv);
-  await respond(ctx, "1. 輪班制\n2. 兩週一次");
+  await respond(ctx, "1. 週三疫苗\n2. 早上太趕");
 
   const [bubble] = await respond(ctx, "討論");
   const rendered = JSON.stringify(bubble);
-  assert.match(rendered, /已決定 2\/8/);
-  assert.match(rendered, /輪班制/);
+  assert.match(rendered, new RegExp(`已回答 2/${WEEKLY.length + SETUP.length}`));
+  assert.match(rendered, /週三疫苗/);
 });
 
 test("刪除 2 可以把打錯的待辦拿掉", async () => {
@@ -286,13 +323,15 @@ test("刪除不存在的編號會給提示", async () => {
   assert.match(messages[0].text, /沒有第 9 件/);
 });
 
-test("週日推播只列還沒決定的題目", async () => {
+test("週日推播只列還沒回答的題目", async () => {
   const kv = fakeKv();
   const { nightlyMessage } = await import("../src/push.js");
-  await store.saveAnswers(kv, [[1, "輪班制"], [2, "兩週一次"]], "爸爸");
+  const sunday = { ...NOW, dow: 0, day: 6, iso: "2026-09-06" };
 
-  const msg = await nightlyMessage(kv, { ...NOW, dow: 0, iso: "2026-09-06" });
-  assert.match(msg.text, /還有 6\/8 題沒決定/);
-  assert.doesNotMatch(msg.text, /每晚的四件家事怎麼分/);
-  assert.match(msg.text, /妹妹的主題日提案/);
+  await store.saveWeekly(kv, [["2026-09-06#0", "週三疫苗"]], "爸爸");
+
+  const msg = await nightlyMessage(kv, sunday);
+  assert.match(msg.text, new RegExp(`還有 ${WEEKLY.length + SETUP.length - 1}/${WEEKLY.length + SETUP.length} 題`));
+  assert.doesNotMatch(msg.text, /下週有沒有特殊行程/, "已回答的不再重複問");
+  assert.match(msg.text, /上週哪一段沒跑順/);
 });

@@ -3,7 +3,14 @@
  * 注意：同一秒內兩個人同時寫，後寫的會蓋掉先寫的。以家庭用量來說可以接受。
  */
 
-const KEYS = { users: "users", todos: "todos", lowfreq: "lowfreq", answers: "answers" };
+const KEYS = {
+  users: "users",
+  todos: "todos",
+  lowfreq: "lowfreq",
+  answers: "answers", // 設定題的答案＝家規，永久保留
+  weekly: "weekly", // 每週題的答案，key 帶週次
+  topics: "topics", // 平常想到就丟進來的議題
+};
 
 async function readJson(kv, key, fallback) {
   const raw = await kv.get(key);
@@ -136,6 +143,48 @@ export async function saveAnswers(kv, entries, by) {
   }
   await kv.put(KEYS.answers, JSON.stringify(answers));
   return answers;
+}
+
+export async function getWeekly(kv) {
+  return readJson(kv, KEYS.weekly, {});
+}
+
+export async function saveWeekly(kv, entries, by) {
+  const weekly = await getWeekly(kv);
+  for (const [key, value] of entries) {
+    weekly[key] = { text: value.slice(0, 200), by: by || "", at: new Date().toISOString() };
+  }
+  await kv.put(KEYS.weekly, JSON.stringify(weekly));
+  return weekly;
+}
+
+export async function listTopics(kv) {
+  return readJson(kv, KEYS.topics, []);
+}
+
+/** 平常想到的議題，丟著等週日一起看。 */
+export async function addTopic(kv, text, by) {
+  const topics = await listTopics(kv);
+  const topic = {
+    id: newId(),
+    text: text.slice(0, 200),
+    by: by || "",
+    at: new Date().toISOString(),
+  };
+  topics.push(topic);
+  await kv.put(KEYS.topics, JSON.stringify(topics.slice(-50)));
+  return topic;
+}
+
+export async function answerTopic(kv, id, answer, by) {
+  const topics = await listTopics(kv);
+  const topic = topics.find((t) => t.id === id);
+  if (!topic) return null;
+  topic.answer = answer.slice(0, 200);
+  topic.answeredBy = by || "";
+  topic.answeredAt = new Date().toISOString();
+  await kv.put(KEYS.topics, JSON.stringify(topics));
+  return topic;
 }
 
 export async function clearAnswers(kv) {

@@ -2,7 +2,7 @@
  * 指令解析與回應組裝。這一層不碰網路，方便測試。
  */
 import {
-  AGENDA, BLOCKS, DOW, LAUNDRY, LOWFREQ, THEMES, blockAt, hhmm, isWeekday,
+  BLOCKS, DOW, LAUNDRY, LOWFREQ, SETUP, THEMES, WEEKLY, blockAt, hhmm, isWeekday,
 } from "./data.js";
 import { daysBetween, parseDate } from "./time.js";
 import * as store from "./store.js";
@@ -17,6 +17,7 @@ const COMMANDS = [
   { cmd: "todos", words: ["待辦", "清單", "完成", "todo", "list"] },
   { cmd: "chores", words: ["家事", "輪值", "洗衣"] },
   { cmd: "agenda", words: ["討論", "下週", "議題"] },
+  { cmd: "rules", words: ["家規", "已定案", "定案"] },
   { cmd: "help", words: ["說明", "指令", "怎麼用", "help"] },
   { cmd: "menu", words: ["安裝選單", "裝選單", "選單", "menu"] },
 ];
@@ -47,6 +48,10 @@ export function parse(input) {
   if (m) return { cmd: "done", arg: m[1] };
   m = raw.match(/^(?:完成|做完|done)[\s:：]+(.+)$/is);
   if (m) return { cmd: "done", arg: m[1].trim() };
+
+  // 討論 加 要不要換保母 → 丟一個議題進這週的清單
+  m = raw.match(/^(?:討論|議題)[\s:：]*(?:加|新增|\+)[\s:：]*(.+)$/s);
+  if (m) return { cmd: "topic", arg: m[1].trim() };
 
   // 討論 3 輪班制 → 記下第 3 題的答案
   m = raw.match(/^(?:討論|決定)[\s:：]+(\d{1,2})[\s.、):：]*(.+)$/s);
@@ -121,7 +126,11 @@ export async function respond(ctx, input) {
     case "chores":
       return [await buildChores(ctx)];
     case "agenda":
-      return [flex.agendaBubble(AGENDA, await store.getAnswers(ctx.kv))];
+      return [flex.agendaBubble(await weekAgenda(ctx))];
+    case "rules":
+      return [flex.rulesBubble(SETUP, await store.getAnswers(ctx.kv))];
+    case "topic":
+      return [await addTopic(ctx, arg)];
     case "answers":
       return await recordAnswers(ctx, arg);
     case "remove":
@@ -200,25 +209,84 @@ async function setupMenu(ctx) {
   }
 }
 
-/** 記下討論清單的答案。同一題再回一次會覆蓋。 */
+/** 這一週的討論清單：每週固定題 → 本週議題 → 還沒定案的設定題。 */
+export function weekKey(now) {
+  // 用「這一週的星期日」當 key，週日當天就是自己
+  const delta = (7 - now.dow) % 7;
+  const d = new Date(Date.UTC(now.year, now.month - 1, now.day + delta));
+  return d.toISOString().slice(0, 10);
+}
+
+export async function weekAgenda(ctx) {
+  const week = weekKey(ctx.now);
+  const [answers, weekly, topics] = await Promise.all([
+    store.getAnswers(ctx.kv),
+    store.getWeekly(ctx.kv),
+    store.listTopics(ctx.kv),
+  ]);
+
+  const items = WEEKLY.map((text, i) => ({
+    kind: "weekly",
+    key: `${week}#${i}`,
+    text,
+    answer: weekly[`${week}#${i}`],
+  }));
+
+  for (const topic of topics.filter((t) => !t.answeredAt)) {
+    items.push({ kind: "topic", key: topic.id, text: topic.text, by: topic.by, answer: topic.answer ? { text: topic.answer } : null });
+  }
+
+  SETUP.forEach((item, i) => {
+    if (!answers[String(i + 1)]) {
+      items.push({ kind: "setup", key: String(i + 1), text: item.text, first: item.first, answer: null });
+    }
+  });
+
+  return { week, items };
+}
+
+/** 記下討論清單的答案。號碼對應「討論」那張卡上的順序。 */
 async function recordAnswers(ctx, raw) {
-  const entries = numberedLines(raw).filter(([no]) => no >= 1 && no <= AGENDA.length);
+  const agenda = await weekAgenda(ctx);
+  const entries = numberedLines(raw).filter(([no]) => no >= 1 && no <= agenda.items.length);
   if (!entries.length) return [await addTodo(ctx, raw)];
 
-  const answers = await store.saveAnswers(ctx.kv, entries, ctx.userName);
-  const answered = AGENDA.filter((_, i) => answers[String(i + 1)]).length;
+  const weeklyEntries = [];
+  const setupEntries = [];
+  for (const [no, value] of entries) {
+    const item = agenda.items[no - 1];
+    if (item.kind === "weekly") weeklyEntries.push([item.key, value]);
+    else if (item.kind === "setup") setupEntries.push([item.key, value]);
+    else await store.answerTopic(ctx.kv, item.key, value, ctx.userName);
+  }
+  if (weeklyEntries.length) await store.saveWeekly(ctx.kv, weeklyEntries, ctx.userName);
+  if (setupEntries.length) await store.saveAnswers(ctx.kv, setupEntries, ctx.userName);
+
   const summary = text(
     [
-      `記下 ${entries.length} 題的決定（共 ${answered}/${AGENDA.length} 題有答案）。`,
+      `記下 ${entries.length} 題。`,
       "",
       ...entries.map(([no, value]) => `${no}. ${value}`),
       "",
-      "打「討論」看完整清單。要改的話再回一次同一個號碼就會覆蓋。",
-      "如果這其實是待辦清單，用「待辦 內容」一筆一筆加。",
-    ].join("\n"),
+      setupEntries.length ? "設定題答完就會退出每週清單，之後用「家規」查。" : "",
+      "同一個號碼再回一次就覆蓋。這其實是待辦的話，用「待辦 內容」逐筆加。",
+    ]
+      .filter(Boolean)
+      .join("\n"),
     MENU,
   );
-  return [summary, flex.agendaBubble(AGENDA, answers)];
+  return [summary, flex.agendaBubble(await weekAgenda(ctx))];
+}
+
+/** 平常想到的議題丟進來，週日一起看。 */
+async function addTopic(ctx, content) {
+  if (!content) return text("要討論什麼？例如「討論 加 要不要換保母」。", MENU);
+  await store.addTopic(ctx.kv, content, ctx.userName);
+  const agenda = await weekAgenda(ctx);
+  return text(
+    `記下了，週日會出現在討論清單：\n${content}\n\n這週目前 ${agenda.items.length} 題。`,
+    MENU,
+  );
 }
 
 /** 待辦打錯了要刪掉——只能勾完成的話，錯字會留一輩子。 */
@@ -317,7 +385,9 @@ function helpText() {
       "· 今天 → 現在的時段、今晚洗什麼",
       "· 一週 → 七天的安排",
       "· 家事 → 輪值與長週期進度",
-      "· 討論 → 下週要決定的事",
+      "· 討論 → 這週要談的事（每週固定題＋你丟的議題）",
+      "· 討論 加 要不要換保母 → 平常想到就丟，週日一起看",
+      "· 家規 → 已經定案的安排",
       "· 照編號回答（1. …換行 2. …）→ 記成決定，不會變待辦",
       "· 安裝選單 → 裝上／重裝下方的按鈕列",
       "",

@@ -2,8 +2,8 @@
  * 排程推播。每天 21:30 一則，週日那則後面接下週討論清單。
  * 合成一則是刻意的：免費方案的主動訊息有額度，cron 觸發器整個帳號也只有 5 個。
  */
-import { AGENDA, DOW, LAUNDRY, NIGHTLY, THEMES, isWeekday } from "./data.js";
-import { lowfreqStatus } from "./router.js";
+import { DOW, LAUNDRY, NIGHTLY, THEMES, isWeekday } from "./data.js";
+import { lowfreqStatus, weekAgenda } from "./router.js";
 import * as store from "./store.js";
 import { text, quick } from "./line.js";
 
@@ -41,23 +41,22 @@ export async function nightlyMessage(kv, now) {
     lines.push("", `明天是${tomorrow.name}，記得先備：${tomorrow.prep}`);
   }
   if (now.dow === 0) {
-    lines.push("", "──────────", "", ...agendaLines(open, await store.getAnswers(kv)));
+    lines.push("", "──────────", "", ...(await agendaLines(kv, now)));
   }
   return text(lines.join("\n"), MENU);
 }
 
-/** 週日附在後面的下週討論清單。已經有答案的收成一行。 */
-function agendaLines(open, answers) {
-  const undecided = AGENDA.map((a, i) => [i + 1, a]).filter(([no]) => !answers[String(no)]);
-  const lines = [
-    `下週行程討論 · 還有 ${undecided.length}/${AGENDA.length} 題沒決定`,
+/** 週日附在後面的討論清單，只列還沒回答的。 */
+async function agendaLines(kv, now) {
+  const { items } = await weekAgenda({ kv, now });
+  const open = items.map((it, i) => [i + 1, it]).filter(([, it]) => !it.answer);
+
+  if (!open.length) return ["這週的討論都回答完了，確認一下有沒有要改的。"];
+  return [
+    `這週的討論 · 還有 ${open.length}/${items.length} 題`,
     "",
-    ...undecided.map(([no, a]) => `${no}. ${a.first ? "【先決定】" : ""}${a.text}`),
+    ...open.map(([no, it]) => `${no}. ${it.first ? "【先決定】" : ""}${it.text}`),
+    "",
+    "照編號回一句就記下來，例如「3. 先試一週」。",
   ];
-  if (!undecided.length) lines.push("全部都有答案了，確認一下有沒有要改的。");
-  lines.push("", "照編號回一句就記下來，例如「3. 先試一週」。");
-  if (open.length) {
-    lines.push("", `這週沒做完的 ${open.length} 件：`, ...open.slice(0, 8).map((t) => `· ${t.text}`));
-  }
-  return lines;
 }
