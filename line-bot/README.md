@@ -92,13 +92,13 @@ npm test        # 18 個測試，不會連到 LINE
 npm run deploy
 ```
 
-部署完會給一個 `https://bbssfamily.<你的帳號>.workers.dev`。
+部署完會給一個 `https://bbssfamily.brian-fan.workers.dev`。
 開 `<那個網址>/health` 應該看到 `{"ok":true,...}`。
 
 ### 3. 接起來
 
 1. 回 LINE Console → **Messaging API** → **Webhook URL** 填
-   `https://bbssfamily.<你的帳號>.workers.dev/webhook`
+   `https://bbssfamily.brian-fan.workers.dev/webhook`
 2. 按 **Verify**，要出現 Success。
 3. **Use webhook** 打開。
 4. 用手機掃同一頁的 QR code 加好友。**爸爸媽媽都要加**，排程才推得到兩個人。

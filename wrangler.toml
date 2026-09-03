@@ -5,8 +5,9 @@ main = "line-bot/src/index.js"
 compatibility_date = "2026-01-01"
 
 # 台北 21:30 = 13:30 UTC；週日 22:50 = 週日 14:50 UTC。
+# 星期幾要用 SUN 這種寫法，Cloudflare 不接受 0。
 [triggers]
-crons = ["30 13 * * *", "50 14 * * 0"]
+crons = ["30 13 * * *", "50 14 * * SUN"]
 
 [vars]
 # 機器人回「一週」時附的網頁連結，換成你自己的 GitHub Pages 網址。
