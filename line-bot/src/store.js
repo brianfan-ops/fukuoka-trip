@@ -191,6 +191,22 @@ export async function clearAnswers(kv) {
   await kv.put(KEYS.answers, JSON.stringify({}));
 }
 
+/**
+ * 行事曆訂閱網址裡的那串亂碼。網址就是密碼——拿到的人就看得到，
+ * 所以要能重設（重設後舊網址立刻失效）。
+ */
+export async function calendarToken(kv, { reset = false } = {}) {
+  if (!reset) {
+    const existing = await kv.get("calToken");
+    if (existing) return existing;
+  }
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  const token = [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+  await kv.put("calToken", token);
+  return token;
+}
+
 /** 完成日期用台北時間比較，所以存的 ISO 要先轉過去。 */
 export function taipeiDateOf(isoTimestamp) {
   if (!isoTimestamp) return "";

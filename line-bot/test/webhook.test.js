@@ -203,3 +203,47 @@ test("到期的待辦只提醒寫下它的人，而且只提醒一次", async ()
   assert.equal(pushes.length, 1, "第二次跑不該重複提醒");
   assert.ok(JSON.parse(kv._dump().todos).find((t) => t.id === "t1").remindedAt);
 });
+
+test("行事曆訂閱：只有正確的 token 拿得到 .ics", async () => {
+  const kv = fakeKv({
+    calToken: "a".repeat(32),
+    todos: JSON.stringify([{ id: "t1", text: "打疫苗", done: false, due: "2026-09-04T09:00" }]),
+    lowfreq: JSON.stringify({ bedding: "2026-08-25" }),
+  });
+  const env = envOf(kv);
+
+  const wrong = await worker.fetch(
+    new Request(`https://bot.test/cal/${"b".repeat(32)}.ics`),
+    env,
+    ctxOf().ctx,
+  );
+  assert.equal(wrong.status, 404, "token 不對就當作不存在");
+
+  const res = await worker.fetch(
+    new Request(`https://bot.test/cal/${"a".repeat(32)}.ics`),
+    env,
+    ctxOf().ctx,
+  );
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get("Content-Type"), /text\/calendar/);
+  assert.match(res.headers.get("X-Robots-Tag"), /noindex/);
+
+  const body = await res.text();
+  assert.match(body, /^BEGIN:VCALENDAR/);
+  assert.match(body, /END:VCALENDAR\r\n$/);
+  assert.match(body, /SUMMARY:打疫苗/);
+  assert.match(body, /DTSTART:20260904T010000Z/, "09:00 台北 = 01:00 UTC");
+  assert.match(body, /SUMMARY:床單、被套、枕套 該做了/);
+  assert.match(body, /RRULE:FREQ=WEEKLY;BYDAY=FR/);
+  assert.match(body, /SUMMARY:接哥哥放學/);
+  assert.ok(!body.includes("洗衣"), "洗衣輪值不放進行事曆");
+});
+
+test("行事曆訂閱：沒有設過 token 的話任何網址都不通", async () => {
+  const res = await worker.fetch(
+    new Request(`https://bot.test/cal/${"a".repeat(32)}.ics`),
+    envOf(fakeKv()),
+    ctxOf().ctx,
+  );
+  assert.equal(res.status, 404);
+});

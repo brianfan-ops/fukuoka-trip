@@ -3,6 +3,7 @@
  *
  * 路由：
  *   GET  /         ← 作息表網頁（機器人回「一週」時附的連結）
+ *   GET  /cal/<token>.ics ← 手機行事曆訂閱（網址就是密碼）
  *   POST /webhook  ← LINE 的事件（要先驗簽章）
  *   GET  /health   ← 部署後自己確認用
  *
@@ -17,6 +18,8 @@ import { nightlyMessage } from "./push.js";
 import { taipei } from "./time.js";
 import { nowStamp } from "./when.js";
 import page from "./page.js";
+import { buildIcs } from "./ics.js";
+import { weekKey } from "./router.js";
 import * as store from "./store.js";
 
 export default {
@@ -26,6 +29,25 @@ export default {
     if (url.pathname === "/health") {
       return json({ ok: true, now: taipei() });
     }
+    const cal = url.pathname.match(/^\/cal\/([0-9a-f]{32})\.ics$/);
+    if (cal) {
+      const token = await env.FAMILY.get("calToken");
+      if (!token || token !== cal[1]) return new Response("Not found", { status: 404 });
+
+      const now = taipei();
+      const [todos, lowfreq] = await Promise.all([
+        store.listTodos(env.FAMILY),
+        store.getLowfreq(env.FAMILY),
+      ]);
+      return new Response(buildIcs({ todos, lowfreq, now, friday: weekKey(now) }), {
+        headers: {
+          "Content-Type": "text/calendar; charset=utf-8",
+          "Cache-Control": "no-cache",
+          "X-Robots-Tag": "noindex, nofollow",
+        },
+      });
+    }
+
     if (url.pathname === "/" || url.pathname === "/family" || url.pathname === "/family/") {
       // 頁面帶 noindex，網址也不對外公開，只給家裡人用。
       return new Response(page, {

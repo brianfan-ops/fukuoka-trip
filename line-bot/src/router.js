@@ -20,6 +20,7 @@ const COMMANDS = [
   { cmd: "rules", words: ["家規", "已定案", "定案"] },
   { cmd: "calendar", words: ["行事曆", "月曆", "排程", "接下來"] },
   { cmd: "log", words: ["紀錄", "記錄", "做過", "歷史"] },
+  { cmd: "subscribe", words: ["行事曆連結", "訂閱", "訂閱連結"] },
   { cmd: "help", words: ["說明", "指令", "怎麼用", "help"] },
   { cmd: "menu", words: ["安裝選單", "裝選單", "選單", "menu"] },
 ];
@@ -61,6 +62,9 @@ export function parse(input) {
 
   m = raw.match(/^(?:刪除|刪掉|刪|remove|delete)[\s:：]*(\d+)$/i);
   if (m) return { cmd: "remove", arg: m[1] };
+
+  m = raw.match(/^(?:行事曆連結|訂閱)[\s:：]*(重設|重新產生|reset)$/i);
+  if (m) return { cmd: "subscribe", arg: "reset" };
 
   // 家事 冷氣濾網 8/20 → 記下長週期家事的完成日
   m = raw.match(/^(?:家事|長週期)[\s:：]+(.+)$/s);
@@ -149,6 +153,8 @@ export async function respond(ctx, input) {
       return [flex.calendarBubble(await upcoming(ctx))];
     case "log":
       return [flex.logBubble(await history(ctx))];
+    case "subscribe":
+      return [await calendarLink(ctx, arg === "reset")];
     case "done":
       return [await completeByIndex(ctx, arg)];
     case "menu":
@@ -409,6 +415,30 @@ function groupByDate(items) {
   return [...map].map(([date, list]) => ({ date, dow: dowOf(date), items: list }));
 }
 
+/** 手機行事曆的訂閱網址。網址本身就是密碼，所以要能重設。 */
+async function calendarLink(ctx, reset) {
+  if (!ctx.siteUrl) return text("這裡拿不到網址設定，沒辦法產生訂閱連結。", MENU);
+  const token = await store.calendarToken(ctx.kv, { reset });
+  const url = `${ctx.siteUrl.replace(/\/$/, "")}/cal/${token}.ics`;
+
+  return text(
+    [
+      reset ? "已重設，舊連結立刻失效。新的是：" : "手機行事曆訂閱網址：",
+      "",
+      url,
+      "",
+      "iPhone：設定 → 行事曆 → 帳號 → 加入帳號 → 其他 → 加入已訂閱的日曆，貼上網址。",
+      "Android：Google 日曆網頁版 → 其他日曆 ＋ → 以網址新增。",
+      "",
+      "會出現的是：排了時間的待辦、長週期家事的下次到期、每週五的爸媽時間、平日的上下學。",
+      "洗衣輪值和主題日不放進來——那些機器人每天 21:30 就會推。",
+      "",
+      "⚠️ 拿到這個網址的人就看得到，別轉貼。要換打「行事曆連結 重設」。",
+    ].join("\n"),
+    MENU,
+  );
+}
+
 /** 平常想到的議題丟進來，週日一起看。 */
 async function addTopic(ctx, content) {
   if (!content) return text("要討論什麼？例如「討論 加 要不要換保母」。", MENU);
@@ -519,6 +549,7 @@ function helpText() {
       "· 家事 冷氣濾網 → 記成今天做過；補日期就寫「家事 床單 8/20」",
       "· 行事曆 → 接下來兩週有時間的事",
       "· 紀錄 → 最近做過、決定過什麼",
+      "· 行事曆連結 → 訂閱到手機的行事曆 App",
       "· 討論 → 這週要談的事（每週固定題＋你丟的議題）",
       "· 討論 加 要不要換保母 → 平常想到就丟，週五一起看",
       "· 家規 → 已經定案的安排",

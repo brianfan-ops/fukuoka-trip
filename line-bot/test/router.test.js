@@ -543,3 +543,20 @@ test("行事曆和紀錄都不能超過 Flex 的 10 KB", async () => {
   assert.ok(cal < 10000, `行事曆 ${cal} bytes`);
   assert.ok(log < 10000, `紀錄 ${log} bytes`);
 });
+
+test("行事曆連結：產生一次就固定，重設會換掉", async () => {
+  const kv = fakeKv();
+  const ctx = { ...ctxOf(kv), siteUrl: "https://bot.test/" };
+
+  const [first] = await respond(ctx, "行事曆連結");
+  const url = first.text.match(/https:\/\/bot\.test\/cal\/([0-9a-f]{32})\.ics/);
+  assert.ok(url, `回覆裡要有訂閱網址：${first.text}`);
+  assert.match(first.text, /別轉貼/, "要提醒這個網址等於密碼");
+
+  const [again] = await respond(ctx, "行事曆連結");
+  assert.ok(again.text.includes(url[0]), "再問一次是同一個網址");
+
+  const [reset] = await respond(ctx, "行事曆連結 重設");
+  assert.ok(!reset.text.includes(url[0]), "重設要換一個新的");
+  assert.match(reset.text, /舊連結立刻失效/);
+});
