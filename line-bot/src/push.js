@@ -13,7 +13,7 @@ const MENU = quick([
   { label: "家事", text: "家事" },
 ]);
 
-/** 每天 21:30 推的那一則；星期日會多接下週討論清單。 */
+/** 每天 21:30 推的那一則；星期五會多接這週的討論清單。 */
 export async function nightlyMessage(kv, now) {
   const [todos, lfMap] = await Promise.all([store.listTodos(kv), store.getLowfreq(kv)]);
   const l = LAUNDRY[now.dow];
@@ -40,13 +40,13 @@ export async function nightlyMessage(kv, now) {
   if (tomorrow && isWeekday((now.dow + 1) % 7)) {
     lines.push("", `明天是${tomorrow.name}，記得先備：${tomorrow.prep}`);
   }
-  if (now.dow === 0) {
+  if (now.dow === 5) {
     lines.push("", "──────────", "", ...(await agendaLines(kv, now)));
   }
   return text(lines.join("\n"), MENU);
 }
 
-/** 週日附在後面的討論清單，只列還沒回答的。 */
+/** 週五附在後面的討論清單，只列還沒回答的。 */
 async function agendaLines(kv, now) {
   const { items } = await weekAgenda({ kv, now });
   const open = items.map((it, i) => [i + 1, it]).filter(([, it]) => !it.answer);

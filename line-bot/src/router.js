@@ -211,8 +211,8 @@ async function setupMenu(ctx) {
 
 /** 這一週的討論清單：每週固定題 → 本週議題 → 還沒定案的設定題。 */
 export function weekKey(now) {
-  // 用「這一週的星期日」當 key，週日當天就是自己
-  const delta = (7 - now.dow) % 7;
+  // 以「這一週的星期五」為界：週末行程要在週五就定好，前一晚知道要去哪比較好準備
+  const delta = (5 - now.dow + 7) % 7;
   const d = new Date(Date.UTC(now.year, now.month - 1, now.day + delta));
   return d.toISOString().slice(0, 10);
 }
@@ -391,7 +391,7 @@ function helpText() {
       "· 照編號回答（1. …換行 2. …）→ 記成決定，不會變待辦",
       "· 安裝選單 → 裝上／重裝下方的按鈕列",
       "",
-      "每天 21:30 會提醒今晚的家事，週日晚上提醒下週討論。",
+      "每天 21:30 會提醒今晚的家事，週五那則會多接這週的討論清單。",
     ].join("\n"),
     MENU,
   );

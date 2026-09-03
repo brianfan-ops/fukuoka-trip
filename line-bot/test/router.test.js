@@ -19,6 +19,9 @@ function fakeKv(seed = {}) {
 }
 
 const NOW = { year: 2026, month: 9, day: 3, dow: 4, mins: 1295, iso: "2026-09-03" };
+// 週次以星期五為界：2026-09-03 是星期四，所以這一週的 key 是 09-04
+const WEEK = "2026-09-04";
+const FRIDAY = { ...NOW, dow: 5, day: 4, iso: WEEK };
 const ctxOf = (kv) => ({ kv, now: NOW, userName: "爸爸", siteUrl: "https://example.test/family/" });
 
 test("指令：認得的關鍵字", () => {
@@ -153,17 +156,16 @@ test("一週：七張卡加一則網頁連結", async () => {
   assert.match(messages[1].text, /example\.test/);
 });
 
-test("星期日的排程訊息會接上這週的討論清單", async () => {
+test("星期五的排程訊息會接上這週的討論清單", async () => {
   const kv = fakeKv();
   const { nightlyMessage } = await import("../src/push.js");
 
-  const sunday = { ...NOW, dow: 0, day: 6, iso: "2026-09-06" };
-  const sundayMsg = await nightlyMessage(kv, sunday);
-  const weekdayMsg = await nightlyMessage(kv, { ...NOW, dow: 4 });
+  const fridayMsg = await nightlyMessage(kv, FRIDAY);
+  const otherDayMsg = await nightlyMessage(kv, { ...NOW, dow: 4 });
 
-  assert.match(sundayMsg.text, /這週的討論/);
-  assert.match(sundayMsg.text, /下週有沒有特殊行程/);
-  assert.doesNotMatch(weekdayMsg.text, /這週的討論/);
+  assert.match(fridayMsg.text, /這週的討論/);
+  assert.match(fridayMsg.text, /週末和下週有沒有特殊行程/);
+  assert.doesNotMatch(otherDayMsg.text, /這週的討論/, "只有週五那則帶討論清單");
 });
 
 test("內建網頁與 family/index.html 一致", async () => {
@@ -222,8 +224,8 @@ test("照編號回答會記成決定，不會變成待辦", async () => {
 
   // 前四題是每週固定題，答案存在那一週底下，不會蓋掉下一週
   const weekly = await store.getWeekly(kv);
-  assert.equal(weekly["2026-09-06#0"].text, "週三疫苗");
-  assert.equal(weekly["2026-09-06#1"].by, "爸爸");
+  assert.equal(weekly[`${WEEK}#0`].text, "週三疫苗");
+  assert.equal(weekly[`${WEEK}#1`].by, "爸爸");
 });
 
 test("設定題答完就退出每週清單，改成用家規查", async () => {
@@ -278,11 +280,11 @@ test("討論 3 先試一週：單題作答，再回一次會覆蓋", async () =>
   const ctx = ctxOf(kv);
 
   await respond(ctx, "討論 3 先試一週");
-  assert.equal((await store.getWeekly(kv))["2026-09-06#2"].text, "先試一週");
+  assert.equal((await store.getWeekly(kv))[`${WEEK}#2`].text, "先試一週");
 
   await respond(ctx, "討論 3 改成兩週");
   const weekly = await store.getWeekly(kv);
-  assert.equal(weekly["2026-09-06#2"].text, "改成兩週");
+  assert.equal(weekly[`${WEEK}#2`].text, "改成兩週");
   assert.equal(Object.keys(weekly).length, 1);
 });
 
@@ -323,15 +325,22 @@ test("刪除不存在的編號會給提示", async () => {
   assert.match(messages[0].text, /沒有第 9 件/);
 });
 
-test("週日推播只列還沒回答的題目", async () => {
+test("週五推播只列還沒回答的題目", async () => {
   const kv = fakeKv();
   const { nightlyMessage } = await import("../src/push.js");
-  const sunday = { ...NOW, dow: 0, day: 6, iso: "2026-09-06" };
 
-  await store.saveWeekly(kv, [["2026-09-06#0", "週三疫苗"]], "爸爸");
+  await store.saveWeekly(kv, [[`${WEEK}#0`, "週三疫苗"]], "爸爸");
 
-  const msg = await nightlyMessage(kv, sunday);
+  const msg = await nightlyMessage(kv, FRIDAY);
   assert.match(msg.text, new RegExp(`還有 ${WEEKLY.length + SETUP.length - 1}/${WEEKLY.length + SETUP.length} 題`));
-  assert.doesNotMatch(msg.text, /下週有沒有特殊行程/, "已回答的不再重複問");
+  assert.doesNotMatch(msg.text, /週末和下週有沒有特殊行程/, "已回答的不再重複問");
   assert.match(msg.text, /上週哪一段沒跑順/);
+});
+
+test("週次以星期五為界", async () => {
+  const { weekKey } = await import("../src/router.js");
+  assert.equal(weekKey({ year: 2026, month: 9, day: 3, dow: 4 }), "2026-09-04", "週四 → 這週五");
+  assert.equal(weekKey({ year: 2026, month: 9, day: 4, dow: 5 }), "2026-09-04", "週五當天就是自己");
+  assert.equal(weekKey({ year: 2026, month: 9, day: 6, dow: 0 }), "2026-09-11", "週日 → 下一個週五");
+  assert.equal(weekKey({ year: 2026, month: 9, day: 30, dow: 3 }), "2026-10-02", "跨月");
 });
