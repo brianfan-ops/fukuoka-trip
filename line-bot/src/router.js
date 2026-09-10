@@ -10,6 +10,7 @@ import * as flex from "./flex.js";
 import { installRichMenu } from "./richmenu.js";
 import { parseWhen, shiftIso, dowOf } from "./when.js";
 import { HOBBIES, draw, neglected } from "./hobbies.js";
+import { drawNote, NOTE_KIND } from "./notes.js";
 import { text, quick } from "./line.js";
 
 const COMMANDS = [
@@ -23,6 +24,7 @@ const COMMANDS = [
   { cmd: "log", words: ["紀錄", "記錄", "做過", "歷史"] },
   { cmd: "subscribe", words: ["行事曆連結", "訂閱", "訂閱連結"] },
   { cmd: "hobby", words: ["興趣", "抽一個", "八項"] },
+  { cmd: "note", words: ["一句", "小提示", "來一句"] },
   { cmd: "help", words: ["說明", "指令", "怎麼用", "help"] },
   { cmd: "menu", words: ["安裝選單", "裝選單", "選單", "menu"] },
 ];
@@ -64,6 +66,9 @@ export function parse(input) {
 
   m = raw.match(/^(?:刪除|刪掉|刪|remove|delete)[\s:：]*(\d+)$/i);
   if (m) return { cmd: "remove", arg: m[1] };
+
+  m = raw.match(/^(?:一句|小提示)[\s:：]*(開|關|打開|關掉|on|off)$/i);
+  if (m) return { cmd: "noteToggle", arg: /關|off/i.test(m[1]) ? "off" : "on" };
 
   m = raw.match(/^(?:興趣|八項)[\s:：]*(清單|列表|全部)$/);
   if (m) return { cmd: "hobbyList", arg: "" };
@@ -164,6 +169,10 @@ export async function respond(ctx, input) {
       return [await calendarLink(ctx, arg === "reset")];
     case "hobby":
       return [await drawHobby(ctx)];
+    case "note":
+      return [await drawOneNote(ctx)];
+    case "noteToggle":
+      return [await toggleNotes(ctx, arg === "off")];
     case "hobbyList":
       return [flex.hobbiesBubble(neglected((await store.getHobbies(ctx.kv)).done, ctx.now.iso, daysBetween))];
     case "hobbyDone":
@@ -434,6 +443,36 @@ function groupByDate(items) {
   return [...map].map(([date, list]) => ({ date, dow: dowOf(date), items: list }));
 }
 
+/** 抽一句話。打字問的不計推播額度，想抽幾次都行。 */
+async function drawOneNote(ctx) {
+  const [state, todos, lowfreq] = await Promise.all([
+    store.getNotes(ctx.kv),
+    store.listTodos(ctx.kv),
+    store.getLowfreq(ctx.kv),
+  ]);
+  const { note, bag } = drawNote(state, { now: ctx.now, todos, lowfreq });
+  if (!note) return text("暫時沒有可以抽的句子。", MENU);
+  await store.saveNotes(ctx.kv, { bag });
+
+  return text(
+    `${NOTE_KIND[note.kind]}\n\n${note.text}`,
+    quick([
+      { label: "再一句", text: "一句" },
+      { label: state.off ? "打開每晚附一句" : "每晚不要附", text: state.off ? "一句 開" : "一句 關" },
+    ]),
+  );
+}
+
+async function toggleNotes(ctx, off) {
+  await store.saveNotes(ctx.kv, { off });
+  return text(
+    off
+      ? "好，每晚 21:30 那則不再附一句話。想看的時候打「一句」還是抽得到。"
+      : "好，每晚 21:30 那則會再附一句話。",
+    MENU,
+  );
+}
+
 /** 抽一項興趣出來。八項出完一輪才會重抽，不會連著給同一項。 */
 export async function drawHobby(ctx) {
   const state = await store.getHobbies(ctx.kv);
@@ -608,6 +647,7 @@ function helpText() {
       "· 紀錄 → 最近做過、決定過什麼",
       "· 行事曆連結 → 訂閱到手機的行事曆 App",
       "· 興趣 → 從八個面向裡抽一項；「興趣 清單」看哪一項最久沒碰",
+      "· 一句 → 抽一則小提示；每晚那則也會附一句，不想要就打「一句 關」",
       "· 討論 → 這週要談的事（每週固定題＋你丟的議題）",
       "· 討論 加 要不要換保母 → 平常想到就丟，週五一起看",
       "· 家規 → 已經定案的安排",

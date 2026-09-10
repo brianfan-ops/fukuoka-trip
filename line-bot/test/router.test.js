@@ -603,3 +603,74 @@ test("興趣：對不到名稱就說清楚，不亂記", async () => {
   assert.match(msg.text, /對不到八項/);
   assert.deepEqual((await store.getHobbies(kv)).done, {});
 });
+
+test("一句：每晚那則後面會附一句話", async () => {
+  const kv = fakeKv();
+  const { nightlyMessage } = await import("../src/push.js");
+  const { NOTE_COUNT } = await import("../src/notes.js");
+
+  assert.ok(NOTE_COUNT >= 30, "句子太少會很快開始重複");
+
+  const msg = await nightlyMessage(kv, NOW);
+  const parts = msg.text.split("──────────");
+  assert.equal(parts.length, 2, "家事那段之後要再接一段");
+  assert.ok(parts[1].trim().length > 10);
+});
+
+test("一句 關：關掉之後每晚就不附了，但還是抽得到", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+  const { nightlyMessage } = await import("../src/push.js");
+
+  const [off] = await respond(ctx, "一句 關");
+  assert.match(off.text, /不再附一句/);
+  assert.equal((await store.getNotes(kv)).off, true);
+
+  const quiet = await nightlyMessage(kv, NOW);
+  assert.ok(!quiet.text.includes("──────────"), "關掉就不該再附");
+
+  const [drawn] = await respond(ctx, "一句");
+  assert.ok(drawn.text.length > 10, "自己打「一句」還是要抽得到");
+
+  await respond(ctx, "一句 開");
+  assert.equal((await store.getNotes(kv)).off, false);
+});
+
+test("一句：抽完一輪才會重複，而且算不出來的會跳過", async () => {
+  const kv = fakeKv();
+  const { drawNote, NOTE_COUNT } = await import("../src/notes.js");
+  // 沒有待辦也沒有家事紀錄：靠資料算的那幾則算不出來，要自動跳過
+  const context = { now: NOW, todos: [], lowfreq: {} };
+
+  let state = {};
+  const seen = [];
+  for (let i = 0; i < 12; i++) {
+    const { note, bag } = drawNote(state, context);
+    state = { bag };
+    assert.ok(note, "永遠要抽得到一句");
+    seen.push(note.text);
+  }
+  assert.equal(new Set(seen).size, seen.length, `連抽 12 則不該重複：${seen.length - new Set(seen).size} 則重複`);
+  assert.ok(NOTE_COUNT > 12);
+});
+
+test("一句：靠資料算的句子會用到這個家自己的數字", async () => {
+  const kv = fakeKv();
+  const { drawNote } = await import("../src/notes.js");
+  const context = {
+    now: NOW,
+    todos: [{ done: true, doneAt: "2026-09-02T10:00:00Z" }],
+    lowfreq: { bedding: "2026-09-01" },
+  };
+
+  const texts = [];
+  let state = {};
+  for (let i = 0; i < 40; i++) {
+    const { note, bag } = drawNote(state, context);
+    state = { bag };
+    if (note) texts.push(note.text);
+  }
+  const joined = texts.join("\n");
+  assert.match(joined, /哥哥|妹妹/, "要有算年齡的那則");
+  assert.match(joined, /床單/, "要有算下次到期的那則");
+});

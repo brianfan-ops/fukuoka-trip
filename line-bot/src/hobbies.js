@@ -5,6 +5,8 @@
  * 設計上不是催人做滿八項——帶兩個幼兒的階段本來就做不到。
  * 重點是讓「已經歸零很久的那一項」被看見。
  */
+import { drawFromBag } from "./bag.js";
+
 export const HOBBIES = [
   { id: "body", name: "身體", examples: ["健身", "跑步", "游泳", "瑜伽", "爬山"],
     point: "要能流汗，而且難度會慢慢加上去。長期沒被挑戰的身體只會慢慢退化。" },
@@ -24,25 +26,12 @@ export const HOBBIES = [
     point: "不用證明有什麼用。每項興趣都得有用的話，那是第二份工作，不是生活。" },
 ];
 
-/**
- * 洗牌抽牌：八項全部出過一輪才會重來，
- * 純隨機會連著抽到同一項，反而讓人覺得這功能很笨。
- */
+/** 八項全部出過一輪才會重來。 */
 export function draw(state, random = Math.random) {
-  const bag = Array.isArray(state?.bag) && state.bag.length ? [...state.bag] : shuffle(random);
-  const id = bag.pop();
+  const { id, bag } = drawFromBag(HOBBIES.map((h) => h.id), state?.bag, random);
   const hobby = HOBBIES.find((h) => h.id === id) || HOBBIES[0];
   const example = hobby.examples[Math.floor(random() * hobby.examples.length)];
   return { hobby, example, bag };
-}
-
-function shuffle(random) {
-  const ids = HOBBIES.map((h) => h.id);
-  for (let i = ids.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [ids[i], ids[j]] = [ids[j], ids[i]];
-  }
-  return ids;
 }
 
 /** 每一項多久沒碰了。沒記錄過的排最前面——那才是真正歸零的。 */

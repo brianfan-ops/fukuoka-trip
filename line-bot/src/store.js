@@ -11,6 +11,7 @@ const KEYS = {
   weekly: "weekly", // 每週題的答案，key 帶週次
   topics: "topics", // 平常想到就丟進來的議題
   hobbies: "hobbies", // 八種興趣：抽牌的牌堆 + 每項最後碰到的日期
+  notes: "notes", // 每晚附的一句話：牌堆 + 開關
 };
 
 async function readJson(kv, key, fallback) {
@@ -190,6 +191,17 @@ export async function answerTopic(kv, id, answer, by) {
 
 export async function clearAnswers(kv) {
   await kv.put(KEYS.answers, JSON.stringify({}));
+}
+
+export async function getNotes(kv) {
+  return readJson(kv, KEYS.notes, { bag: [], off: false });
+}
+
+export async function saveNotes(kv, patch) {
+  const state = await getNotes(kv);
+  const next = { ...state, ...patch };
+  await kv.put(KEYS.notes, JSON.stringify(next));
+  return next;
 }
 
 export async function getHobbies(kv) {
