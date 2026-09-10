@@ -10,12 +10,13 @@
  * Cron：每 5 分鐘跑一次，做兩件事——
  *   1. 把到期的待辦提醒推出去（所以提醒最多晚 5 分鐘）
  *   2. 台北 21:30 之後推當天的家事提醒，一天只推一次
- *   3. 週三、週日 23:00 的爸媽時間丟一項興趣
+ *   3. 台北 11:15 丟一句話——那是單獨帶小孩的第三個小時，疲勞感開始出現的時候
+ *   4. 週三、週日 23:00 的爸媽時間丟一項興趣
  * 用同一個觸發器是因為免費方案整個帳號只有 5 個 cron 額度。
  */
 import { verifySignature, reply, push, getProfile, text, quick } from "./line.js";
 import { respond, respondPostback, helpText, MENU } from "./router.js";
-import { nightlyMessage, hobbyMessage } from "./push.js";
+import { nightlyMessage, hobbyMessage, noteMessage } from "./push.js";
 import { taipei } from "./time.js";
 import { nowStamp } from "./when.js";
 import page from "./page.js";
@@ -152,8 +153,29 @@ async function resolveName(env, userId) {
 async function broadcast(env) {
   const now = taipei();
   await sendReminders(env, now);
+  await sendDailyNote(env, now);
   await sendNightly(env, now);
   await sendHobbyNudge(env, now);
+}
+
+/** 每天 11:15 的一句話，一天只發一次。 */
+async function sendDailyNote(env, now) {
+  if (now.mins < 11 * 60 + 15) return;
+
+  const state = await store.getNotes(env.FAMILY);
+  if (state.off || state.lastSent === now.iso) return;
+
+  const message = await noteMessage(env.FAMILY, now);
+  if (!message) return;
+
+  for (const user of await store.listUsers(env.FAMILY)) {
+    try {
+      await push(env.LINE_CHANNEL_ACCESS_TOKEN, user.id, [message]);
+    } catch (err) {
+      console.error("note push failed", user.id, err.message);
+    }
+  }
+  await store.saveNotes(env.FAMILY, { lastSent: now.iso });
 }
 
 /** 週三、週日的爸媽時間，一天只丟一次。 */

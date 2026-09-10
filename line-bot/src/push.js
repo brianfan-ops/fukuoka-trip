@@ -5,7 +5,7 @@
 import { DOW, LAUNDRY, NIGHTLY, THEMES, isWeekday } from "./data.js";
 import { lowfreqStatus, weekAgenda } from "./router.js";
 import { draw } from "./hobbies.js";
-import { drawNote } from "./notes.js";
+import { drawNote, NOTE_KIND } from "./notes.js";
 import { daysBetween } from "./time.js";
 import * as store from "./store.js";
 import { text, quick } from "./line.js";
@@ -47,21 +47,30 @@ export async function nightlyMessage(kv, now) {
     lines.push("", "──────────", "", ...(await agendaLines(kv, now)));
   }
 
-  // 一句話附在最後。附在既有的推播裡，不另外花訊息額度。
-  const note = await pickNote(kv, { now, todos, lowfreq: lfMap });
-  if (note) lines.push("", "──────────", "", note);
-
   return text(lines.join("\n"), MENU);
 }
 
-/** 抽一句話。關掉就不抽。 */
-async function pickNote(kv, context) {
+/**
+ * 每天 11:15 的那一句。挑這個時間是因為媽媽從 08:30 起就單獨帶妹妹，
+ * 到這時剛好第三個小時，疲勞感開始出現，午餐又還沒著落。
+ */
+export async function noteMessage(kv, now) {
   const state = await store.getNotes(kv);
   if (state.off) return null;
-  const { note, bag } = drawNote(state, context);
+
+  const [todos, lowfreq] = await Promise.all([store.listTodos(kv), store.getLowfreq(kv)]);
+  const { note, bag } = drawNote(state, { now, todos, lowfreq });
   if (!note) return null;
   await store.saveNotes(kv, { bag });
-  return note.text;
+
+  return text(
+    `${NOTE_KIND[note.kind]}\n\n${note.text}`,
+    quick([
+      { label: "再一句", text: "一句" },
+      { label: "今天", text: "今天" },
+      { label: "不要每天發", text: "一句 關" },
+    ]),
+  );
 }
 
 /** 週五附在後面的討論清單，只列還沒回答的。 */

@@ -135,6 +135,7 @@ test("21:30 之後的排程會把家事提醒發給每個人，而且一天只�
   const kv = fakeKv({
     users: JSON.stringify([{ id: "U1", name: "爸爸" }, { id: "U2", name: "媽媽" }]),
     todos: JSON.stringify([{ id: "a", text: "買奶粉", done: false }]),
+    notes: JSON.stringify({ lastSent: "2026-09-03" }), // 當天的一句話已經發過
   });
   const unfreeze = freeze("2026-09-03T13:35:00Z"); // 台北 21:35
   const line = captureLine();
@@ -160,7 +161,10 @@ test("21:30 之後的排程會把家事提醒發給每個人，而且一天只�
 });
 
 test("21:30 之前不推家事提醒", async () => {
-  const kv = fakeKv({ users: JSON.stringify([{ id: "U1" }]) });
+  const kv = fakeKv({
+    users: JSON.stringify([{ id: "U1" }]),
+    notes: JSON.stringify({ lastSent: "2026-09-03" }),
+  });
   const unfreeze = freeze("2026-09-03T06:00:00Z"); // 台北 14:00
   const line = captureLine();
   const { ctx, settle } = ctxOf();
@@ -181,6 +185,7 @@ test("到期的待辦只提醒寫下它的人，而且只提醒一次", async ()
       { id: "t2", text: "還沒到期", done: false, due: "2026-09-03T23:00", byId: "U2" },
       { id: "t3", text: "已完成的不提醒", done: true, due: "2026-09-03T08:00", byId: "U2" },
     ]),
+    notes: JSON.stringify({ lastSent: "2026-09-03" }),
   });
   const unfreeze = freeze("2026-09-03T06:00:00Z"); // 台北 14:00
   const line = captureLine();
@@ -254,6 +259,7 @@ test("興趣提醒：週三 23:00 之後推一次，同一天不重複", async (
   const kv = fakeKv({
     users: JSON.stringify([{ id: "U1" }, { id: "U2" }]),
     lastNightly: "2026-09-09",
+    notes: JSON.stringify({ lastSent: "2026-09-09" }),
   });
   const unfreeze = freeze("2026-09-09T15:10:00Z"); // 週三 台北 23:10
   const line = captureLine();
@@ -278,7 +284,10 @@ test("興趣提醒：週三 23:00 之後推一次，同一天不重複", async (
 });
 
 test("興趣提醒：不是週三週日就不推", async () => {
-  const kv = fakeKv({ users: JSON.stringify([{ id: "U1" }]) });
+  const kv = fakeKv({
+    users: JSON.stringify([{ id: "U1" }]),
+    notes: JSON.stringify({ lastSent: "2026-09-10" }),
+  });
   const unfreeze = freeze("2026-09-10T15:10:00Z"); // 週四 台北 23:10
   const line = captureLine();
   const { ctx, settle } = ctxOf();
@@ -289,4 +298,57 @@ test("興趣提醒：不是週三週日就不推", async () => {
   unfreeze();
 
   assert.ok(!line.calls.some((c) => c.body?.messages?.[0]?.text?.includes("今晚抽到")));
+});
+
+test("一句話：11:15 之後推一次，同一天不重複", async () => {
+  const kv = fakeKv({ users: JSON.stringify([{ id: "U1" }, { id: "U2" }]) });
+  const unfreeze = freeze("2026-09-10T03:15:00Z"); // 台北 11:15
+  const line = captureLine();
+  const first = ctxOf();
+
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), first.ctx);
+  await first.settle();
+
+  let pushes = line.calls.filter((c) => c.url.endsWith("/message/push"));
+  assert.equal(pushes.length, 2, "兩個人各一則");
+  assert.match(pushes[0].body.messages[0].text, /育兒|家務|提醒|這個家/);
+
+  const second = ctxOf();
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), second.ctx);
+  await second.settle();
+  line.restore();
+  unfreeze();
+
+  assert.equal(line.calls.filter((c) => c.url.endsWith("/message/push")).length, 2);
+});
+
+test("一句話：11:15 之前不推", async () => {
+  const kv = fakeKv({ users: JSON.stringify([{ id: "U1" }]) });
+  const unfreeze = freeze("2026-09-10T03:00:00Z"); // 台北 11:00
+  const line = captureLine();
+  const { ctx, settle } = ctxOf();
+
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), ctx);
+  await settle();
+  line.restore();
+  unfreeze();
+
+  assert.equal(line.calls.length, 0);
+});
+
+test("一句話：關掉之後 11:15 就不發了", async () => {
+  const kv = fakeKv({
+    users: JSON.stringify([{ id: "U1" }]),
+    notes: JSON.stringify({ bag: [], off: true }),
+  });
+  const unfreeze = freeze("2026-09-10T03:15:00Z");
+  const line = captureLine();
+  const { ctx, settle } = ctxOf();
+
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), ctx);
+  await settle();
+  line.restore();
+  unfreeze();
+
+  assert.equal(line.calls.length, 0);
 });

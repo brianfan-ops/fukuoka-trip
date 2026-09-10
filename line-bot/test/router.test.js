@@ -604,30 +604,29 @@ test("興趣：對不到名稱就說清楚，不亂記", async () => {
   assert.deepEqual((await store.getHobbies(kv)).done, {});
 });
 
-test("一句：每晚那則後面會附一句話", async () => {
+test("一句：11:15 那則會帶類別和內容", async () => {
   const kv = fakeKv();
-  const { nightlyMessage } = await import("../src/push.js");
+  const { noteMessage } = await import("../src/push.js");
   const { NOTE_COUNT } = await import("../src/notes.js");
 
   assert.ok(NOTE_COUNT >= 30, "句子太少會很快開始重複");
 
-  const msg = await nightlyMessage(kv, NOW);
-  const parts = msg.text.split("──────────");
-  assert.equal(parts.length, 2, "家事那段之後要再接一段");
-  assert.ok(parts[1].trim().length > 10);
+  const msg = await noteMessage(kv, NOW);
+  const [kind, , body] = msg.text.split("\n");
+  assert.match(kind, /育兒|家務|提醒|這個家/);
+  assert.ok(body.length > 10);
+  assert.ok(msg.quickReply.items.some((i) => i.action.label === "不要每天發"));
 });
 
 test("一句 關：關掉之後每晚就不附了，但還是抽得到", async () => {
   const kv = fakeKv();
   const ctx = ctxOf(kv);
-  const { nightlyMessage } = await import("../src/push.js");
-
   const [off] = await respond(ctx, "一句 關");
-  assert.match(off.text, /不再附一句/);
+  assert.match(off.text, /不再自動發/);
   assert.equal((await store.getNotes(kv)).off, true);
 
-  const quiet = await nightlyMessage(kv, NOW);
-  assert.ok(!quiet.text.includes("──────────"), "關掉就不該再附");
+  const { noteMessage } = await import("../src/push.js");
+  assert.equal(await noteMessage(kv, NOW), null, "關掉就不該再自動發");
 
   const [drawn] = await respond(ctx, "一句");
   assert.ok(drawn.text.length > 10, "自己打「一句」還是要抽得到");
