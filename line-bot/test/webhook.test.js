@@ -126,6 +126,7 @@ test("群組訊息不理會", async () => {
 
 /** 把時鐘固定住，排程的行為才測得準。傳入的是 UTC。 */
 function freeze(utcIso) {
+  mock.timers.reset(); // 上一個測試炸掉沒清乾淨時不要卡住後面的
   mock.timers.enable({ apis: ["Date"], now: new Date(utcIso) });
   return () => mock.timers.reset();
 }
@@ -246,4 +247,46 @@ test("行事曆訂閱：沒有設過 token 的話任何網址都不通", async (
     ctxOf().ctx,
   );
   assert.equal(res.status, 404);
+});
+
+test("興趣提醒：週三 23:00 之後推一次，同一天不重複", async () => {
+  // 家事提醒當天已經發過了，這樣才量得準興趣那一則
+  const kv = fakeKv({
+    users: JSON.stringify([{ id: "U1" }, { id: "U2" }]),
+    lastNightly: "2026-09-09",
+  });
+  const unfreeze = freeze("2026-09-09T15:10:00Z"); // 週三 台北 23:10
+  const line = captureLine();
+  const first = ctxOf();
+
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), first.ctx);
+  await first.settle();
+
+  let pushes = line.calls.filter((c) => c.url.endsWith("/message/push"));
+  assert.equal(pushes.length, 2);
+  assert.match(pushes[0].body.messages[0].text, /爸媽時間 · 今晚抽到/);
+  assert.match(pushes[0].body.messages[0].text, /沒力氣就跳過/);
+
+  const second = ctxOf();
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), second.ctx);
+  await second.settle();
+  line.restore();
+  unfreeze();
+
+  pushes = line.calls.filter((c) => c.url.endsWith("/message/push"));
+  assert.equal(pushes.length, 2, "五分鐘後再跑不該重推");
+});
+
+test("興趣提醒：不是週三週日就不推", async () => {
+  const kv = fakeKv({ users: JSON.stringify([{ id: "U1" }]) });
+  const unfreeze = freeze("2026-09-10T15:10:00Z"); // 週四 台北 23:10
+  const line = captureLine();
+  const { ctx, settle } = ctxOf();
+
+  await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), ctx);
+  await settle();
+  line.restore();
+  unfreeze();
+
+  assert.ok(!line.calls.some((c) => c.body?.messages?.[0]?.text?.includes("今晚抽到")));
 });

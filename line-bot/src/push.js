@@ -4,6 +4,8 @@
  */
 import { DOW, LAUNDRY, NIGHTLY, THEMES, isWeekday } from "./data.js";
 import { lowfreqStatus, weekAgenda } from "./router.js";
+import { draw } from "./hobbies.js";
+import { daysBetween } from "./time.js";
 import * as store from "./store.js";
 import { text, quick } from "./line.js";
 
@@ -59,4 +61,37 @@ async function agendaLines(kv, now) {
     "",
     "照編號回一句就記下來，例如「3. 先試一週」。",
   ];
+}
+
+/**
+ * 每週三、週日的 23:00 爸媽時間丟一項興趣。
+ * 挑這個時段是因為整份作息裡，那是唯一沒有小孩、兩個人都在的一小時。
+ */
+export async function hobbyMessage(kv, now) {
+  const state = await store.getHobbies(kv);
+  const { hobby, example, bag } = draw(state);
+  await store.saveHobbies(kv, { bag });
+
+  const last = state.done?.[hobby.id];
+  const gap = last ? `上次碰是 ${daysBetween(last, now.iso)} 天前` : "還沒記錄過這一項";
+
+  return text(
+    [
+      `23:00 爸媽時間 · 今晚抽到「${hobby.name}」`,
+      "",
+      `例如：${example}`,
+      hobby.examples.filter((e) => e !== example).join("、"),
+      "",
+      hobby.point,
+      "",
+      gap,
+      "",
+      "沒力氣就跳過，這不是待辦。",
+    ].join("\n"),
+    quick([
+      { label: `做了${hobby.name}`, data: `hb:${hobby.id}` },
+      { label: "換一個", text: "興趣" },
+      { label: "看八項", text: "興趣 清單" },
+    ]),
+  );
 }

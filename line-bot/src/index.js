@@ -10,11 +10,12 @@
  * Cron：每 5 分鐘跑一次，做兩件事——
  *   1. 把到期的待辦提醒推出去（所以提醒最多晚 5 分鐘）
  *   2. 台北 21:30 之後推當天的家事提醒，一天只推一次
+ *   3. 週三、週日 23:00 的爸媽時間丟一項興趣
  * 用同一個觸發器是因為免費方案整個帳號只有 5 個 cron 額度。
  */
 import { verifySignature, reply, push, getProfile, text, quick } from "./line.js";
 import { respond, respondPostback, helpText, MENU } from "./router.js";
-import { nightlyMessage } from "./push.js";
+import { nightlyMessage, hobbyMessage } from "./push.js";
 import { taipei } from "./time.js";
 import { nowStamp } from "./when.js";
 import page from "./page.js";
@@ -152,6 +153,26 @@ async function broadcast(env) {
   const now = taipei();
   await sendReminders(env, now);
   await sendNightly(env, now);
+  await sendHobbyNudge(env, now);
+}
+
+/** 週三、週日的爸媽時間，一天只丟一次。 */
+async function sendHobbyNudge(env, now) {
+  if (now.dow !== 3 && now.dow !== 0) return;
+  if (now.mins < 23 * 60) return;
+
+  const state = await store.getHobbies(env.FAMILY);
+  if (state.lastNudge === now.iso) return;
+
+  const message = await hobbyMessage(env.FAMILY, now);
+  for (const user of await store.listUsers(env.FAMILY)) {
+    try {
+      await push(env.LINE_CHANNEL_ACCESS_TOKEN, user.id, [message]);
+    } catch (err) {
+      console.error("hobby push failed", user.id, err.message);
+    }
+  }
+  await store.saveHobbies(env.FAMILY, { lastNudge: now.iso });
 }
 
 /** 到期的待辦：只推給當初寫下它的人，找不到人才發給全家。 */

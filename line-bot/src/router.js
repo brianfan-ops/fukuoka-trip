@@ -9,6 +9,7 @@ import * as store from "./store.js";
 import * as flex from "./flex.js";
 import { installRichMenu } from "./richmenu.js";
 import { parseWhen, shiftIso, dowOf } from "./when.js";
+import { HOBBIES, draw, neglected } from "./hobbies.js";
 import { text, quick } from "./line.js";
 
 const COMMANDS = [
@@ -21,6 +22,7 @@ const COMMANDS = [
   { cmd: "calendar", words: ["行事曆", "月曆", "排程", "接下來"] },
   { cmd: "log", words: ["紀錄", "記錄", "做過", "歷史"] },
   { cmd: "subscribe", words: ["行事曆連結", "訂閱", "訂閱連結"] },
+  { cmd: "hobby", words: ["興趣", "抽一個", "八項"] },
   { cmd: "help", words: ["說明", "指令", "怎麼用", "help"] },
   { cmd: "menu", words: ["安裝選單", "裝選單", "選單", "menu"] },
 ];
@@ -62,6 +64,11 @@ export function parse(input) {
 
   m = raw.match(/^(?:刪除|刪掉|刪|remove|delete)[\s:：]*(\d+)$/i);
   if (m) return { cmd: "remove", arg: m[1] };
+
+  m = raw.match(/^(?:興趣|八項)[\s:：]*(清單|列表|全部)$/);
+  if (m) return { cmd: "hobbyList", arg: "" };
+  m = raw.match(/^(?:興趣|八項)[\s:：]*(?:做了|完成)[\s:：]*(.+)$/s);
+  if (m) return { cmd: "hobbyDone", arg: m[1].trim() };
 
   m = raw.match(/^(?:行事曆連結|訂閱)[\s:：]*(重設|重新產生|reset)$/i);
   if (m) return { cmd: "subscribe", arg: "reset" };
@@ -155,6 +162,12 @@ export async function respond(ctx, input) {
       return [flex.logBubble(await history(ctx))];
     case "subscribe":
       return [await calendarLink(ctx, arg === "reset")];
+    case "hobby":
+      return [await drawHobby(ctx)];
+    case "hobbyList":
+      return [flex.hobbiesBubble(neglected((await store.getHobbies(ctx.kv)).done, ctx.now.iso, daysBetween))];
+    case "hobbyDone":
+      return [await logHobby(ctx, arg)];
     case "done":
       return [await completeByIndex(ctx, arg)];
     case "menu":
@@ -196,6 +209,12 @@ export async function respondPostback(ctx, data) {
   if (kind === "del") {
     const todo = await store.removeTodo(ctx.kv, value);
     return [text(todo ? `已收回：${todo.text}` : "找不到這一筆。", MENU)];
+  }
+  if (kind === "hb") {
+    const hobby = HOBBIES.find((h) => h.id === value);
+    if (!hobby) return [text("找不到這一項。", MENU)];
+    await store.saveHobbies(ctx.kv, { done: { [hobby.id]: ctx.now.iso } });
+    return [text(`記下了：${hobby.name} · 今天`, MENU)];
   }
   if (kind === "lf") {
     const item = LOWFREQ.find((i) => i.id === value);
@@ -415,6 +434,44 @@ function groupByDate(items) {
   return [...map].map(([date, list]) => ({ date, dow: dowOf(date), items: list }));
 }
 
+/** 抽一項興趣出來。八項出完一輪才會重抽，不會連著給同一項。 */
+export async function drawHobby(ctx) {
+  const state = await store.getHobbies(ctx.kv);
+  const { hobby, example, bag } = draw(state);
+  await store.saveHobbies(ctx.kv, { bag });
+
+  const last = state.done?.[hobby.id];
+  const gap = last ? `上次碰是 ${daysBetween(last, ctx.now.iso)} 天前` : "還沒記錄過這一項";
+
+  return text(
+    [
+      `今天的一項：${hobby.name}`,
+      "",
+      hobby.examples.join("、"),
+      "",
+      hobby.point,
+      "",
+      gap,
+    ].join("\n"),
+    quick([
+      { label: `做了${hobby.name}`, data: `hb:${hobby.id}` },
+      { label: "換一個", text: "興趣" },
+      { label: "看八項", text: "興趣 清單" },
+    ]),
+  );
+}
+
+async function logHobby(ctx, arg) {
+  const needle = String(arg).trim();
+  const hobby =
+    HOBBIES.find((h) => h.id === needle || h.name === needle) ||
+    HOBBIES.find((h) => h.examples.some((e) => e === needle || needle.includes(e)));
+  if (!hobby) return text(`「${needle}」對不到八項裡的哪一個。打「興趣 清單」看名稱。`, MENU);
+
+  await store.saveHobbies(ctx.kv, { done: { [hobby.id]: ctx.now.iso } });
+  return text(`記下了：${hobby.name} · ${ctx.now.iso}`, MENU);
+}
+
 /** 手機行事曆的訂閱網址。網址本身就是密碼，所以要能重設。 */
 async function calendarLink(ctx, reset) {
   if (!ctx.siteUrl) return text("這裡拿不到網址設定，沒辦法產生訂閱連結。", MENU);
@@ -550,6 +607,7 @@ function helpText() {
       "· 行事曆 → 接下來兩週有時間的事",
       "· 紀錄 → 最近做過、決定過什麼",
       "· 行事曆連結 → 訂閱到手機的行事曆 App",
+      "· 興趣 → 從八個面向裡抽一項；「興趣 清單」看哪一項最久沒碰",
       "· 討論 → 這週要談的事（每週固定題＋你丟的議題）",
       "· 討論 加 要不要換保母 → 平常想到就丟，週五一起看",
       "· 家規 → 已經定案的安排",

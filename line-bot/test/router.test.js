@@ -560,3 +560,46 @@ test("行事曆連結：產生一次就固定，重設會換掉", async () => {
   assert.ok(!reset.text.includes(url[0]), "重設要換一個新的");
   assert.match(reset.text, /舊連結立刻失效/);
 });
+
+test("興趣：八項出完一輪才會重複", async () => {
+  const { HOBBIES, draw } = await import("../src/hobbies.js");
+  let state = {};
+  const seen = [];
+  for (let i = 0; i < HOBBIES.length; i++) {
+    const d = draw(state);
+    state = { bag: d.bag };
+    seen.push(d.hobby.id);
+  }
+  assert.equal(new Set(seen).size, HOBBIES.length, "一輪內不該重複");
+});
+
+test("興趣：抽一項會附上多久沒碰，並記得住", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+
+  const [first] = await respond(ctx, "興趣");
+  assert.match(first.text, /今天的一項/);
+  assert.match(first.text, /還沒記錄過這一項/);
+
+  await respond(ctx, "興趣 做了 攝影");
+  const state = await store.getHobbies(kv);
+  assert.equal(state.done.make, "2026-09-03");
+});
+
+test("興趣清單：最久沒碰的排最前面", async () => {
+  const kv = fakeKv();
+  const ctx = ctxOf(kv);
+  await respond(ctx, "興趣 做了 跑步");
+
+  const [card] = await respond(ctx, "興趣 清單");
+  const rendered = JSON.stringify(card);
+  assert.match(rendered, /最久沒碰的排前面/);
+  assert.ok(rendered.indexOf("還沒記錄") < rendered.lastIndexOf("身體"), "有記錄的要排到後面");
+});
+
+test("興趣：對不到名稱就說清楚，不亂記", async () => {
+  const kv = fakeKv();
+  const [msg] = await respond(ctxOf(kv), "興趣 做了 打麻將");
+  assert.match(msg.text, /對不到八項/);
+  assert.deepEqual((await store.getHobbies(kv)).done, {});
+});

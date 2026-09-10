@@ -505,3 +505,43 @@ export function logBubble({ days }) {
     ),
   );
 }
+
+/** 八種興趣：最久沒碰的排最前面。 */
+export function hobbiesBubble(items) {
+  const body = [];
+  items.forEach((item, i) => {
+    if (i) body.push(separator());
+    const state = item.days === null ? "還沒記錄" : `${item.days} 天前`;
+    body.push({
+      type: "box",
+      layout: "vertical",
+      margin: i ? "md" : "none",
+      contents: [
+        {
+          type: "box",
+          layout: "baseline",
+          spacing: "sm",
+          contents: [
+            { type: "text", text: item.name, size: "sm", weight: "bold", color: INK, flex: 2 },
+            {
+              type: "text",
+              text: state,
+              size: "xs",
+              color: item.days === null ? ALERT : MUTED,
+              align: "end",
+              flex: 3,
+            },
+          ],
+        },
+        { type: "text", text: item.examples.join("、"), size: "xxs", color: MUTED, wrap: true, margin: "xs" },
+      ],
+    });
+  });
+
+  return flex(
+    "八種興趣",
+    bubble({ title: "八種興趣", sub: "最久沒碰的排前面" }, body, [
+      { type: "text", text: "做了就打「興趣 做了 攝影」", size: "xxs", color: MUTED, align: "center" },
+    ]),
+  );
+}
