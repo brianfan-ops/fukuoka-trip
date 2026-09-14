@@ -131,13 +131,13 @@ function freeze(utcIso) {
   return () => mock.timers.reset();
 }
 
-test("21:30 之後的排程會把家事提醒發給每個人，而且一天只發一次", async () => {
+test("19:30 之後把今晚分工發給每個人，而且一天只發一次", async () => {
   const kv = fakeKv({
     users: JSON.stringify([{ id: "U1", name: "爸爸" }, { id: "U2", name: "媽媽" }]),
     todos: JSON.stringify([{ id: "a", text: "買奶粉", done: false }]),
     notes: JSON.stringify({ lastSent: "2026-09-03" }), // 當天的一句話已經發過
   });
-  const unfreeze = freeze("2026-09-03T13:35:00Z"); // 台北 21:35
+  const unfreeze = freeze("2026-09-03T11:35:00Z"); // 台北 19:35
   const line = captureLine();
   const { ctx, settle } = ctxOf();
 
@@ -147,10 +147,14 @@ test("21:30 之後的排程會把家事提醒發給每個人，而且一天只�
   const pushes = line.calls.filter((c) => c.url.endsWith("/message/push"));
   assert.equal(pushes.length, 2);
   assert.deepEqual(pushes.map((p) => p.body.to), ["U1", "U2"]);
-  assert.match(pushes[0].body.messages[0].text, /家事時間/);
-  assert.match(pushes[0].body.messages[0].text, /買奶粉/);
 
-  // 五分鐘後再跑一次，不該重複發
+  const card = JSON.stringify(pushes[0].body.messages[0]);
+  assert.match(card, /今晚分工/);
+  assert.match(card, /洗碗/, "A 那邊要有洗碗");
+  assert.match(card, /碗槽要刷過/, "洗碗的標準要貼在洗碗底下");
+  assert.match(card, /丟垃圾/);
+  assert.match(card, /尿布桶/, "垃圾要列出四個點");
+
   const second = ctxOf();
   await worker.scheduled({ cron: "*/5 * * * *" }, envOf(kv), second.ctx);
   await second.settle();
@@ -160,7 +164,7 @@ test("21:30 之後的排程會把家事提醒發給每個人，而且一天只�
   assert.equal(line.calls.filter((c) => c.url.endsWith("/message/push")).length, 2);
 });
 
-test("21:30 之前不推家事提醒", async () => {
+test("19:30 之前不推今晚分工", async () => {
   const kv = fakeKv({
     users: JSON.stringify([{ id: "U1" }]),
     notes: JSON.stringify({ lastSent: "2026-09-03" }),

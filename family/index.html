@@ -443,7 +443,7 @@
         <div class="t mono">21:30<small>23:00</small></div>
         <div class="blk">
           <h3>家事時間<span class="now-chip">現在</span></h3>
-          <p class="wd">洗衣（當天的種類）、折昨天晾的、吸地拖地。孩子衣物夠輪替，不必每天洗，所以照種類分天跑就好。誰洗、誰拖還沒講定——見下方輪值表。</p>
+          <p class="wd">A／B 從 19:30 洗澡就分開了，到這裡是 A 那邊的收尾：吸地、拖地、折昨天晾的。洗衣媽媽白天做完，晚上不排。</p>
           <p class="we">洗衣、折衣、吸地拖地。週末適合排大件與長週期家事：床單被套、冷氣濾網、陽台。</p>
           <span class="chip fix">固定</span><span class="chip todo">分工輪值待討論</span><span class="chip">見「家事輪值」</span>
         </div>
@@ -574,31 +574,48 @@
 
   <!-- 家事輪值 -->
   <section id="chores">
-    <div class="sec-head"><h2>家事輪值</h2><span class="num mono">21:30 — 23:00</span></div>
-    <p class="sec-note">家事分三層：<b>每晚都要做的</b>（不用排，照做）、<b>每週輪值的</b>（照種類分天，不用每天洗）、<b>長週期的</b>（隔幾週才一次，最容易忘）。誰做誰不做是提案，表格裡可以直接改。</p>
+    <div class="sec-head"><h2>家事輪值</h2><span class="num mono">19:30 起</span></div>
+    <p class="sec-note">晚上從 19:30 洗澡開始分成兩邊、<b>每天輪一次</b>：<b>A 是家裡和自己的身體，B 是小孩</b>。洗衣不排在晚上——媽媽會儘量白天洗完。下面第三層是隔幾週才一次、最容易忘的那些。</p>
 
     <div class="card tonight">
-      <h3>今晚要做什麼</h3>
+      <h3>今天要做什麼</h3>
       <p id="tonight-day">—</p>
       <p class="must" id="tonight-wash">—</p>
       <p class="also" id="tonight-floor">—</p>
-      <p class="also" id="tonight-duty">—</p>
     </div>
 
-    <h3 style="font-size:1rem; margin:26px 0 8px;">一、每晚固定</h3>
-    <div class="acts">
-      <div class="act"><div class="slot mono">18:15–19:30</div><h3>洗碗</h3><p>吃完就洗，不要留到家事時間——晚餐那 75 分鐘本來就含收拾。</p></div>
-      <div class="act"><div class="slot mono">18:05 進門後</div><h3>餐袋、水壺</h3><p>爸爸帶回來就直接沖洗晾著，隔天要用。這兩樣不進洗衣機。</p></div>
-      <div class="act"><div class="slot mono">21:30–23:00</div><h3>折昨天晾的衣服</h3><p>今晚洗 → 明晚折，永遠差一天，量固定也好抓。邊看電視邊折就行。</p></div>
-      <div class="act"><div class="slot mono">21:30 開洗</div><h3>當天種類的那一批</h3><p>21:30 開洗 → 22:15 晾／進烘乾。洗衣機在轉的時候順手吸地拖地。</p></div>
+    <h3 style="font-size:1rem; margin:26px 0 8px;">一、晚上的 A／B 分工</h3>
+    <p class="sec-note">19:30 洗澡開始分頭進行，兩邊每天輪一次。運動放在 A，所以輪到 A 的人當晚有機會動一動——這是刻意的，不要拿掉。</p>
+    <div class="grid2">
+      <div class="card" style="border-left:4px solid var(--accent);">
+        <h3>A · 家裡</h3>
+        <ul style="margin:8px 0 0; padding-left:1.1em; font-size:.88rem; color:var(--ink-2); line-height:1.9;">
+          <li><b>洗碗</b><br><span style="font-size:.82rem; color:var(--ink-3);">碗槽要刷過，洗完的東西歸位，檯面不要積</span></li>
+          <li>整理客廳</li>
+          <li>吸整個家地板</li>
+          <li>拖地</li>
+          <li>運動</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:4px solid var(--b-eve);">
+        <h3>B · 小孩</h3>
+        <ul style="margin:8px 0 0; padding-left:1.1em; font-size:.88rem; color:var(--ink-2); line-height:1.9;">
+          <li>幫小孩洗澡</li>
+          <li>泡奶</li>
+          <li>刷牙</li>
+          <li>陪睡</li>
+          <li><b>丟垃圾</b><br><span style="font-size:.82rem; color:var(--ink-3);">廚房、尿布桶、兩間廁所、書房，一次收齊</span></li>
+        </ul>
+      </div>
     </div>
+    <p class="sec-note" style="margin:12px 0 0;">另外兩件每晚固定、不分 A／B：<b>餐袋和水壺</b>進門就沖洗晾著，<b>折昨天晾的衣服</b>。</p>
 
-    <h3 style="font-size:1rem; margin:26px 0 8px;">二、每週輪值</h3>
-    <p class="sec-note">孩子衣物夠輪替，不用每天洗，所以照<b>種類</b>分天跑：小孩衣物一週兩批（週一、週四），大人衣物兩批，毛巾類一批。最右欄的分工是提案，可以直接改。</p>
+    <h3 style="font-size:1rem; margin:26px 0 8px;">二、白天的洗衣</h3>
+    <p class="sec-note">孩子衣物夠輪替，不用每天洗，所以照<b>種類</b>分天跑：小孩衣物一週兩批（週一、週四），大人衣物兩批，毛巾類一批。地板和垃圾已經在上面的 A／B 裡，這裡不重複。</p>
     <div class="scroll">
       <table>
         <thead>
-          <tr><th style="width:76px;">星期</th><th style="min-width:210px;">洗衣 · 種類</th><th style="min-width:150px;">地板家事</th><th style="min-width:136px;">負責 · 洗衣／地板</th></tr>
+          <tr><th style="width:76px;">星期</th><th style="min-width:210px;">白天洗 · 種類</th><th style="min-width:200px;">備註</th></tr>
         </thead>
         <tbody id="laundry"></tbody>
       </table>
@@ -618,8 +635,8 @@
 
     <div class="grid2">
       <div class="card">
-        <h3>輪值怎麼分（提案）</h3>
-        <p>原則：<b>誰白天顧得多，晚上就少做一點</b>。平日媽媽單獨帶妹妹九小時，所以洗衣（開機、晾收）偏向爸爸，地板由媽媽白天順手或當晚處理，週三、週五對調一次；週六日兩人一起清大件。</p>
+        <h3>為什麼這樣切</h3>
+        <p>A 是家裡和自己的身體，B 是小孩。A 做完就結束，B 要陪到睡著——所以每天輪，不是固定誰做什麼。運動放進 A，讓輪到的人當晚有機會動一動，不然那一項永遠排不進來。</p>
       </div>
       <div class="card">
         <h3>長週期家事排哪裡</h3>
@@ -748,18 +765,19 @@
   [1, 2, 3, 4, 5, 6, 0].forEach(function (d) {
     var r = LAUNDRY[d], tr = el("tr");
     tr.setAttribute("data-dow", d);
-    [DOW[d].replace("星期", "週"), r.wash, r.floor].forEach(function (txt, i) {
+    [DOW[d].replace("星期", "週"), r.wash].forEach(function (txt, i) {
       var td = el("td", null, txt);
       if (i === 0) { td.style.whiteSpace = "nowrap"; td.style.fontWeight = "700"; }
       if (i === 1) { td.style.fontWeight = "700"; }
       tr.appendChild(td);
     });
-    var dutyCell = el("td");
-    var duty = el("div", "cell", r.duty);
-    duty.setAttribute("contenteditable", "true");
-    duty.setAttribute("data-key", "duty-" + d);
-    dutyCell.appendChild(duty);
-    tr.appendChild(dutyCell);
+    var noteCell = el("td");
+    var note = el("div", "cell");
+    note.setAttribute("contenteditable", "true");
+    note.setAttribute("data-key", "duty-" + d);
+    note.setAttribute("data-ph", "要記什麼就寫這裡");
+    noteCell.appendChild(note);
+    tr.appendChild(noteCell);
     tb.appendChild(tr);
   });
 
@@ -942,10 +960,9 @@
     });
 
     var t = LAUNDRY[dow];
-    document.getElementById("tonight-day").textContent = "今天是 " + DOW[dow] + "，21:30 家事時間（另有每晚固定：洗碗、餐袋、折昨天晾的）";
+    document.getElementById("tonight-day").textContent = "今天是 " + DOW[dow] + "，白天要洗的是";
     document.getElementById("tonight-wash").textContent = t.wash;
-    document.getElementById("tonight-floor").textContent = "地板：" + t.floor;
-    document.getElementById("tonight-duty").textContent = "分工：" + t.duty;
+    document.getElementById("tonight-floor").textContent = "晚上 19:30 起照 A／B 分工，兩邊每天輪。";
   }
   tick();
   refreshLowFreq();

@@ -156,12 +156,12 @@ test("一週：七張卡加一則網頁連結", async () => {
   assert.match(messages[1].text, /example\.test/);
 });
 
-test("星期五的排程訊息會接上這週的討論清單", async () => {
+test("星期五 11:15 那則會接上這週的討論清單", async () => {
   const kv = fakeKv();
-  const { nightlyMessage } = await import("../src/push.js");
+  const { noteMessage } = await import("../src/push.js");
 
-  const fridayMsg = await nightlyMessage(kv, FRIDAY);
-  const otherDayMsg = await nightlyMessage(kv, { ...NOW, dow: 4 });
+  const fridayMsg = await noteMessage(kv, FRIDAY);
+  const otherDayMsg = await noteMessage(kv, { ...NOW, dow: 4 });
 
   assert.match(fridayMsg.text, /這週的討論/);
   assert.match(fridayMsg.text, /週末和下週有沒有特殊行程/);
@@ -327,11 +327,11 @@ test("刪除不存在的編號會給提示", async () => {
 
 test("週五推播只列還沒回答的題目", async () => {
   const kv = fakeKv();
-  const { nightlyMessage } = await import("../src/push.js");
+  const { noteMessage } = await import("../src/push.js");
 
   await store.saveWeekly(kv, [[`${WEEK}#0`, "週三疫苗"]], "爸爸");
 
-  const msg = await nightlyMessage(kv, FRIDAY);
+  const msg = await noteMessage(kv, FRIDAY);
   assert.match(msg.text, new RegExp(`還有 ${WEEKLY.length + SETUP.length - 1}/${WEEKLY.length + SETUP.length} 題`));
   assert.doesNotMatch(msg.text, /週末和下週有沒有特殊行程/, "已回答的不再重複問");
   assert.match(msg.text, /上週哪一段沒跑順/);
@@ -672,4 +672,45 @@ test("一句：靠資料算的句子會用到這個家自己的數字", async ()
   const joined = texts.join("\n");
   assert.match(joined, /哥哥|妹妹/, "要有算年齡的那則");
   assert.match(joined, /床單/, "要有算下次到期的那則");
+});
+
+test("分工：A 是家裡、B 是小孩，細節貼在該做的那一項下面", async () => {
+  const kv = fakeKv();
+  const [card] = await respond(ctxOf(kv), "分工");
+  const rendered = JSON.stringify(card);
+
+  assert.match(rendered, /今晚分工/);
+  for (const task of ["洗碗", "整理客廳", "吸整個家地板", "拖地", "運動"]) {
+    assert.match(rendered, new RegExp(task), `A 少了 ${task}`);
+  }
+  for (const task of ["幫小孩洗澡", "泡奶", "刷牙", "陪睡", "丟垃圾"]) {
+    assert.match(rendered, new RegExp(task), `B 少了 ${task}`);
+  }
+  assert.match(rendered, /碗槽要刷過/);
+  assert.match(rendered, /廚房、尿布桶、兩間廁所、書房/);
+  assert.match(rendered, /衣服白天洗/, "晚上不排洗衣");
+  assert.ok(Buffer.byteLength(rendered, "utf8") < 10000);
+});
+
+test("分工：每天輪，換班會把順序翻過來", async () => {
+  const kv = fakeKv();
+  const { tonight } = await import("../src/evening.js");
+
+  const day1 = tonight("2026-09-14", 0);
+  const day2 = tonight("2026-09-15", 0);
+  assert.notEqual(day1.a.who, day2.a.who, "隔天要換人");
+
+  const ctx = ctxOf(kv);
+  const before = tonight(ctx.now.iso, 0).a.who;
+  const [msg] = await respond(ctx, "換班");
+  assert.match(msg.text, /換過來了/);
+
+  const evening = await store.getEvening(kv);
+  assert.equal(tonight(ctx.now.iso, evening.offset).a.who === before, false, "換班後 A 要是另一個人");
+});
+
+test("今天：卡片上會寫今晚誰做 A", async () => {
+  const kv = fakeKv();
+  const [card] = await respond(ctxOf(kv), "今天");
+  assert.match(JSON.stringify(card), /今晚分工/);
 });

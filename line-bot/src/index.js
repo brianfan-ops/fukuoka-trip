@@ -9,14 +9,14 @@
  *
  * Cron：每 5 分鐘跑一次，做兩件事——
  *   1. 把到期的待辦提醒推出去（所以提醒最多晚 5 分鐘）
- *   2. 台北 21:30 之後推當天的家事提醒，一天只推一次
+ *   2. 台北 19:30 之後推今晚的 A/B 分工，一天只推一次
  *   3. 台北 11:15 丟一句話——那是單獨帶小孩的第三個小時，疲勞感開始出現的時候
  *   4. 週三、週日 23:00 的爸媽時間丟一項興趣
  * 用同一個觸發器是因為免費方案整個帳號只有 5 個 cron 額度。
  */
 import { verifySignature, reply, push, getProfile, text, quick } from "./line.js";
 import { respond, respondPostback, helpText, MENU } from "./router.js";
-import { nightlyMessage, hobbyMessage, noteMessage } from "./push.js";
+import { eveningMessage, hobbyMessage, noteMessage } from "./push.js";
 import { taipei } from "./time.js";
 import { nowStamp } from "./when.js";
 import page from "./page.js";
@@ -154,7 +154,7 @@ async function broadcast(env) {
   const now = taipei();
   await sendReminders(env, now);
   await sendDailyNote(env, now);
-  await sendNightly(env, now);
+  await sendEvening(env, now);
   await sendHobbyNudge(env, now);
 }
 
@@ -225,12 +225,12 @@ async function sendReminders(env, now) {
   await store.markReminded(env.FAMILY, sent, new Date().toISOString());
 }
 
-/** 每晚 21:30 那則，一天只推一次。 */
-async function sendNightly(env, now) {
-  if (now.mins < 21 * 60 + 30) return;
+/** 19:30 的今晚分工，一天只推一次。 */
+async function sendEvening(env, now) {
+  if (now.mins < 19 * 60 + 30) return;
   if ((await store.nightlySentOn(env.FAMILY)) === now.iso) return;
 
-  const message = await nightlyMessage(env.FAMILY, now);
+  const message = await eveningMessage(env.FAMILY, now);
   const users = await store.listUsers(env.FAMILY);
   for (const user of users) {
     try {

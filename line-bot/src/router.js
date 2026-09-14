@@ -11,6 +11,7 @@ import { installRichMenu } from "./richmenu.js";
 import { parseWhen, shiftIso, dowOf } from "./when.js";
 import { HOBBIES, draw, neglected } from "./hobbies.js";
 import { drawNote, NOTE_KIND } from "./notes.js";
+import { tonight, tomorrow } from "./evening.js";
 import { text, quick } from "./line.js";
 
 const COMMANDS = [
@@ -25,6 +26,8 @@ const COMMANDS = [
   { cmd: "subscribe", words: ["行事曆連結", "訂閱", "訂閱連結"] },
   { cmd: "hobby", words: ["興趣", "抽一個", "八項"] },
   { cmd: "note", words: ["一句", "小提示", "來一句"] },
+  { cmd: "split", words: ["分工", "今晚分工", "AB"] },
+  { cmd: "swap", words: ["換班", "對調", "交換"] },
   { cmd: "help", words: ["說明", "指令", "怎麼用", "help"] },
   { cmd: "menu", words: ["安裝選單", "裝選單", "選單", "menu"] },
 ];
@@ -171,6 +174,10 @@ export async function respond(ctx, input) {
       return [await drawHobby(ctx)];
     case "note":
       return [await drawOneNote(ctx)];
+    case "split":
+      return [await buildSplit(ctx)];
+    case "swap":
+      return await swapSplit(ctx);
     case "noteToggle":
       return [await toggleNotes(ctx, arg === "off")];
     case "hobbyList":
@@ -191,7 +198,10 @@ export async function respond(ctx, input) {
 /** 圖文選單與按鈕的 postback。 */
 export async function respondPostback(ctx, data) {
   const [kind, value] = String(data || "").split(":");
-  if (kind === "cmd") return respond(ctx, value === "todos" ? "待辦" : value === "week" ? "一週" : value);
+  if (kind === "cmd") {
+    if (value === "swap") return swapSplit(ctx);
+    return respond(ctx, value === "todos" ? "待辦" : value === "week" ? "一週" : value);
+  }
   if (kind === "done") {
     const todo = await store.setDone(ctx.kv, value, true, ctx.userName);
     if (!todo) return [text("找不到這一筆，可能已經被刪掉了。", MENU)];
@@ -443,6 +453,37 @@ function groupByDate(items) {
   return [...map].map(([date, list]) => ({ date, dow: dowOf(date), items: list }));
 }
 
+/** 今晚誰做 A、誰做 B。 */
+export async function buildSplit(ctx) {
+  const [evening, todos, lfMap] = await Promise.all([
+    store.getEvening(ctx.kv),
+    store.listTodos(ctx.kv),
+    store.getLowfreq(ctx.kv),
+  ]);
+  const nextDow = (ctx.now.dow + 1) % 7;
+
+  return flex.eveningBubble({
+    split: tonight(ctx.now.iso, evening.offset),
+    next: tomorrow(ctx.now.iso, evening.offset),
+    laundry: LAUNDRY[ctx.now.dow].wash,
+    overdue: lowfreqStatus(lfMap, ctx.now.iso).filter((i) => i.overdue),
+    openCount: todos.filter((t) => !t.done).length,
+    theme: isWeekday(nextDow) ? THEMES[nextDow] : null,
+  });
+}
+
+/** 輪錯了就翻過來，之後照新的順序輪。 */
+async function swapSplit(ctx) {
+  const evening = await store.getEvening(ctx.kv);
+  const offset = (Number(evening.offset || 0) + 1) % 2;
+  await store.saveEvening(ctx.kv, { offset });
+  const split = tonight(ctx.now.iso, offset);
+  return [
+    text(`換過來了：今晚 A 是${split.a.who}、B 是${split.b.who}。之後照這個順序輪。`, MENU),
+    await buildSplit(ctx),
+  ];
+}
+
 /** 抽一句話。打字問的不計推播額度，想抽幾次都行。 */
 async function drawOneNote(ctx) {
   const [state, todos, lowfreq] = await Promise.all([
@@ -608,10 +649,15 @@ async function buildTodos(ctx) {
 
 async function buildToday(ctx) {
   const { dow, mins, iso } = ctx.now;
-  const [todos, lfMap] = await Promise.all([store.listTodos(ctx.kv), store.getLowfreq(ctx.kv)]);
+  const [todos, lfMap, evening] = await Promise.all([
+    store.listTodos(ctx.kv),
+    store.getLowfreq(ctx.kv),
+    store.getEvening(ctx.kv),
+  ]);
   return flex.todayBubble({
     dow,
     mins,
+    split: tonight(iso, evening.offset),
     block: blockAt(mins),
     laundry: LAUNDRY[dow],
     theme: THEMES[dow],
@@ -641,7 +687,8 @@ function helpText() {
       "· 刪除 2 → 把第 2 件刪掉（打錯用這個）",
       "· 今天 → 現在的時段、今晚洗什麼",
       "· 一週 → 七天的安排",
-      "· 家事 → 輪值與長週期進度",
+      "· 分工 → 今晚誰做 A、誰做 B；輪錯了打「換班」",
+      "· 家事 → 長週期進度與今天要洗的種類",
       "· 家事 冷氣濾網 → 記成今天做過；補日期就寫「家事 床單 8/20」",
       "· 行事曆 → 接下來兩週有時間的事",
       "· 紀錄 → 最近做過、決定過什麼",

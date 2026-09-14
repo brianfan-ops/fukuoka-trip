@@ -176,7 +176,7 @@ function timeline(mins) {
 }
 
 /** 今天：現在在一天的哪裡、今晚家事、主題日。 */
-export function todayBubble({ dow, mins, block, laundry, theme, overdue, openCount }) {
+export function todayBubble({ dow, mins, block, laundry, theme, overdue, openCount, split }) {
   const weekday = isWeekday(dow);
   const body = [
     {
@@ -201,9 +201,8 @@ export function todayBubble({ dow, mins, block, laundry, theme, overdue, openCou
     separator(),
     row("哥哥", weekday ? `${ANCHORS.leave}／${ANCHORS.home}` : "在家"),
     row("妹妹", theme ? `${theme.name} · ${theme.slot}` : weekday ? "在家（今天沒排主題）" : "全家一起"),
-    row("今晚洗", laundry.wash),
-    row("地板", laundry.floor),
-    row("分工", laundry.duty),
+    row("今天洗", laundry.wash),
+    row("今晚分工", `A ${split ? split.a.who : "—"}／B ${split ? split.b.who : "—"}`),
   ];
   if (overdue.length) body.push(row("逾期家事", overdue.map((o) => o.name).join("、"), ALERT));
   body.push(row("未完成待辦", openCount ? `${openCount} 件` : "沒有，清空了"));
@@ -298,10 +297,9 @@ export function choresBubble({ dow, laundry, lowfreq }) {
     label("每晚固定"),
     ...NIGHTLY.map((n) => line(`· ${n}`, { size: "xs" })),
     separator(),
-    label(`今晚 · 週${DOW[dow]}`),
-    row("洗衣", laundry.wash),
-    row("地板", laundry.floor),
-    row("分工", laundry.duty),
+    label(`今天 · 週${DOW[dow]}`),
+    row("白天洗", laundry.wash),
+    row("晚上", "地板在 A、垃圾在 B — 打「分工」"),
     separator(),
     label("長週期"),
   ];
@@ -542,6 +540,53 @@ export function hobbiesBubble(items) {
     "八種興趣",
     bubble({ title: "八種興趣", sub: "最久沒碰的排前面" }, body, [
       { type: "text", text: "做了就打「興趣 做了 攝影」", size: "xxs", color: MUTED, align: "center" },
+    ]),
+  );
+}
+
+/** 今晚的 A/B 分工。細節（廚房、垃圾）貼在該做的那一項下面，才不會被當成標語。 */
+export function eveningBubble({ split, next, laundry, overdue, openCount, theme }) {
+  const side = (part, color) => ({
+    type: "box",
+    layout: "vertical",
+    spacing: "xs",
+    contents: [
+      {
+        type: "box",
+        layout: "baseline",
+        spacing: "sm",
+        contents: [
+          { type: "text", text: part.key, size: "xs", weight: "bold", color, flex: 0 },
+          { type: "text", text: part.name, size: "xs", color: MUTED, flex: 2 },
+          { type: "text", text: part.who, size: "sm", weight: "bold", color: INK, align: "end", flex: 3 },
+        ],
+      },
+      ...part.tasks.flatMap((task) => [
+        { type: "text", text: `· ${task.text}`, size: "sm", color: INK, wrap: true, margin: "xs" },
+        ...(task.note
+          ? [{ type: "text", text: task.note, size: "xxs", color: MUTED, wrap: true, margin: "none" }]
+          : []),
+      ]),
+    ],
+  });
+
+  const body = [
+    side(split.a, ACCENT),
+    separator(),
+    side(split.b, "#4152A0"),
+    separator(),
+    row("明天", `A 換 ${next.a.who}`),
+  ];
+  if (laundry) body.push(row("白天洗", laundry));
+  if (theme) body.push(row("明天主題", `${theme.name}｜先備 ${theme.prep}`));
+  if (overdue?.length) body.push(row("逾期家事", overdue.map((o) => o.name).join("、"), ALERT));
+  body.push(row("未完成待辦", openCount ? `${openCount} 件` : "沒有，清空了"));
+
+  return flex(
+    `今晚分工 · A ${split.a.who}／B ${split.b.who}`,
+    bubble({ title: "今晚分工", sub: "19:30 開始" }, body, [
+      button("換班", "cmd:swap"),
+      { type: "text", text: "衣服白天洗，晚上不排", size: "xxs", color: MUTED, align: "center" },
     ]),
   );
 }
